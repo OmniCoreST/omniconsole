@@ -1,0 +1,287 @@
+# Janitza UMG 96RM-PN — Modbus register map for Omni Console
+#
+# Source: janitza-mal-umg96rmpn-en.pdf ("Modbus address list").
+# - All measured values are IEEE-754 FLOAT (f32), 2 registers, Big-Endian (manual §
+#   "addresses ... supply the data in the Big-Endian format"). `word_order` therefore
+#   defaults to "be" and is omitted below; values are in engineering units (no scale).
+# - Measured values update every 200 ms. Read with FC03 (holding) or FC04 (input).
+# - Factory defaults: device address (slave) = 1, RTU baud = 115.2 kbps, 8N2.
+# - Addresses are the Modbus protocol addresses, in decimal, as printed in the manual.
+#
+# Workspace fields below activate in Phase 1 (currently ignored by the build):
+# pinned = [800, 808, 810, 812, 860, 862, 864, 874, 882, 890, 834]
+# poll_interval_ms = 1000
+# slave = 1
+
+vendor = "Janitza"
+model = "UMG 96RM-PN"
+description = "Power quality analyser — instantaneous measurements + energy totals (float, BE)."
+
+# ----- Frequency -----
+[[registers]]
+address = 800
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# ----- Voltages, phase-to-neutral -----
+[[registers]]
+address = 808
+type = "f32"
+name = "Voltage L1-N"
+unit = "V"
+
+[[registers]]
+address = 810
+type = "f32"
+name = "Voltage L2-N"
+unit = "V"
+
+[[registers]]
+address = 812
+type = "f32"
+name = "Voltage L3-N"
+unit = "V"
+
+# ----- Voltages, phase-to-phase -----
+[[registers]]
+address = 814
+type = "f32"
+name = "Voltage L1-L2"
+unit = "V"
+
+[[registers]]
+address = 816
+type = "f32"
+name = "Voltage L2-L3"
+unit = "V"
+
+[[registers]]
+address = 818
+type = "f32"
+name = "Voltage L3-L1"
+unit = "V"
+
+# ----- Currents -----
+[[registers]]
+address = 860
+type = "f32"
+name = "Current L1"
+unit = "A"
+
+[[registers]]
+address = 862
+type = "f32"
+name = "Current L2"
+unit = "A"
+
+[[registers]]
+address = 864
+type = "f32"
+name = "Current L3"
+unit = "A"
+
+[[registers]]
+address = 866
+type = "f32"
+name = "Current N (vector sum)"
+unit = "A"
+
+# ----- Active (real) power -----
+[[registers]]
+address = 868
+type = "f32"
+name = "Active power L1"
+unit = "W"
+
+[[registers]]
+address = 870
+type = "f32"
+name = "Active power L2"
+unit = "W"
+
+[[registers]]
+address = 872
+type = "f32"
+name = "Active power L3"
+unit = "W"
+
+[[registers]]
+address = 874
+type = "f32"
+name = "Active power Σ"
+unit = "W"
+
+# ----- Reactive power (fundamental) -----
+[[registers]]
+address = 876
+type = "f32"
+name = "Reactive power L1"
+unit = "var"
+
+[[registers]]
+address = 878
+type = "f32"
+name = "Reactive power L2"
+unit = "var"
+
+[[registers]]
+address = 880
+type = "f32"
+name = "Reactive power L3"
+unit = "var"
+
+[[registers]]
+address = 882
+type = "f32"
+name = "Reactive power Σ"
+unit = "var"
+
+# ----- Apparent power -----
+[[registers]]
+address = 884
+type = "f32"
+name = "Apparent power L1"
+unit = "VA"
+
+[[registers]]
+address = 886
+type = "f32"
+name = "Apparent power L2"
+unit = "VA"
+
+[[registers]]
+address = 888
+type = "f32"
+name = "Apparent power L3"
+unit = "VA"
+
+[[registers]]
+address = 890
+type = "f32"
+name = "Apparent power Σ"
+unit = "VA"
+
+# ----- Power factor (|P|/S) -----
+[[registers]]
+address = 828
+type = "f32"
+name = "Power factor L1"
+
+[[registers]]
+address = 830
+type = "f32"
+name = "Power factor L2"
+
+[[registers]]
+address = 832
+type = "f32"
+name = "Power factor L3"
+
+[[registers]]
+address = 834
+type = "f32"
+name = "Power factor Σ"
+
+# ----- CosPhi (fundamental power factor) -----
+[[registers]]
+address = 820
+type = "f32"
+name = "CosPhi L1"
+
+[[registers]]
+address = 822
+type = "f32"
+name = "CosPhi L2"
+
+[[registers]]
+address = 824
+type = "f32"
+name = "CosPhi L3"
+
+# ----- THD, voltage L-N -----
+[[registers]]
+address = 836
+type = "f32"
+name = "THD voltage L1-N"
+unit = "%"
+
+[[registers]]
+address = 838
+type = "f32"
+name = "THD voltage L2-N"
+unit = "%"
+
+[[registers]]
+address = 840
+type = "f32"
+name = "THD voltage L3-N"
+unit = "%"
+
+# ----- THD, current -----
+[[registers]]
+address = 908
+type = "f32"
+name = "THD current L1"
+unit = "%"
+
+[[registers]]
+address = 910
+type = "f32"
+name = "THD current L2"
+unit = "%"
+
+[[registers]]
+address = 912
+type = "f32"
+name = "THD current L3"
+unit = "%"
+
+# ----- Phase rotation: 1 = clockwise, 0 = none, -1 = counter-clockwise -----
+[[registers]]
+address = 938
+type = "f32"
+name = "Phase rotation (1=CW / 0 / -1=CCW)"
+
+# ----- Energy totals (sum L1..L3, tariff rate 0 = running total) -----
+[[registers]]
+address = 5336
+type = "f32"
+name = "Active energy Σ (total)"
+unit = "Wh"
+
+[[registers]]
+address = 5352
+type = "f32"
+name = "Active energy Σ, consumed (import)"
+unit = "Wh"
+
+[[registers]]
+address = 5368
+type = "f32"
+name = "Active energy Σ, delivered (export)"
+unit = "Wh"
+
+[[registers]]
+address = 5384
+type = "f32"
+name = "Reactive energy Σ"
+unit = "varh"
+
+[[registers]]
+address = 5400
+type = "f32"
+name = "Reactive energy Σ, inductive"
+unit = "varh"
+
+[[registers]]
+address = 5416
+type = "f32"
+name = "Reactive energy Σ, capacitive"
+unit = "varh"
+
+[[registers]]
+address = 5432
+type = "f32"
+name = "Apparent energy Σ"
+unit = "VAh"
