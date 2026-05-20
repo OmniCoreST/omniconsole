@@ -1,0 +1,313 @@
+# Socomec DIRIS A-40 — Modbus / JBUS register map for Omni Console
+#
+# Source: Socomec "DIRIS A-40 v1.7.4 communication table" (Power Monitoring AC
+# real-time block @ 0x4804 and Energy AC block @ 0x4D80). Read with FC03.
+# - Multi-register values are Big-Endian (most-significant word first), the
+#   Socomec default — `word_order` defaults to "be" and is omitted.
+# - Manual "value weight" is folded into `scale`:
+#       V x10^-2 -> 0.01    mA -> 0.001    mHz -> 0.001
+#       PF /1000 -> 0.001   THD % /100 -> 0.01     W / var / VA -> 1 (raw)
+#   Active energy counts in kWh, apparent in kVAh and reactive in kvarh
+#   (manual weight varh x10^3) — represented directly in those units (no scale).
+# - Addresses are the protocol addresses, in decimal (e.g. 0x4804 = 18436).
+# - Factory defaults: device address (slave) = 5, RTU = 9600 baud (check unit).
+#
+# Workspace fields below activate in Phase 1 (currently ignored by the build):
+# pinned = [18436, 18440, 18444, 18458, 18476, 19843]
+# poll_interval_ms = 1000
+# slave = 5
+
+vendor = "Socomec"
+model = "DIRIS A-40"
+description = "Multifunction power monitoring device — V/I/P/Q/S per phase and system, power factor, frequency, THD and energy meters (scaled U32/S32, BE)."
+
+# ----- System (aggregate) measurements -----
+[[registers]]
+address = 18436
+type = "u32"
+name = "System voltage Ph-N"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 18438
+type = "u32"
+name = "System voltage Ph-Ph"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 18440
+type = "u32"
+name = "System current"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 18442
+type = "u32"
+name = "Frequency"
+unit = "Hz"
+scale = 0.001
+
+# ----- Voltages, phase-to-neutral -----
+[[registers]]
+address = 18444
+type = "u32"
+name = "Voltage V1 (L1-N)"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 18446
+type = "u32"
+name = "Voltage V2 (L2-N)"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 18448
+type = "u32"
+name = "Voltage V3 (L3-N)"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 18450
+type = "u32"
+name = "Voltage Vn (neutral)"
+unit = "V"
+scale = 0.01
+
+# ----- Voltages, phase-to-phase -----
+[[registers]]
+address = 18452
+type = "u32"
+name = "Voltage U12 (L1-L2)"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 18454
+type = "u32"
+name = "Voltage U23 (L2-L3)"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 18456
+type = "u32"
+name = "Voltage U31 (L3-L1)"
+unit = "V"
+scale = 0.01
+
+# ----- Currents -----
+[[registers]]
+address = 18458
+type = "u32"
+name = "Current I1"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 18460
+type = "u32"
+name = "Current I2"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 18462
+type = "u32"
+name = "Current I3"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 18464
+type = "u32"
+name = "Current In (neutral)"
+unit = "A"
+scale = 0.001
+
+# ----- Total power -----
+[[registers]]
+address = 18476
+type = "s32"
+name = "Total active power"
+unit = "W"
+
+[[registers]]
+address = 18478
+type = "s32"
+name = "Total reactive power"
+unit = "var"
+
+[[registers]]
+address = 18484
+type = "u32"
+name = "Total apparent power"
+unit = "VA"
+
+[[registers]]
+address = 18486
+type = "s16"
+name = "Total power factor"
+scale = 0.001
+
+# ----- Active power per phase -----
+[[registers]]
+address = 18488
+type = "s32"
+name = "Active power P1"
+unit = "W"
+
+[[registers]]
+address = 18490
+type = "s32"
+name = "Active power P2"
+unit = "W"
+
+[[registers]]
+address = 18492
+type = "s32"
+name = "Active power P3"
+unit = "W"
+
+# ----- Reactive power per phase -----
+[[registers]]
+address = 18494
+type = "s32"
+name = "Reactive power Q1"
+unit = "var"
+
+[[registers]]
+address = 18496
+type = "s32"
+name = "Reactive power Q2"
+unit = "var"
+
+[[registers]]
+address = 18498
+type = "s32"
+name = "Reactive power Q3"
+unit = "var"
+
+# ----- Apparent power per phase -----
+[[registers]]
+address = 18512
+type = "u32"
+name = "Apparent power S1"
+unit = "VA"
+
+[[registers]]
+address = 18514
+type = "u32"
+name = "Apparent power S2"
+unit = "VA"
+
+[[registers]]
+address = 18516
+type = "u32"
+name = "Apparent power S3"
+unit = "VA"
+
+# ----- Power factor per phase -----
+[[registers]]
+address = 18518
+type = "s16"
+name = "Power factor PF1"
+scale = 0.001
+
+[[registers]]
+address = 18519
+type = "s16"
+name = "Power factor PF2"
+scale = 0.001
+
+[[registers]]
+address = 18520
+type = "s16"
+name = "Power factor PF3"
+scale = 0.001
+
+# ----- Voltage THD -----
+[[registers]]
+address = 18751
+type = "u16"
+name = "THD voltage V1"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 18752
+type = "u16"
+name = "THD voltage V2"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 18753
+type = "u16"
+name = "THD voltage V3"
+unit = "%"
+scale = 0.01
+
+# ----- Current THD -----
+[[registers]]
+address = 18757
+type = "u16"
+name = "THD current I1"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 18758
+type = "u16"
+name = "THD current I2"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 18759
+type = "u16"
+name = "THD current I3"
+unit = "%"
+scale = 0.01
+
+# ----- Energy meters (block @ 0x4D80) -----
+[[registers]]
+address = 19841
+type = "u32"
+name = "Total hour meter"
+unit = "s"
+
+[[registers]]
+address = 19843
+type = "u32"
+name = "Total positive active energy Ea+"
+unit = "kWh"
+
+[[registers]]
+address = 19846
+type = "u32"
+name = "Total negative active energy Ea-"
+unit = "kWh"
+
+[[registers]]
+address = 19849
+type = "u32"
+name = "Total positive reactive energy Er+"
+unit = "kvarh"
+
+[[registers]]
+address = 19852
+type = "u32"
+name = "Total negative reactive energy Er-"
+unit = "kvarh"
+
+[[registers]]
+address = 19855
+type = "u32"
+name = "Total apparent energy Eap"
+unit = "kVAh"
