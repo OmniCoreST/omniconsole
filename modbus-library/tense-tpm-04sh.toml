@@ -1,0 +1,1874 @@
+# Tense TPM-04SH Energy Analyser — Modbus register map for Omni Console
+#
+# Source: "Modbus Register TPM-04 SH SH-DL.pdf" (Basic Data Modbus Address).
+# Shared map for the Tense TPM-04 / TPM-04SH / TPM-01ES / TPM-01ESH family.
+# - Holding registers (FC03). Addresses are the raw register addresses in
+#   decimal: 4000 = 0x0FA0 … 4419 = 0x1143 (manual's Dec and Hex are equal).
+#   `area` defaults to "holding"; `word_order` defaults to "be" (manual lists
+#   wide values most-significant word first: H/L and H3/H2/H1/L). Both omitted.
+# - "RESERVED read as 0" rows from the manual are intentionally not mapped.
+# - `scale` bakes in the device's fixed multiplier only.
+#
+# CT/VT CAVEAT applies ONLY to the 16-bit voltage and current registers:
+#     voltage(16-bit) = raw × VT × 0.1     current(16-bit) = raw × CT × 0.001
+# This map assumes a DIRECT connection (CT = 1, VT = 1). With external
+# transformers, multiply those readings by the ratio in reg 4052 (CT) / 4053 (VT).
+# The 32-/64-bit power and energy registers already include CT/VT — they carry
+# only their fixed ×scale and need no further correction.
+#
+# Enums (see manual footnotes): Modbus parity 1=None/2=Even/3=Odd; relay & DI
+# state 0=OFF/1=ON; relay control parameter 0=OFF…9=dI n; relay function 0=LO/1=HI.
+# Write registers (relay/Modbus config) are writable only on -DIN variants.
+
+vendor = "Tense"
+model = "TPM-04SH"
+description = "3-phase power-quality analyser (TPM-04 family) — V/I/P/Q/S with min/max/avg/demand, 64-bit energy, per-harmonic THD (3rd–31st), relay control."
+
+
+# ----- Voltages, phase-to-neutral (live / min / max / avg) -----
+[[registers]]
+address = 4000
+type = "u16"
+name = "Voltage L1-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4001
+type = "u16"
+name = "Voltage L2-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4002
+type = "u16"
+name = "Voltage L3-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4003
+type = "u16"
+name = "Voltage L1-N (min)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4004
+type = "u16"
+name = "Voltage L2-N (min)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4005
+type = "u16"
+name = "Voltage L3-N (min)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4006
+type = "u16"
+name = "Voltage L1-N (max)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4007
+type = "u16"
+name = "Voltage L2-N (max)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4008
+type = "u16"
+name = "Voltage L3-N (max)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4009
+type = "u16"
+name = "Voltage L1-N (avg)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4010
+type = "u16"
+name = "Voltage L2-N (avg)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4011
+type = "u16"
+name = "Voltage L3-N (avg)"
+unit = "V"
+scale = 0.1
+
+
+# ----- Voltages, phase-to-phase (live / min / max / avg) -----
+[[registers]]
+address = 4012
+type = "u16"
+name = "Voltage L1-L2"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4013
+type = "u16"
+name = "Voltage L2-L3"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4014
+type = "u16"
+name = "Voltage L3-L1"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4015
+type = "u16"
+name = "Voltage L1-L2 (min)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4016
+type = "u16"
+name = "Voltage L2-L3 (min)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4017
+type = "u16"
+name = "Voltage L3-L1 (min)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4018
+type = "u16"
+name = "Voltage L1-L2 (max)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4019
+type = "u16"
+name = "Voltage L2-L3 (max)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4020
+type = "u16"
+name = "Voltage L3-L1 (max)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4021
+type = "u16"
+name = "Voltage L1-L2 (avg)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4022
+type = "u16"
+name = "Voltage L2-L3 (avg)"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4023
+type = "u16"
+name = "Voltage L3-L1 (avg)"
+unit = "V"
+scale = 0.1
+
+
+# ----- Currents (live / neutral / total / max / demand) -----
+[[registers]]
+address = 4024
+type = "u16"
+name = "Current L1"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4025
+type = "u16"
+name = "Current L2"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4026
+type = "u16"
+name = "Current L3"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4027
+type = "u16"
+name = "Current N"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4028
+type = "u16"
+name = "Current total (L-N)"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4029
+type = "u16"
+name = "Current L1 (max)"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4030
+type = "u16"
+name = "Current L2 (max)"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4031
+type = "u16"
+name = "Current L3 (max)"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4032
+type = "u16"
+name = "Current total (max)"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4033
+type = "u16"
+name = "Current L1 (demand)"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4034
+type = "u16"
+name = "Current L2 (demand)"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4035
+type = "u16"
+name = "Current L3 (demand)"
+unit = "A"
+scale = 0.001
+
+
+# ----- Frequency -----
+[[registers]]
+address = 4040
+type = "u16"
+name = "Frequency L1"
+unit = "Hz"
+scale = 0.01
+
+[[registers]]
+address = 4041
+type = "u16"
+name = "Frequency L2"
+unit = "Hz"
+scale = 0.01
+
+[[registers]]
+address = 4042
+type = "u16"
+name = "Frequency L3"
+unit = "Hz"
+scale = 0.01
+
+
+# ----- Power factor -----
+[[registers]]
+address = 4043
+type = "s16"
+name = "Power factor L1"
+scale = 0.001
+
+[[registers]]
+address = 4044
+type = "s16"
+name = "Power factor L2"
+scale = 0.001
+
+[[registers]]
+address = 4045
+type = "s16"
+name = "Power factor L3"
+scale = 0.001
+
+[[registers]]
+address = 4046
+type = "s16"
+name = "Power factor Σ"
+scale = 0.001
+
+
+# ----- CosPhi -----
+[[registers]]
+address = 4047
+type = "s16"
+name = "CosPhi L1"
+scale = 0.001
+
+[[registers]]
+address = 4048
+type = "s16"
+name = "CosPhi L2"
+scale = 0.001
+
+[[registers]]
+address = 4049
+type = "s16"
+name = "CosPhi L3"
+scale = 0.001
+
+
+# ----- Unbalance -----
+[[registers]]
+address = 4050
+type = "u16"
+name = "Voltage unbalance"
+unit = "%"
+scale = 0.001
+
+[[registers]]
+address = 4051
+type = "u16"
+name = "Current unbalance"
+unit = "%"
+scale = 0.001
+
+
+# ----- Configuration — CT/VT ratio, Modbus, calibration, identity -----
+[[registers]]
+address = 4052
+type = "u16"
+name = "Current transformer ratio"
+
+[[registers]]
+address = 4053
+type = "u16"
+name = "Voltage transformer ratio"
+scale = 0.1
+
+[[registers]]
+address = 4054
+type = "u16"
+name = "Modbus baud rate"
+
+[[registers]]
+address = 4055
+type = "u16"
+name = "Modbus stop bits"
+
+[[registers]]
+address = 4056
+type = "enum"
+name = "Modbus parity"
+enum_map = { 1 = "None", 2 = "Even", 3 = "Odd" }
+
+[[registers]]
+address = 4057
+type = "u16"
+name = "Modbus slave ID"
+
+[[registers]]
+address = 4058
+type = "enum"
+name = "Digital input state"
+enum_map = { 0 = "OFF", 1 = "ON" }
+
+[[registers]]
+address = 4059
+type = "enum"
+name = "Relay 1 state"
+enum_map = { 0 = "OFF", 1 = "ON" }
+
+[[registers]]
+address = 4060
+type = "enum"
+name = "Relay 2 state"
+enum_map = { 0 = "OFF", 1 = "ON" }
+
+[[registers]]
+address = 4061
+type = "u16"
+name = "Calibration voltage (target)"
+scale = 0.01
+
+[[registers]]
+address = 4062
+type = "u16"
+name = "Calibration voltage error"
+scale = 0.001
+
+[[registers]]
+address = 4063
+type = "u16"
+name = "Calibration current (target)"
+scale = 0.0001
+
+[[registers]]
+address = 4064
+type = "u16"
+name = "Calibration current error"
+scale = 0.001
+
+[[registers]]
+address = 4065
+type = "u16"
+name = "Serial number (H2)"
+
+[[registers]]
+address = 4066
+type = "u16"
+name = "Serial number (H1)"
+
+[[registers]]
+address = 4067
+type = "u16"
+name = "Serial number (L)"
+
+[[registers]]
+address = 4068
+type = "u16"
+name = "Firmware version"
+scale = 0.001
+
+
+# ----- Relay control — Out1 / Out2 thresholds -----
+[[registers]]
+address = 4070
+type = "enum"
+name = "Relay 1 control parameter"
+enum_map = { 0 = "OFF", 1 = "ULn", 2 = "ILn", 3 = "ILt", 4 = "thdU", 5 = "thdI", 6 = "PF", 7 = "U Un", 8 = "I Un", 9 = "dI n" }
+
+[[registers]]
+address = 4071
+type = "enum"
+name = "Relay 2 control parameter"
+enum_map = { 0 = "OFF", 1 = "ULn", 2 = "ILn", 3 = "ILt", 4 = "thdU", 5 = "thdI", 6 = "PF", 7 = "U Un", 8 = "I Un", 9 = "dI n" }
+
+[[registers]]
+address = 4072
+type = "enum"
+name = "Relay 1 ULn function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4073
+type = "u16"
+name = "Relay 1 ULn value"
+scale = 0.1
+
+[[registers]]
+address = 4074
+type = "u16"
+name = "Relay 1 ULn delay"
+
+[[registers]]
+address = 4075
+type = "u16"
+name = "Relay 1 ULn hysteresis"
+
+[[registers]]
+address = 4076
+type = "enum"
+name = "Relay 1 ILn function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4077
+type = "u16"
+name = "Relay 1 ILn value"
+scale = 0.001
+
+[[registers]]
+address = 4078
+type = "u16"
+name = "Relay 1 ILn delay"
+
+[[registers]]
+address = 4079
+type = "u16"
+name = "Relay 1 ILn hysteresis"
+
+[[registers]]
+address = 4080
+type = "enum"
+name = "Relay 1 ILt function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4081
+type = "u16"
+name = "Relay 1 ILt value"
+scale = 0.001
+
+[[registers]]
+address = 4082
+type = "u16"
+name = "Relay 1 ILt delay"
+
+[[registers]]
+address = 4083
+type = "u16"
+name = "Relay 1 ILt hysteresis"
+
+[[registers]]
+address = 4084
+type = "enum"
+name = "Relay 1 thdU function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4085
+type = "u16"
+name = "Relay 1 thdU value"
+scale = 0.01
+
+[[registers]]
+address = 4086
+type = "u16"
+name = "Relay 1 thdU delay"
+
+[[registers]]
+address = 4087
+type = "u16"
+name = "Relay 1 thdU hysteresis"
+
+[[registers]]
+address = 4088
+type = "enum"
+name = "Relay 1 thdI function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4089
+type = "u16"
+name = "Relay 1 thdI value"
+scale = 0.01
+
+[[registers]]
+address = 4090
+type = "u16"
+name = "Relay 1 thdI delay"
+
+[[registers]]
+address = 4091
+type = "u16"
+name = "Relay 1 thdI hysteresis"
+
+[[registers]]
+address = 4092
+type = "enum"
+name = "Relay 1 PF function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4093
+type = "u16"
+name = "Relay 1 PF value"
+scale = 0.001
+
+[[registers]]
+address = 4094
+type = "u16"
+name = "Relay 1 PF delay"
+
+[[registers]]
+address = 4095
+type = "u16"
+name = "Relay 1 PF hysteresis"
+
+[[registers]]
+address = 4096
+type = "enum"
+name = "Relay 1 U Un function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4097
+type = "u16"
+name = "Relay 1 U Un value"
+scale = 0.01
+
+[[registers]]
+address = 4098
+type = "u16"
+name = "Relay 1 U Un delay"
+
+[[registers]]
+address = 4099
+type = "u16"
+name = "Relay 1 U Un hysteresis"
+
+[[registers]]
+address = 4100
+type = "enum"
+name = "Relay 1 I Un function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4101
+type = "u16"
+name = "Relay 1 I Un value"
+scale = 0.01
+
+[[registers]]
+address = 4102
+type = "u16"
+name = "Relay 1 I Un delay"
+
+[[registers]]
+address = 4103
+type = "u16"
+name = "Relay 1 I Un hysteresis"
+
+[[registers]]
+address = 4104
+type = "enum"
+name = "Relay 1 dI n function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4105
+type = "u16"
+name = "Relay 1 dI n delay"
+
+[[registers]]
+address = 4106
+type = "enum"
+name = "Relay 2 ULn function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4107
+type = "u16"
+name = "Relay 2 ULn value"
+scale = 0.1
+
+[[registers]]
+address = 4108
+type = "u16"
+name = "Relay 2 ULn delay"
+
+[[registers]]
+address = 4109
+type = "u16"
+name = "Relay 2 ULn hysteresis"
+
+[[registers]]
+address = 4110
+type = "enum"
+name = "Relay 2 ILn function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4111
+type = "u16"
+name = "Relay 2 ILn value"
+scale = 0.001
+
+[[registers]]
+address = 4112
+type = "u16"
+name = "Relay 2 ILn delay"
+
+[[registers]]
+address = 4113
+type = "u16"
+name = "Relay 2 ILn hysteresis"
+
+[[registers]]
+address = 4114
+type = "enum"
+name = "Relay 2 ILt function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4115
+type = "u16"
+name = "Relay 2 ILt value"
+scale = 0.001
+
+[[registers]]
+address = 4116
+type = "u16"
+name = "Relay 2 ILt delay"
+
+[[registers]]
+address = 4117
+type = "u16"
+name = "Relay 2 ILt hysteresis"
+
+[[registers]]
+address = 4118
+type = "enum"
+name = "Relay 2 thdU function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4119
+type = "u16"
+name = "Relay 2 thdU value"
+scale = 0.01
+
+[[registers]]
+address = 4120
+type = "u16"
+name = "Relay 2 thdU delay"
+
+[[registers]]
+address = 4121
+type = "u16"
+name = "Relay 2 thdU hysteresis"
+
+[[registers]]
+address = 4122
+type = "enum"
+name = "Relay 2 thdI function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4123
+type = "u16"
+name = "Relay 2 thdI value"
+scale = 0.01
+
+[[registers]]
+address = 4124
+type = "u16"
+name = "Relay 2 thdI delay"
+
+[[registers]]
+address = 4125
+type = "u16"
+name = "Relay 2 thdI hysteresis"
+
+[[registers]]
+address = 4126
+type = "enum"
+name = "Relay 2 PF function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4127
+type = "u16"
+name = "Relay 2 PF value"
+scale = 0.001
+
+[[registers]]
+address = 4128
+type = "u16"
+name = "Relay 2 PF delay"
+
+[[registers]]
+address = 4129
+type = "u16"
+name = "Relay 2 PF hysteresis"
+
+[[registers]]
+address = 4130
+type = "enum"
+name = "Relay 2 U Un function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4131
+type = "u16"
+name = "Relay 2 U Un value"
+scale = 0.01
+
+[[registers]]
+address = 4132
+type = "u16"
+name = "Relay 2 U Un delay"
+
+[[registers]]
+address = 4133
+type = "u16"
+name = "Relay 2 U Un hysteresis"
+
+[[registers]]
+address = 4134
+type = "enum"
+name = "Relay 2 I Un function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4135
+type = "u16"
+name = "Relay 2 I Un value"
+scale = 0.01
+
+[[registers]]
+address = 4136
+type = "u16"
+name = "Relay 2 I Un delay"
+
+[[registers]]
+address = 4137
+type = "u16"
+name = "Relay 2 I Un hysteresis"
+
+[[registers]]
+address = 4138
+type = "enum"
+name = "Relay 2 dI n function"
+enum_map = { 0 = "LO", 1 = "HI" }
+
+[[registers]]
+address = 4139
+type = "u16"
+name = "Relay 2 dI n delay"
+
+
+# ----- Active power (32-bit, CT/VT applied) -----
+[[registers]]
+address = 4140
+type = "s32"
+name = "Active power L1"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4142
+type = "s32"
+name = "Active power L2"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4144
+type = "s32"
+name = "Active power L3"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4146
+type = "s32"
+name = "Active power Σ"
+unit = "W"
+scale = 0.001
+
+
+# ----- Reactive power (32-bit, CT/VT applied) -----
+[[registers]]
+address = 4162
+type = "s32"
+name = "Reactive power L1"
+unit = "var"
+scale = 0.001
+
+[[registers]]
+address = 4164
+type = "s32"
+name = "Reactive power L2"
+unit = "var"
+scale = 0.001
+
+[[registers]]
+address = 4166
+type = "s32"
+name = "Reactive power L3"
+unit = "var"
+scale = 0.001
+
+[[registers]]
+address = 4168
+type = "s32"
+name = "Reactive power Σ"
+unit = "var"
+scale = 0.001
+
+
+# ----- Apparent power (32-bit: live / max / demand) -----
+[[registers]]
+address = 4184
+type = "u32"
+name = "Apparent power L1"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4186
+type = "u32"
+name = "Apparent power L2"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4188
+type = "u32"
+name = "Apparent power L3"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4190
+type = "u32"
+name = "Apparent power Σ"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4192
+type = "u32"
+name = "Apparent power L1 (max)"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4194
+type = "u32"
+name = "Apparent power L2 (max)"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4196
+type = "u32"
+name = "Apparent power L3 (max)"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4198
+type = "u32"
+name = "Apparent power Σ (max)"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4200
+type = "u32"
+name = "Apparent power L1 (demand)"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4202
+type = "u32"
+name = "Apparent power L2 (demand)"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4204
+type = "u32"
+name = "Apparent power L3 (demand)"
+unit = "VA"
+scale = 0.001
+
+
+# ----- Active import energy (64-bit) -----
+[[registers]]
+address = 4210
+type = "u64"
+name = "Active import energy L1"
+unit = "Wh"
+
+[[registers]]
+address = 4214
+type = "u64"
+name = "Active import energy L2"
+unit = "Wh"
+
+[[registers]]
+address = 4218
+type = "u64"
+name = "Active import energy L3"
+unit = "Wh"
+
+[[registers]]
+address = 4222
+type = "u64"
+name = "Active import energy Σ"
+unit = "Wh"
+
+
+# ----- Active export energy (64-bit) -----
+[[registers]]
+address = 4226
+type = "u64"
+name = "Active export energy L1"
+unit = "Wh"
+
+[[registers]]
+address = 4230
+type = "u64"
+name = "Active export energy L2"
+unit = "Wh"
+
+[[registers]]
+address = 4234
+type = "u64"
+name = "Active export energy L3"
+unit = "Wh"
+
+[[registers]]
+address = 4238
+type = "u64"
+name = "Active export energy Σ"
+unit = "Wh"
+
+
+# ----- Inductive reactive energy (64-bit) -----
+[[registers]]
+address = 4242
+type = "u64"
+name = "Inductive reactive energy L1"
+unit = "varh"
+
+[[registers]]
+address = 4246
+type = "u64"
+name = "Inductive reactive energy L2"
+unit = "varh"
+
+[[registers]]
+address = 4250
+type = "u64"
+name = "Inductive reactive energy L3"
+unit = "varh"
+
+[[registers]]
+address = 4254
+type = "u64"
+name = "Inductive reactive energy Σ"
+unit = "varh"
+
+
+# ----- Capacitive reactive energy (64-bit) -----
+[[registers]]
+address = 4258
+type = "u64"
+name = "Capacitive reactive energy L1"
+unit = "varh"
+
+[[registers]]
+address = 4262
+type = "u64"
+name = "Capacitive reactive energy L2"
+unit = "varh"
+
+[[registers]]
+address = 4266
+type = "u64"
+name = "Capacitive reactive energy L3"
+unit = "varh"
+
+[[registers]]
+address = 4270
+type = "u64"
+name = "Capacitive reactive energy Σ"
+unit = "varh"
+
+
+# ----- Apparent energy (64-bit) -----
+[[registers]]
+address = 4280
+type = "u64"
+name = "Apparent energy L1"
+unit = "VAh"
+
+[[registers]]
+address = 4284
+type = "u64"
+name = "Apparent energy L2"
+unit = "VAh"
+
+[[registers]]
+address = 4288
+type = "u64"
+name = "Apparent energy L3"
+unit = "VAh"
+
+[[registers]]
+address = 4292
+type = "u64"
+name = "Apparent energy Σ"
+unit = "VAh"
+
+
+# ----- Voltage harmonics, 3rd–31st (per phase, % of fundamental) -----
+[[registers]]
+address = 4296
+type = "u16"
+name = "HD voltage L1 H3"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4297
+type = "u16"
+name = "HD voltage L1 H5"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4298
+type = "u16"
+name = "HD voltage L1 H7"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4299
+type = "u16"
+name = "HD voltage L1 H9"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4300
+type = "u16"
+name = "HD voltage L1 H11"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4301
+type = "u16"
+name = "HD voltage L1 H13"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4302
+type = "u16"
+name = "HD voltage L1 H15"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4303
+type = "u16"
+name = "HD voltage L1 H17"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4304
+type = "u16"
+name = "HD voltage L1 H19"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4305
+type = "u16"
+name = "HD voltage L1 H21"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4306
+type = "u16"
+name = "HD voltage L1 H23"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4307
+type = "u16"
+name = "HD voltage L1 H25"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4308
+type = "u16"
+name = "HD voltage L1 H27"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4309
+type = "u16"
+name = "HD voltage L1 H29"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4310
+type = "u16"
+name = "HD voltage L1 H31"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4311
+type = "u16"
+name = "HD voltage L2 H3"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4312
+type = "u16"
+name = "HD voltage L2 H5"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4313
+type = "u16"
+name = "HD voltage L2 H7"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4314
+type = "u16"
+name = "HD voltage L2 H9"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4315
+type = "u16"
+name = "HD voltage L2 H11"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4316
+type = "u16"
+name = "HD voltage L2 H13"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4317
+type = "u16"
+name = "HD voltage L2 H15"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4318
+type = "u16"
+name = "HD voltage L2 H17"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4319
+type = "u16"
+name = "HD voltage L2 H19"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4320
+type = "u16"
+name = "HD voltage L2 H21"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4321
+type = "u16"
+name = "HD voltage L2 H23"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4322
+type = "u16"
+name = "HD voltage L2 H25"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4323
+type = "u16"
+name = "HD voltage L2 H27"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4324
+type = "u16"
+name = "HD voltage L2 H29"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4325
+type = "u16"
+name = "HD voltage L2 H31"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4326
+type = "u16"
+name = "HD voltage L3 H3"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4327
+type = "u16"
+name = "HD voltage L3 H5"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4328
+type = "u16"
+name = "HD voltage L3 H7"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4329
+type = "u16"
+name = "HD voltage L3 H9"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4330
+type = "u16"
+name = "HD voltage L3 H11"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4331
+type = "u16"
+name = "HD voltage L3 H13"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4332
+type = "u16"
+name = "HD voltage L3 H15"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4333
+type = "u16"
+name = "HD voltage L3 H17"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4334
+type = "u16"
+name = "HD voltage L3 H19"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4335
+type = "u16"
+name = "HD voltage L3 H21"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4336
+type = "u16"
+name = "HD voltage L3 H23"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4337
+type = "u16"
+name = "HD voltage L3 H25"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4338
+type = "u16"
+name = "HD voltage L3 H27"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4339
+type = "u16"
+name = "HD voltage L3 H29"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4340
+type = "u16"
+name = "HD voltage L3 H31"
+unit = "%"
+scale = 0.01
+
+
+# ----- Current harmonics, 3rd–31st (per phase, % of fundamental) -----
+[[registers]]
+address = 4350
+type = "u16"
+name = "HD current L1 H3"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4351
+type = "u16"
+name = "HD current L1 H5"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4352
+type = "u16"
+name = "HD current L1 H7"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4353
+type = "u16"
+name = "HD current L1 H9"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4354
+type = "u16"
+name = "HD current L1 H11"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4355
+type = "u16"
+name = "HD current L1 H13"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4356
+type = "u16"
+name = "HD current L1 H15"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4357
+type = "u16"
+name = "HD current L1 H17"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4358
+type = "u16"
+name = "HD current L1 H19"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4359
+type = "u16"
+name = "HD current L1 H21"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4360
+type = "u16"
+name = "HD current L1 H23"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4361
+type = "u16"
+name = "HD current L1 H25"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4362
+type = "u16"
+name = "HD current L1 H27"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4363
+type = "u16"
+name = "HD current L1 H29"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4364
+type = "u16"
+name = "HD current L1 H31"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4365
+type = "u16"
+name = "HD current L2 H3"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4366
+type = "u16"
+name = "HD current L2 H5"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4367
+type = "u16"
+name = "HD current L2 H7"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4368
+type = "u16"
+name = "HD current L2 H9"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4369
+type = "u16"
+name = "HD current L2 H11"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4370
+type = "u16"
+name = "HD current L2 H13"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4371
+type = "u16"
+name = "HD current L2 H15"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4372
+type = "u16"
+name = "HD current L2 H17"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4373
+type = "u16"
+name = "HD current L2 H19"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4374
+type = "u16"
+name = "HD current L2 H21"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4375
+type = "u16"
+name = "HD current L2 H23"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4376
+type = "u16"
+name = "HD current L2 H25"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4377
+type = "u16"
+name = "HD current L2 H27"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4378
+type = "u16"
+name = "HD current L2 H29"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4379
+type = "u16"
+name = "HD current L2 H31"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4380
+type = "u16"
+name = "HD current L3 H3"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4381
+type = "u16"
+name = "HD current L3 H5"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4382
+type = "u16"
+name = "HD current L3 H7"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4383
+type = "u16"
+name = "HD current L3 H9"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4384
+type = "u16"
+name = "HD current L3 H11"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4385
+type = "u16"
+name = "HD current L3 H13"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4386
+type = "u16"
+name = "HD current L3 H15"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4387
+type = "u16"
+name = "HD current L3 H17"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4388
+type = "u16"
+name = "HD current L3 H19"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4389
+type = "u16"
+name = "HD current L3 H21"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4390
+type = "u16"
+name = "HD current L3 H23"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4391
+type = "u16"
+name = "HD current L3 H25"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4392
+type = "u16"
+name = "HD current L3 H27"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4393
+type = "u16"
+name = "HD current L3 H29"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4394
+type = "u16"
+name = "HD current L3 H31"
+unit = "%"
+scale = 0.01
+
+
+# ----- Total harmonic distortion (THD) -----
+[[registers]]
+address = 4395
+type = "u16"
+name = "THD voltage L1"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4396
+type = "u16"
+name = "THD voltage L2"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4397
+type = "u16"
+name = "THD voltage L3"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4398
+type = "u16"
+name = "THD voltage 3-phase"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4399
+type = "u16"
+name = "THD current L1"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4400
+type = "u16"
+name = "THD current L2"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4401
+type = "u16"
+name = "THD current L3"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4402
+type = "u16"
+name = "THD current 3-phase"
+unit = "%"
+scale = 0.01
+
+
+# ----- Active fundamental power (32-bit) -----
+[[registers]]
+address = 4403
+type = "s32"
+name = "Active fundamental power L1"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4405
+type = "s32"
+name = "Active fundamental power L2"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4407
+type = "s32"
+name = "Active fundamental power L3"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4409
+type = "s32"
+name = "Active fundamental power Σ"
+unit = "W"
+scale = 0.001
+
+
+# ----- Active harmonic power (32-bit) -----
+[[registers]]
+address = 4411
+type = "s32"
+name = "Active harmonic power L1"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4413
+type = "s32"
+name = "Active harmonic power L2"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4415
+type = "s32"
+name = "Active harmonic power L3"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4417
+type = "s32"
+name = "Active harmonic power Σ"
+unit = "W"
+scale = 0.001
