@@ -1,0 +1,376 @@
+# Entes MPR-3X / MPR-4X series — Modbus register map for Omni Console
+#
+# Source: Entes "MPR 3X-4X Register table" (Measurements block @ 0, Energy @ 200).
+# - Mixed types: voltages/currents/frequency are UINT32 (2 registers), powers are
+#   IEEE-754 FLOAT (f32), power factor / CosPhi are INT32, energy counters are
+#   UINT64 (4 registers). All Big-Endian (most-significant word first) — the
+#   default — so `word_order` is omitted. (Verify on your unit; if values look
+#   byte-swapped, add `word_order = "le"`.)
+# - Manual scale folded into `scale`:  V x0.1 -> 0.1   A x0.001 -> 0.001
+#   Hz x0.01 -> 0.01   PF/CosPhi x0.001 -> 0.001   power & energy raw (scale 1).
+# - Addresses are the protocol addresses, in decimal (0x0000 = 0).
+# - Factory defaults: device address (slave) = 1, RTU = 9600 baud (check unit).
+#
+# Workspace fields below activate in Phase 1 (currently ignored by the build):
+# pinned = [0, 14, 38, 24, 216]
+# poll_interval_ms = 1000
+# slave = 1
+
+vendor = "Entes"
+model = "MPR-3X / MPR-4X"
+description = "3-/4-phase power analyser — V/I/P/Q/S per phase and total, power factor, CosPhi, frequency and 64-bit energy meters."
+
+# ----- Voltages, phase-to-neutral -----
+[[registers]]
+address = 0
+type = "u32"
+name = "Voltage L1-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 2
+type = "u32"
+name = "Voltage L2-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4
+type = "u32"
+name = "Voltage L3-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 6
+type = "u32"
+name = "Voltage L4-N"
+unit = "V"
+scale = 0.1
+
+# ----- Voltages, phase-to-phase -----
+[[registers]]
+address = 8
+type = "u32"
+name = "Voltage L1-L2"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 10
+type = "u32"
+name = "Voltage L2-L3"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 12
+type = "u32"
+name = "Voltage L3-L1"
+unit = "V"
+scale = 0.1
+
+# ----- Currents -----
+[[registers]]
+address = 14
+type = "u32"
+name = "Current L1"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 16
+type = "u32"
+name = "Current L2"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 18
+type = "u32"
+name = "Current L3"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 20
+type = "u32"
+name = "Current L4"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 22
+type = "u32"
+name = "Neutral current (I1+I2+I3)"
+unit = "A"
+scale = 0.001
+
+# ----- Frequency -----
+[[registers]]
+address = 24
+type = "u32"
+name = "Frequency"
+unit = "Hz"
+scale = 0.01
+
+# ----- Active (real) power -----
+[[registers]]
+address = 26
+type = "f32"
+name = "Active power L1-N"
+unit = "W"
+
+[[registers]]
+address = 28
+type = "f32"
+name = "Active power L2-N"
+unit = "W"
+
+[[registers]]
+address = 30
+type = "f32"
+name = "Active power L3-N"
+unit = "W"
+
+[[registers]]
+address = 32
+type = "f32"
+name = "Active power L4-N"
+unit = "W"
+
+[[registers]]
+address = 34
+type = "f32"
+name = "Total import active power"
+unit = "W"
+
+[[registers]]
+address = 36
+type = "f32"
+name = "Total export active power"
+unit = "W"
+
+[[registers]]
+address = 38
+type = "f32"
+name = "Total active power Σ (P1+P2+P3)"
+unit = "W"
+
+# ----- Reactive power -----
+[[registers]]
+address = 40
+type = "f32"
+name = "Reactive power L1"
+unit = "var"
+
+[[registers]]
+address = 42
+type = "f32"
+name = "Reactive power L2"
+unit = "var"
+
+[[registers]]
+address = 44
+type = "f32"
+name = "Reactive power L3"
+unit = "var"
+
+[[registers]]
+address = 46
+type = "f32"
+name = "Reactive power L4"
+unit = "var"
+
+[[registers]]
+address = 56
+type = "f32"
+name = "Total reactive power Σ (Q1+Q2+Q3)"
+unit = "var"
+
+# ----- Apparent power -----
+[[registers]]
+address = 58
+type = "f32"
+name = "Apparent power L1-N"
+unit = "VA"
+
+[[registers]]
+address = 60
+type = "f32"
+name = "Apparent power L2-N"
+unit = "VA"
+
+[[registers]]
+address = 62
+type = "f32"
+name = "Apparent power L3-N"
+unit = "VA"
+
+[[registers]]
+address = 64
+type = "f32"
+name = "Apparent power L4-N"
+unit = "VA"
+
+[[registers]]
+address = 66
+type = "f32"
+name = "Total import apparent power"
+unit = "VA"
+
+[[registers]]
+address = 68
+type = "f32"
+name = "Total export apparent power"
+unit = "VA"
+
+[[registers]]
+address = 70
+type = "f32"
+name = "Total apparent power Σ (S1+S2+S3)"
+unit = "VA"
+
+# ----- Power factor -----
+[[registers]]
+address = 72
+type = "s32"
+name = "Power factor L1"
+scale = 0.001
+
+[[registers]]
+address = 74
+type = "s32"
+name = "Power factor L2"
+scale = 0.001
+
+[[registers]]
+address = 76
+type = "s32"
+name = "Power factor L3"
+scale = 0.001
+
+[[registers]]
+address = 78
+type = "s32"
+name = "Power factor L4"
+scale = 0.001
+
+[[registers]]
+address = 80
+type = "s32"
+name = "Total power factor Σ"
+scale = 0.001
+
+# ----- CosPhi -----
+[[registers]]
+address = 82
+type = "s32"
+name = "CosPhi L1"
+scale = 0.001
+
+[[registers]]
+address = 84
+type = "s32"
+name = "CosPhi L2"
+scale = 0.001
+
+[[registers]]
+address = 86
+type = "s32"
+name = "CosPhi L3"
+scale = 0.001
+
+[[registers]]
+address = 88
+type = "s32"
+name = "CosPhi L4"
+scale = 0.001
+
+# ----- Active energy (64-bit) -----
+[[registers]]
+address = 200
+type = "u64"
+name = "Consumed active energy L1"
+unit = "Wh"
+
+[[registers]]
+address = 204
+type = "u64"
+name = "Consumed active energy L2"
+unit = "Wh"
+
+[[registers]]
+address = 208
+type = "u64"
+name = "Consumed active energy L3"
+unit = "Wh"
+
+[[registers]]
+address = 216
+type = "u64"
+name = "Total consumed active energy L1..L3"
+unit = "Wh"
+
+[[registers]]
+address = 220
+type = "u64"
+name = "Delivered active energy L1"
+unit = "Wh"
+
+[[registers]]
+address = 224
+type = "u64"
+name = "Delivered active energy L2"
+unit = "Wh"
+
+[[registers]]
+address = 228
+type = "u64"
+name = "Delivered active energy L3"
+unit = "Wh"
+
+[[registers]]
+address = 236
+type = "u64"
+name = "Total delivered active energy L1..L3"
+unit = "Wh"
+
+# ----- Apparent energy (64-bit) -----
+[[registers]]
+address = 256
+type = "u64"
+name = "Total consumed apparent energy L1..L3"
+unit = "VAh"
+
+[[registers]]
+address = 276
+type = "u64"
+name = "Total delivered apparent energy L1..L3"
+unit = "VAh"
+
+# ----- Reactive energy by quadrant (64-bit) -----
+[[registers]]
+address = 296
+type = "u64"
+name = "Quadrant 1 total reactive energy"
+unit = "varh"
+
+[[registers]]
+address = 316
+type = "u64"
+name = "Quadrant 2 total reactive energy"
+unit = "varh"
+
+[[registers]]
+address = 336
+type = "u64"
+name = "Quadrant 3 total reactive energy"
+unit = "varh"
+
+[[registers]]
+address = 356
+type = "u64"
+name = "Quadrant 4 total reactive energy"
+unit = "varh"
