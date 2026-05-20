@@ -1,0 +1,286 @@
+# Eastron SDM630 (Modbus / Modbus-V2) — Modbus register map for Omni Console
+#
+# Source: Eastron "SDM630 Modbus Protocol" (V1.x) input-register table.
+# - All measured values are IEEE-754 FLOAT (f32), 2 registers, most-significant
+#   register first (Big-Endian) — `word_order` defaults to "be" and is omitted.
+#   (The meter's "Register Order" holding register can flip this to LSW-first; if
+#   your meter is set to "reversed", add `word_order = "le"` to every entry.)
+# - Measurements live in the INPUT registers (read with FC04), so `area = "input"`.
+#   Addresses are the raw protocol addresses, in decimal (e.g. 0x0000 = 0).
+#   Read in even register pairs; max 80 registers per request.
+# - Energy registers report directly in kWh / kVArh / kVAh / Ah (no scale).
+# - Factory defaults: device address (slave) = 1, RTU = 9600 baud, 8N1.
+#
+# Workspace fields below activate in Phase 1 (currently ignored by the build):
+# pinned = [0, 6, 52, 70, 72, 74]
+# poll_interval_ms = 1000
+# slave = 1
+
+vendor = "Eastron"
+model = "SDM630"
+description = "3-phase DIN-rail energy meter — V/I/P/Q/S, power factor, frequency and energy totals (IEEE-754 float, input registers)."
+
+# ----- Voltages, phase-to-neutral -----
+[[registers]]
+address = 0
+area = "input"
+type = "f32"
+name = "Voltage L1-N"
+unit = "V"
+
+[[registers]]
+address = 2
+area = "input"
+type = "f32"
+name = "Voltage L2-N"
+unit = "V"
+
+[[registers]]
+address = 4
+area = "input"
+type = "f32"
+name = "Voltage L3-N"
+unit = "V"
+
+# ----- Currents -----
+[[registers]]
+address = 6
+area = "input"
+type = "f32"
+name = "Current L1"
+unit = "A"
+
+[[registers]]
+address = 8
+area = "input"
+type = "f32"
+name = "Current L2"
+unit = "A"
+
+[[registers]]
+address = 10
+area = "input"
+type = "f32"
+name = "Current L3"
+unit = "A"
+
+# ----- Active (real) power -----
+[[registers]]
+address = 12
+area = "input"
+type = "f32"
+name = "Active power L1"
+unit = "W"
+
+[[registers]]
+address = 14
+area = "input"
+type = "f32"
+name = "Active power L2"
+unit = "W"
+
+[[registers]]
+address = 16
+area = "input"
+type = "f32"
+name = "Active power L3"
+unit = "W"
+
+# ----- Apparent power -----
+[[registers]]
+address = 18
+area = "input"
+type = "f32"
+name = "Apparent power L1"
+unit = "VA"
+
+[[registers]]
+address = 20
+area = "input"
+type = "f32"
+name = "Apparent power L2"
+unit = "VA"
+
+[[registers]]
+address = 22
+area = "input"
+type = "f32"
+name = "Apparent power L3"
+unit = "VA"
+
+# ----- Reactive power -----
+[[registers]]
+address = 24
+area = "input"
+type = "f32"
+name = "Reactive power L1"
+unit = "var"
+
+[[registers]]
+address = 26
+area = "input"
+type = "f32"
+name = "Reactive power L2"
+unit = "var"
+
+[[registers]]
+address = 28
+area = "input"
+type = "f32"
+name = "Reactive power L3"
+unit = "var"
+
+# ----- Power factor (sign indicates current direction) -----
+[[registers]]
+address = 30
+area = "input"
+type = "f32"
+name = "Power factor L1"
+
+[[registers]]
+address = 32
+area = "input"
+type = "f32"
+name = "Power factor L2"
+
+[[registers]]
+address = 34
+area = "input"
+type = "f32"
+name = "Power factor L3"
+
+# ----- System / averaged quantities -----
+[[registers]]
+address = 42
+area = "input"
+type = "f32"
+name = "Average voltage L-N"
+unit = "V"
+
+[[registers]]
+address = 46
+area = "input"
+type = "f32"
+name = "Average line current"
+unit = "A"
+
+[[registers]]
+address = 48
+area = "input"
+type = "f32"
+name = "Sum of line currents"
+unit = "A"
+
+[[registers]]
+address = 52
+area = "input"
+type = "f32"
+name = "Total system power"
+unit = "W"
+
+[[registers]]
+address = 56
+area = "input"
+type = "f32"
+name = "Total system apparent power"
+unit = "VA"
+
+[[registers]]
+address = 60
+area = "input"
+type = "f32"
+name = "Total system reactive power"
+unit = "var"
+
+[[registers]]
+address = 62
+area = "input"
+type = "f32"
+name = "Total system power factor"
+
+[[registers]]
+address = 70
+area = "input"
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# ----- Energy totals (since last reset) -----
+[[registers]]
+address = 72
+area = "input"
+type = "f32"
+name = "Import active energy"
+unit = "kWh"
+
+[[registers]]
+address = 74
+area = "input"
+type = "f32"
+name = "Export active energy"
+unit = "kWh"
+
+[[registers]]
+address = 76
+area = "input"
+type = "f32"
+name = "Import reactive energy"
+unit = "kvarh"
+
+[[registers]]
+address = 78
+area = "input"
+type = "f32"
+name = "Export reactive energy"
+unit = "kvarh"
+
+[[registers]]
+address = 80
+area = "input"
+type = "f32"
+name = "Total apparent energy"
+unit = "kVAh"
+
+[[registers]]
+address = 82
+area = "input"
+type = "f32"
+name = "Total ampere-hours"
+unit = "Ah"
+
+# ----- Voltages, phase-to-phase -----
+[[registers]]
+address = 200
+area = "input"
+type = "f32"
+name = "Voltage L1-L2"
+unit = "V"
+
+[[registers]]
+address = 202
+area = "input"
+type = "f32"
+name = "Voltage L2-L3"
+unit = "V"
+
+[[registers]]
+address = 204
+area = "input"
+type = "f32"
+name = "Voltage L3-L1"
+unit = "V"
+
+[[registers]]
+address = 206
+area = "input"
+type = "f32"
+name = "Average voltage L-L"
+unit = "V"
+
+# ----- Neutral current -----
+[[registers]]
+address = 224
+area = "input"
+type = "f32"
+name = "Neutral current"
+unit = "A"
