@@ -1,0 +1,455 @@
+# Tense TPM05 Energy Analyser — Modbus register map for Omni Console
+#
+# Source: TPM05_modbus_register_list_ing.pdf ("Basic Data Modbus Address").
+# - Holding registers (FC03). Addresses are the raw register addresses in
+#   decimal: 4000 = 0x0FA0 … 4087 = 0x0FF7 (the manual's Dec and Hex columns are
+#   the same value). `area` defaults to "holding" and is omitted below.
+# - Values are 16-bit (1 register) unless marked u32 (2 registers, Big-Endian
+#   word order — `word_order` defaults to "be" and is omitted).
+# - `scale` bakes in the device's *fixed* multiplier only (×0.1, ×0.01, ×0.001).
+#
+# CT/VT CAVEAT — voltage, current and power additionally scale by the configured
+# transformer ratios, which a static map cannot read at runtime:
+#     voltage = raw × VT × 0.1     (manual: "Data * VT * 0.1")
+#     current = raw × CT × 0.001   (manual: "Data * CT * 0.001")
+#     power   = raw × CT × VT      (manual: "Data * CT * VT")
+# This map assumes a DIRECT connection (CT ratio = 1, VT ratio = 1): voltage and
+# current keep their fixed ×0.1 / ×0.001 scale, power keeps none. With external
+# CTs/VTs configured, multiply the reading by the ratio in reg 4000 (CT) / 4001 (VT).
+
+vendor = "Tense"
+model = "TPM05"
+description = "3-phase energy analyser — V/I/P/Q/S, frequency, energy totals, power factor and THD (scaled 16/32-bit integers)."
+
+# ----- Transformer ratios -----
+[[registers]]
+address = 4000
+type = "u16"
+name = "Current transformer ratio"
+
+[[registers]]
+address = 4001
+type = "u16"
+name = "Voltage transformer ratio"
+scale = 0.1
+
+# ----- Voltages, phase-to-neutral -----
+[[registers]]
+address = 4002
+type = "u16"
+name = "Voltage L1-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4003
+type = "u16"
+name = "Voltage L2-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4004
+type = "u16"
+name = "Voltage L3-N"
+unit = "V"
+scale = 0.1
+
+# ----- Voltages, phase-to-phase -----
+[[registers]]
+address = 4005
+type = "u16"
+name = "Voltage L1-L2"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4006
+type = "u16"
+name = "Voltage L2-L3"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4007
+type = "u16"
+name = "Voltage L3-L1"
+unit = "V"
+scale = 0.1
+
+# ----- Currents -----
+[[registers]]
+address = 4008
+type = "u16"
+name = "Current L1"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4009
+type = "u16"
+name = "Current L2"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4010
+type = "u16"
+name = "Current L3"
+unit = "A"
+scale = 0.001
+
+# ----- Frequency (per phase) -----
+[[registers]]
+address = 4012
+type = "u16"
+name = "Frequency L1"
+unit = "Hz"
+scale = 0.01
+
+[[registers]]
+address = 4013
+type = "u16"
+name = "Frequency L2"
+unit = "Hz"
+scale = 0.01
+
+[[registers]]
+address = 4014
+type = "u16"
+name = "Frequency L3"
+unit = "Hz"
+scale = 0.01
+
+# ----- Active (real) power — raw, ×CT×VT applied externally -----
+[[registers]]
+address = 4015
+type = "u16"
+name = "Active power L1"
+unit = "W"
+
+[[registers]]
+address = 4016
+type = "u16"
+name = "Active power L2"
+unit = "W"
+
+[[registers]]
+address = 4017
+type = "u16"
+name = "Active power L3"
+unit = "W"
+
+[[registers]]
+address = 4018
+type = "u16"
+name = "Active power Σ"
+unit = "W"
+
+# ----- Reactive power — raw, ×CT×VT applied externally -----
+[[registers]]
+address = 4019
+type = "u16"
+name = "Reactive power L1"
+unit = "var"
+
+[[registers]]
+address = 4020
+type = "u16"
+name = "Reactive power L2"
+unit = "var"
+
+[[registers]]
+address = 4021
+type = "u16"
+name = "Reactive power L3"
+unit = "var"
+
+[[registers]]
+address = 4022
+type = "u16"
+name = "Reactive power Σ"
+unit = "var"
+
+# ----- Apparent power — raw, ×CT×VT applied externally -----
+[[registers]]
+address = 4023
+type = "u16"
+name = "Apparent power L1"
+unit = "VA"
+
+[[registers]]
+address = 4024
+type = "u16"
+name = "Apparent power L2"
+unit = "VA"
+
+[[registers]]
+address = 4025
+type = "u16"
+name = "Apparent power L3"
+unit = "VA"
+
+[[registers]]
+address = 4026
+type = "u16"
+name = "Apparent power Σ"
+unit = "VA"
+
+# ----- CosPhi (per phase) -----
+[[registers]]
+address = 4027
+type = "s16"
+name = "CosPhi L1"
+scale = 0.001
+
+[[registers]]
+address = 4028
+type = "s16"
+name = "CosPhi L2"
+scale = 0.001
+
+[[registers]]
+address = 4029
+type = "s16"
+name = "CosPhi L3"
+scale = 0.001
+
+# ----- Power factor -----
+[[registers]]
+address = 4030
+type = "s16"
+name = "Power factor L1"
+scale = 0.001
+
+[[registers]]
+address = 4031
+type = "s16"
+name = "Power factor L2"
+scale = 0.001
+
+[[registers]]
+address = 4032
+type = "s16"
+name = "Power factor L3"
+scale = 0.001
+
+[[registers]]
+address = 4033
+type = "s16"
+name = "Power factor Σ"
+scale = 0.001
+
+# ----- Real-time clock -----
+[[registers]]
+address = 4034
+type = "u16"
+name = "Hour"
+
+[[registers]]
+address = 4035
+type = "u16"
+name = "Minute"
+
+[[registers]]
+address = 4036
+type = "u16"
+name = "Second"
+
+[[registers]]
+address = 4037
+type = "u16"
+name = "Day"
+
+[[registers]]
+address = 4038
+type = "u16"
+name = "Month"
+
+[[registers]]
+address = 4039
+type = "u16"
+name = "Year"
+
+# ----- Active import energy (32-bit) -----
+[[registers]]
+address = 4040
+type = "u32"
+name = "Active import energy L1"
+unit = "Wh"
+
+[[registers]]
+address = 4042
+type = "u32"
+name = "Active import energy L2"
+unit = "Wh"
+
+[[registers]]
+address = 4044
+type = "u32"
+name = "Active import energy L3"
+unit = "Wh"
+
+[[registers]]
+address = 4046
+type = "u32"
+name = "Active import energy Σ"
+unit = "Wh"
+
+# ----- Active export energy (32-bit) -----
+[[registers]]
+address = 4048
+type = "u32"
+name = "Active export energy L1"
+unit = "Wh"
+
+[[registers]]
+address = 4050
+type = "u32"
+name = "Active export energy L2"
+unit = "Wh"
+
+[[registers]]
+address = 4052
+type = "u32"
+name = "Active export energy L3"
+unit = "Wh"
+
+[[registers]]
+address = 4054
+type = "u32"
+name = "Active export energy Σ"
+unit = "Wh"
+
+# ----- Inductive reactive energy (32-bit) -----
+[[registers]]
+address = 4056
+type = "u32"
+name = "Inductive reactive energy L1"
+unit = "varh"
+
+[[registers]]
+address = 4058
+type = "u32"
+name = "Inductive reactive energy L2"
+unit = "varh"
+
+[[registers]]
+address = 4060
+type = "u32"
+name = "Inductive reactive energy L3"
+unit = "varh"
+
+[[registers]]
+address = 4062
+type = "u32"
+name = "Inductive reactive energy Σ"
+unit = "varh"
+
+# ----- Capacitive reactive energy (32-bit) -----
+[[registers]]
+address = 4064
+type = "u32"
+name = "Capacitive reactive energy L1"
+unit = "varh"
+
+[[registers]]
+address = 4066
+type = "u32"
+name = "Capacitive reactive energy L2"
+unit = "varh"
+
+[[registers]]
+address = 4068
+type = "u32"
+name = "Capacitive reactive energy L3"
+unit = "varh"
+
+[[registers]]
+address = 4070
+type = "u32"
+name = "Capacitive reactive energy Σ"
+unit = "varh"
+
+# ----- Apparent energy (32-bit) -----
+[[registers]]
+address = 4072
+type = "u32"
+name = "Apparent energy L1"
+unit = "VAh"
+
+[[registers]]
+address = 4074
+type = "u32"
+name = "Apparent energy L2"
+unit = "VAh"
+
+[[registers]]
+address = 4076
+type = "u32"
+name = "Apparent energy L3"
+unit = "VAh"
+
+[[registers]]
+address = 4078
+type = "u32"
+name = "Apparent energy Σ"
+unit = "VAh"
+
+# ----- Voltage THD -----
+[[registers]]
+address = 4080
+type = "u16"
+name = "THD voltage L1"
+unit = "%"
+scale = 0.1
+
+[[registers]]
+address = 4081
+type = "u16"
+name = "THD voltage L2"
+unit = "%"
+scale = 0.1
+
+[[registers]]
+address = 4082
+type = "u16"
+name = "THD voltage L3"
+unit = "%"
+scale = 0.1
+
+[[registers]]
+address = 4083
+type = "u16"
+name = "THD voltage 3-phase"
+unit = "%"
+scale = 0.1
+
+# ----- Current THD -----
+[[registers]]
+address = 4084
+type = "u16"
+name = "THD current L1"
+unit = "%"
+scale = 0.1
+
+[[registers]]
+address = 4085
+type = "u16"
+name = "THD current L2"
+unit = "%"
+scale = 0.1
+
+[[registers]]
+address = 4086
+type = "u16"
+name = "THD current L3"
+unit = "%"
+scale = 0.1
+
+[[registers]]
+address = 4087
+type = "u16"
+name = "THD current 3-phase"
+unit = "%"
+scale = 0.1
