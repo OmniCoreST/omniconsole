@@ -1,0 +1,161 @@
+# Schneider Electric iEM3155 (iEM3100/3200/3300 series) — Modbus map for Omni Console
+#
+# Source: Schneider "iEM3100/iEM3200/iEM3300 series" user manual (DOCA0005EN)
+# Modbus register list, cross-checked against a working field configuration.
+# - Instantaneous values are FLOAT32 (f32), 2 registers, Big-Endian — the
+#   default — so `word_order` is omitted. Energy totals are 64-bit integers
+#   (s64, 4 registers, Big-Endian) in Wh. Read with FC03 (holding).
+# - IMPORTANT addressing: the manual prints 1-based "register" numbers; the
+#   on-the-wire (PDU) address is register - 1. Addresses below are the 0-based
+#   PDU addresses that match how Omni Console issues reads (e.g. manual reg 3060
+#   "Total active power" -> address 3059). Power is reported in kW / kvar / kVA.
+# - Factory defaults: device address (slave) = 1, RTU = 19.2 kbps, 8E1.
+# - Additional energy registers (reactive/apparent, per-direction) exist in
+#   DOCA0005EN around manual reg 3220+ and can be appended as needed.
+#
+# Workspace fields below activate in Phase 1 (currently ignored by the build):
+# pinned = [2999, 3027, 3059, 3109, 3203]
+# poll_interval_ms = 1000
+# slave = 1
+
+vendor = "Schneider Electric"
+model = "iEM3155"
+description = "Energy meter — current, voltage L-L/L-N, total power, power factor, frequency (float) and 64-bit active energy import/export totals."
+
+# ----- Currents -----
+[[registers]]
+address = 2999
+type = "f32"
+name = "Current I1"
+unit = "A"
+
+[[registers]]
+address = 3001
+type = "f32"
+name = "Current I2"
+unit = "A"
+
+[[registers]]
+address = 3003
+type = "f32"
+name = "Current I3"
+unit = "A"
+
+[[registers]]
+address = 3009
+type = "f32"
+name = "Current average"
+unit = "A"
+
+# ----- Voltages, phase-to-phase -----
+[[registers]]
+address = 3019
+type = "f32"
+name = "Voltage L1-L2"
+unit = "V"
+
+[[registers]]
+address = 3021
+type = "f32"
+name = "Voltage L2-L3"
+unit = "V"
+
+[[registers]]
+address = 3023
+type = "f32"
+name = "Voltage L3-L1"
+unit = "V"
+
+[[registers]]
+address = 3025
+type = "f32"
+name = "Voltage L-L average"
+unit = "V"
+
+# ----- Voltages, phase-to-neutral -----
+[[registers]]
+address = 3027
+type = "f32"
+name = "Voltage L1-N"
+unit = "V"
+
+[[registers]]
+address = 3029
+type = "f32"
+name = "Voltage L2-N"
+unit = "V"
+
+[[registers]]
+address = 3031
+type = "f32"
+name = "Voltage L3-N"
+unit = "V"
+
+[[registers]]
+address = 3035
+type = "f32"
+name = "Voltage L-N average"
+unit = "V"
+
+# ----- Active power -----
+[[registers]]
+address = 3053
+type = "f32"
+name = "Active power L1"
+unit = "kW"
+
+[[registers]]
+address = 3055
+type = "f32"
+name = "Active power L2"
+unit = "kW"
+
+[[registers]]
+address = 3057
+type = "f32"
+name = "Active power L3"
+unit = "kW"
+
+[[registers]]
+address = 3059
+type = "f32"
+name = "Total active power"
+unit = "kW"
+
+# ----- Reactive / apparent power & power factor -----
+[[registers]]
+address = 3067
+type = "f32"
+name = "Total reactive power"
+unit = "kvar"
+
+[[registers]]
+address = 3075
+type = "f32"
+name = "Total apparent power"
+unit = "kVA"
+
+[[registers]]
+address = 3083
+type = "f32"
+name = "Total power factor"
+
+# ----- Frequency -----
+[[registers]]
+address = 3109
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# ----- Active energy totals (64-bit) -----
+[[registers]]
+address = 3203
+type = "s64"
+name = "Total active energy delivered (import)"
+unit = "Wh"
+
+[[registers]]
+address = 3207
+type = "s64"
+name = "Total active energy received (export)"
+unit = "Wh"
