@@ -1,0 +1,310 @@
+# Eastron SDM530-MT — Modbus register map for Omni Console
+#
+# Source: eastron-sdm530mt-manual-protocol.pdf (SDM530-MT Modbus Protocol)
+# - 3-phase 4-wire multifunction meter with neutral current, RS485 Modbus RTU.
+# - Input registers FC04; protocol address = hex column value (= 3xxxx − 30001).
+# - IEEE 754 float32, Big-Endian (MSW first, no word_order needed).
+# - Factory defaults: slave=1, baud=9600, 8N1.
+
+vendor = "Eastron"
+model = "SDM530-MT"
+description = "3-phase 4-wire multifunction meter — per-phase V/I/P/Q/S/PF, phase angles, averages, totals, demands, neutral current, energy (IEEE 754 float32, FC04, Big-Endian)."
+
+# ----- Phase-to-neutral voltages -----
+[[registers]]
+address = 0
+type = "f32"
+name = "Voltage L1-N"
+unit = "V"
+
+[[registers]]
+address = 2
+type = "f32"
+name = "Voltage L2-N"
+unit = "V"
+
+[[registers]]
+address = 4
+type = "f32"
+name = "Voltage L3-N"
+unit = "V"
+
+# ----- Currents -----
+[[registers]]
+address = 6
+type = "f32"
+name = "Current L1"
+unit = "A"
+
+[[registers]]
+address = 8
+type = "f32"
+name = "Current L2"
+unit = "A"
+
+[[registers]]
+address = 10
+type = "f32"
+name = "Current L3"
+unit = "A"
+
+# ----- Active power per phase -----
+[[registers]]
+address = 12
+type = "f32"
+name = "Active power L1"
+unit = "W"
+
+[[registers]]
+address = 14
+type = "f32"
+name = "Active power L2"
+unit = "W"
+
+[[registers]]
+address = 16
+type = "f32"
+name = "Active power L3"
+unit = "W"
+
+# ----- Apparent power per phase -----
+[[registers]]
+address = 18
+type = "f32"
+name = "Apparent power L1"
+unit = "VA"
+
+[[registers]]
+address = 20
+type = "f32"
+name = "Apparent power L2"
+unit = "VA"
+
+[[registers]]
+address = 22
+type = "f32"
+name = "Apparent power L3"
+unit = "VA"
+
+# ----- Reactive power per phase -----
+[[registers]]
+address = 24
+type = "f32"
+name = "Reactive power L1"
+unit = "var"
+
+[[registers]]
+address = 26
+type = "f32"
+name = "Reactive power L2"
+unit = "var"
+
+[[registers]]
+address = 28
+type = "f32"
+name = "Reactive power L3"
+unit = "var"
+
+# ----- Power factor per phase -----
+[[registers]]
+address = 30
+type = "f32"
+name = "Power factor L1"
+
+[[registers]]
+address = 32
+type = "f32"
+name = "Power factor L2"
+
+[[registers]]
+address = 34
+type = "f32"
+name = "Power factor L3"
+
+# ----- Phase angles -----
+[[registers]]
+address = 36
+type = "f32"
+name = "Phase angle L1"
+unit = "°"
+
+[[registers]]
+address = 38
+type = "f32"
+name = "Phase angle L2"
+unit = "°"
+
+[[registers]]
+address = 40
+type = "f32"
+name = "Phase angle L3"
+unit = "°"
+
+# ----- Averages -----
+[[registers]]
+address = 42
+type = "f32"
+name = "Average voltage L-N"
+unit = "V"
+
+[[registers]]
+address = 46
+type = "f32"
+name = "Average current"
+unit = "A"
+
+[[registers]]
+address = 48
+type = "f32"
+name = "Sum of line currents"
+unit = "A"
+
+# ----- System totals -----
+[[registers]]
+address = 52
+type = "f32"
+name = "Total active power"
+unit = "W"
+
+[[registers]]
+address = 56
+type = "f32"
+name = "Total apparent power"
+unit = "VA"
+
+[[registers]]
+address = 60
+type = "f32"
+name = "Total reactive power"
+unit = "var"
+
+[[registers]]
+address = 62
+type = "f32"
+name = "Total power factor"
+
+[[registers]]
+address = 66
+type = "f32"
+name = "Total phase angle"
+unit = "°"
+
+# ----- Frequency -----
+[[registers]]
+address = 70
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# ----- Energy -----
+[[registers]]
+address = 72
+type = "f32"
+name = "Import active energy"
+unit = "kWh"
+
+[[registers]]
+address = 74
+type = "f32"
+name = "Export active energy"
+unit = "kWh"
+
+[[registers]]
+address = 76
+type = "f32"
+name = "Import reactive energy"
+unit = "kvarh"
+
+[[registers]]
+address = 78
+type = "f32"
+name = "Export reactive energy"
+unit = "kvarh"
+
+[[registers]]
+address = 80
+type = "f32"
+name = "Total apparent energy"
+unit = "kVAh"
+
+# ----- Demands -----
+[[registers]]
+address = 84
+type = "f32"
+name = "Demand active power"
+unit = "W"
+
+[[registers]]
+address = 86
+type = "f32"
+name = "Maximum demand active power"
+unit = "W"
+
+[[registers]]
+address = 100
+type = "f32"
+name = "Demand apparent power"
+unit = "VA"
+
+[[registers]]
+address = 102
+type = "f32"
+name = "Maximum demand apparent power"
+unit = "VA"
+
+[[registers]]
+address = 104
+type = "f32"
+name = "Neutral current demand"
+unit = "A"
+
+[[registers]]
+address = 106
+type = "f32"
+name = "Maximum neutral current demand"
+unit = "A"
+
+# ----- Line-to-line voltages -----
+[[registers]]
+address = 200
+type = "f32"
+name = "Voltage L1-L2"
+unit = "V"
+
+[[registers]]
+address = 202
+type = "f32"
+name = "Voltage L2-L3"
+unit = "V"
+
+[[registers]]
+address = 204
+type = "f32"
+name = "Voltage L3-L1"
+unit = "V"
+
+[[registers]]
+address = 206
+type = "f32"
+name = "Average voltage L-L"
+unit = "V"
+
+# ----- Neutral current -----
+[[registers]]
+address = 224
+type = "f32"
+name = "Neutral current"
+unit = "A"
+
+# ----- Total energy (cumulative) -----
+[[registers]]
+address = 342
+type = "f32"
+name = "Total active energy"
+unit = "kWh"
+
+[[registers]]
+address = 344
+type = "f32"
+name = "Total reactive energy"
+unit = "kvarh"

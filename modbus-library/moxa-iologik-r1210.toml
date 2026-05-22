@@ -1,0 +1,261 @@
+# Moxa ioLogik R1210 Remote RTU I/O — 16-channel DI
+#
+# Source: ioLogik R1200 Series User Manual V3.2, November 2017 (Appendix)
+# Protocol: Modbus RTU (RS-485); 9600 8N1 default, address configurable via software
+#
+# DI channels (ch0-15):
+#   FC03 addr 0x0000-0x000F (0-15): DI Mode ch0-15 (0=DI, 1=Counter)
+#   FC03 addr 0x0020-0x002F (32-47): DI filter value ch0-15
+#   FC03 addr 0x0040-0x004F (64-79): DI counter trigger type (0=L2H, 1=H2L, 2=Both)
+#   FC04 addr 0x0000-0x000F (0-15): DI value word ch0-15
+#   FC04 addr 0x0020, 0x0022... (32,34,36...62): DI counter value ch0-15 (u32, 2 words/ch, step 2)
+#   FC02 addr 0x0000-0x000F (0-15): DI bit value ch0-15
+#   FC01 addr 0x0000-0x000F: DI counter start; addr 0x0020: DI counter reset;
+#        addr 0x0040: DI counter overflow; addr 0x0060: DI power-on counter start;
+#        addr 0x0080: DI safe-mode counter start; addr 0x00A0: DI power-failing counter storage
+
+vendor = "Moxa"
+model = "ioLogik R1210"
+description = "16-DI remote RTU I/O, Modbus RTU RS-485 9600 8N1. FC03: DI_Mode ch0-15 (0-15, 0=DI 1=Counter), DI_filterValue ch0-15 (32-47), DI_counterTriggerType ch0-15 (64-79, 0=L2H 1=H2L 2=Both). FC04: DI_value ch0-15 (0-15), DI_counterValue u32 ch0-15 (32,34,...62 step-2 pairs). FC02: DI_bitValue ch0-15 (0-15). FC01: DI_counterStart (0-15), DI_counterReset (32-47), DI_counterOverflow (64-79), DI_powerOnCounterStart (96-111), DI_safeModeCounterStart (128-143), DI_powerFailingCounterStorage (160-175)."
+
+# ===== FC03 Holding Registers =====
+
+[[registers]]
+address = 0
+type = "u16"
+name = "DI_Mode ch0 (0=DI, 1=Counter)"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "DI_Mode ch1"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "DI_Mode ch2"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "DI_Mode ch3"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "DI_Mode ch4"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "DI_Mode ch5"
+
+[[registers]]
+address = 6
+type = "u16"
+name = "DI_Mode ch6"
+
+[[registers]]
+address = 7
+type = "u16"
+name = "DI_Mode ch7"
+
+[[registers]]
+address = 8
+type = "u16"
+name = "DI_Mode ch8"
+
+[[registers]]
+address = 9
+type = "u16"
+name = "DI_Mode ch9"
+
+[[registers]]
+address = 10
+type = "u16"
+name = "DI_Mode ch10"
+
+[[registers]]
+address = 11
+type = "u16"
+name = "DI_Mode ch11"
+
+[[registers]]
+address = 12
+type = "u16"
+name = "DI_Mode ch12"
+
+[[registers]]
+address = 13
+type = "u16"
+name = "DI_Mode ch13"
+
+[[registers]]
+address = 14
+type = "u16"
+name = "DI_Mode ch14"
+
+[[registers]]
+address = 15
+type = "u16"
+name = "DI_Mode ch15"
+
+[[registers]]
+address = 32
+type = "u16"
+name = "DI_filterValue ch0"
+
+[[registers]]
+address = 33
+type = "u16"
+name = "DI_filterValue ch1"
+
+[[registers]]
+address = 34
+type = "u16"
+name = "DI_filterValue ch2"
+
+[[registers]]
+address = 35
+type = "u16"
+name = "DI_filterValue ch3"
+
+[[registers]]
+address = 36
+type = "u16"
+name = "DI_filterValue ch4"
+
+[[registers]]
+address = 37
+type = "u16"
+name = "DI_filterValue ch5"
+
+[[registers]]
+address = 38
+type = "u16"
+name = "DI_filterValue ch6"
+
+[[registers]]
+address = 39
+type = "u16"
+name = "DI_filterValue ch7"
+
+[[registers]]
+address = 40
+type = "u16"
+name = "DI_filterValue ch8"
+
+[[registers]]
+address = 41
+type = "u16"
+name = "DI_filterValue ch9"
+
+[[registers]]
+address = 42
+type = "u16"
+name = "DI_filterValue ch10"
+
+[[registers]]
+address = 43
+type = "u16"
+name = "DI_filterValue ch11"
+
+[[registers]]
+address = 44
+type = "u16"
+name = "DI_filterValue ch12"
+
+[[registers]]
+address = 45
+type = "u16"
+name = "DI_filterValue ch13"
+
+[[registers]]
+address = 46
+type = "u16"
+name = "DI_filterValue ch14"
+
+[[registers]]
+address = 47
+type = "u16"
+name = "DI_filterValue ch15"
+
+[[registers]]
+address = 64
+type = "u16"
+name = "DI_counterTriggerType ch0 (0=L2H, 1=H2L, 2=Both)"
+
+[[registers]]
+address = 65
+type = "u16"
+name = "DI_counterTriggerType ch1"
+
+[[registers]]
+address = 66
+type = "u16"
+name = "DI_counterTriggerType ch2"
+
+[[registers]]
+address = 67
+type = "u16"
+name = "DI_counterTriggerType ch3"
+
+[[registers]]
+address = 68
+type = "u16"
+name = "DI_counterTriggerType ch4"
+
+[[registers]]
+address = 69
+type = "u16"
+name = "DI_counterTriggerType ch5"
+
+[[registers]]
+address = 70
+type = "u16"
+name = "DI_counterTriggerType ch6"
+
+[[registers]]
+address = 71
+type = "u16"
+name = "DI_counterTriggerType ch7"
+
+[[registers]]
+address = 72
+type = "u16"
+name = "DI_counterTriggerType ch8"
+
+[[registers]]
+address = 73
+type = "u16"
+name = "DI_counterTriggerType ch9"
+
+[[registers]]
+address = 74
+type = "u16"
+name = "DI_counterTriggerType ch10"
+
+[[registers]]
+address = 75
+type = "u16"
+name = "DI_counterTriggerType ch11"
+
+[[registers]]
+address = 76
+type = "u16"
+name = "DI_counterTriggerType ch12"
+
+[[registers]]
+address = 77
+type = "u16"
+name = "DI_counterTriggerType ch13"
+
+[[registers]]
+address = 78
+type = "u16"
+name = "DI_counterTriggerType ch14"
+
+[[registers]]
+address = 79
+type = "u16"
+name = "DI_counterTriggerType ch15"

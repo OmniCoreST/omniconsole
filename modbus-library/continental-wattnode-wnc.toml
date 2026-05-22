@@ -1,0 +1,851 @@
+# Continental Control Systems WattNode WNC — 3-Phase Energy Meter (Modbus RTU/TCP)
+#
+# Source: continental-wattnode-wnc-modbus-manual.pdf (pp. 32-50)
+# Models: WNC-3Y-208-MB, WNC-3Y-400-MB, WNC-3Y-480-MB, WNC-3Y-600-MB,
+#         WNC-3D-240-MB, WNC-3D-400-MB, WNC-3D-480-MB
+# Protocol: Modbus RTU or TCP; FC03/FC04 read (interchangeable), FC06/FC16 write
+# Baud: 9600 or 19200 (DIP switch); overridable via register 1652
+# Register numbering: source uses 1-based numbers; TOML addresses are 0-based (source - 1).
+# 32-bit values: low 16 bits at the listed address, high 16 bits at address+1 (little-endian words).
+# Floating point: IEEE 754 f32, low word first.
+# Integer energy (s32): units of 0.1 kWh, 0.1 kVARh, or 0.1 kVAh.
+# Integer power (s16): units of PowerIntScale watts (reg 1608, default auto).
+# Integer voltage (s16): units of 0.1 V.
+# Integer current (s16): scaled by CtAmps/CurrentIntScale.
+# Integer power factor (s16): units of 0.01.
+# Integer frequency (s16): units of 0.1 Hz.
+
+vendor = "Continental Control Systems"
+model = "WattNode WNC"
+description = "3-phase energy meter, Modbus RTU/TCP. FC03/04 read, FC06/16 write. Basic FP (f32): energy kWh at 1000-1006, power W at 1008-1014, voltage V at 1016-1030, freq at 1032. Advanced FP: per-phase energy+reactive+apparent at 1100-1136, PF at 1138-1144, reactive/apparent power at 1146-1160, current A at 1162-1166, demand at 1168-1180. Integer equivalents (s32 energy, s16 power/volt/current) at 1200-1220 (basic) and 1300-1361 (advanced). Config at 1600-1622. Comms at 1650-1655. Diagnostics at 1700-1722."
+
+# ----- Basic Registers — Floating Point (FC03/04, R, f32) -----
+
+# Energy
+[[registers]]
+address = 1000
+type = "f32"
+name = "EnergySum"
+
+[[registers]]
+address = 1002
+type = "f32"
+name = "EnergyPosSum"
+
+[[registers]]
+address = 1004
+type = "f32"
+name = "EnergySumNR"
+
+[[registers]]
+address = 1006
+type = "f32"
+name = "EnergyPosSumNR"
+
+# Power
+[[registers]]
+address = 1008
+type = "f32"
+name = "PowerSum"
+
+[[registers]]
+address = 1010
+type = "f32"
+name = "PowerA"
+
+[[registers]]
+address = 1012
+type = "f32"
+name = "PowerB"
+
+[[registers]]
+address = 1014
+type = "f32"
+name = "PowerC"
+
+# Voltage
+[[registers]]
+address = 1016
+type = "f32"
+name = "VoltAvgLN"
+
+[[registers]]
+address = 1018
+type = "f32"
+name = "VoltA"
+
+[[registers]]
+address = 1020
+type = "f32"
+name = "VoltB"
+
+[[registers]]
+address = 1022
+type = "f32"
+name = "VoltC"
+
+[[registers]]
+address = 1024
+type = "f32"
+name = "VoltAvgLL"
+
+[[registers]]
+address = 1026
+type = "f32"
+name = "VoltAB"
+
+[[registers]]
+address = 1028
+type = "f32"
+name = "VoltBC"
+
+[[registers]]
+address = 1030
+type = "f32"
+name = "VoltAC"
+
+# Frequency
+[[registers]]
+address = 1032
+type = "f32"
+name = "Freq"
+
+# ----- Advanced Registers — Floating Point (FC03/04, R, f32) -----
+
+# Per-phase energy
+[[registers]]
+address = 1100
+type = "f32"
+name = "EnergyA"
+
+[[registers]]
+address = 1102
+type = "f32"
+name = "EnergyB"
+
+[[registers]]
+address = 1104
+type = "f32"
+name = "EnergyC"
+
+[[registers]]
+address = 1106
+type = "f32"
+name = "EnergyPosA"
+
+[[registers]]
+address = 1108
+type = "f32"
+name = "EnergyPosB"
+
+[[registers]]
+address = 1110
+type = "f32"
+name = "EnergyPosC"
+
+[[registers]]
+address = 1112
+type = "f32"
+name = "EnergyNegSum"
+
+[[registers]]
+address = 1114
+type = "f32"
+name = "EnergyNegSumNR"
+
+[[registers]]
+address = 1116
+type = "f32"
+name = "EnergyNegA"
+
+[[registers]]
+address = 1118
+type = "f32"
+name = "EnergyNegB"
+
+[[registers]]
+address = 1120
+type = "f32"
+name = "EnergyNegC"
+
+# Reactive energy
+[[registers]]
+address = 1122
+type = "f32"
+name = "EnergyReacSum"
+
+[[registers]]
+address = 1124
+type = "f32"
+name = "EnergyReacA"
+
+[[registers]]
+address = 1126
+type = "f32"
+name = "EnergyReacB"
+
+[[registers]]
+address = 1128
+type = "f32"
+name = "EnergyReacC"
+
+# Apparent energy
+[[registers]]
+address = 1130
+type = "f32"
+name = "EnergyAppSum"
+
+[[registers]]
+address = 1132
+type = "f32"
+name = "EnergyAppA"
+
+[[registers]]
+address = 1134
+type = "f32"
+name = "EnergyAppB"
+
+[[registers]]
+address = 1136
+type = "f32"
+name = "EnergyAppC"
+
+# Power factor
+[[registers]]
+address = 1138
+type = "f32"
+name = "PowerFactorAvg"
+
+[[registers]]
+address = 1140
+type = "f32"
+name = "PowerFactorA"
+
+[[registers]]
+address = 1142
+type = "f32"
+name = "PowerFactorB"
+
+[[registers]]
+address = 1144
+type = "f32"
+name = "PowerFactorC"
+
+# Reactive power
+[[registers]]
+address = 1146
+type = "f32"
+name = "PowerReacSum"
+
+[[registers]]
+address = 1148
+type = "f32"
+name = "PowerReacA"
+
+[[registers]]
+address = 1150
+type = "f32"
+name = "PowerReacB"
+
+[[registers]]
+address = 1152
+type = "f32"
+name = "PowerReacC"
+
+# Apparent power
+[[registers]]
+address = 1154
+type = "f32"
+name = "PowerAppSum"
+
+[[registers]]
+address = 1156
+type = "f32"
+name = "PowerAppA"
+
+[[registers]]
+address = 1158
+type = "f32"
+name = "PowerAppB"
+
+[[registers]]
+address = 1160
+type = "f32"
+name = "PowerAppC"
+
+# Current
+[[registers]]
+address = 1162
+type = "f32"
+name = "CurrentA"
+
+[[registers]]
+address = 1164
+type = "f32"
+name = "CurrentB"
+
+[[registers]]
+address = 1166
+type = "f32"
+name = "CurrentC"
+
+# Demand
+[[registers]]
+address = 1168
+type = "f32"
+name = "Demand"
+
+[[registers]]
+address = 1170
+type = "f32"
+name = "DemandMin"
+
+[[registers]]
+address = 1172
+type = "f32"
+name = "DemandMax"
+
+[[registers]]
+address = 1174
+type = "f32"
+name = "DemandApp"
+
+[[registers]]
+address = 1176
+type = "f32"
+name = "DemandA"
+
+[[registers]]
+address = 1178
+type = "f32"
+name = "DemandB"
+
+[[registers]]
+address = 1180
+type = "f32"
+name = "DemandC"
+
+# ----- Basic Registers — Integer (FC03/04, R) -----
+
+# Energy (s32, 0.1 kWh)
+[[registers]]
+address = 1200
+type = "s32"
+name = "EnergySum integer"
+
+[[registers]]
+address = 1202
+type = "s32"
+name = "EnergyPosSum integer"
+
+[[registers]]
+address = 1204
+type = "s32"
+name = "EnergySumNR integer"
+
+[[registers]]
+address = 1206
+type = "s32"
+name = "EnergyPosSumNR integer"
+
+# Power (s16, ×PowerIntScale W)
+[[registers]]
+address = 1208
+type = "s16"
+name = "PowerSum integer"
+
+[[registers]]
+address = 1209
+type = "s16"
+name = "PowerA integer"
+
+[[registers]]
+address = 1210
+type = "s16"
+name = "PowerB integer"
+
+[[registers]]
+address = 1211
+type = "s16"
+name = "PowerC integer"
+
+# Voltage (s16, 0.1V)
+[[registers]]
+address = 1212
+type = "s16"
+name = "VoltAvgLN integer"
+
+[[registers]]
+address = 1213
+type = "s16"
+name = "VoltA integer"
+
+[[registers]]
+address = 1214
+type = "s16"
+name = "VoltB integer"
+
+[[registers]]
+address = 1215
+type = "s16"
+name = "VoltC integer"
+
+[[registers]]
+address = 1216
+type = "s16"
+name = "VoltAvgLL integer"
+
+[[registers]]
+address = 1217
+type = "s16"
+name = "VoltAB integer"
+
+[[registers]]
+address = 1218
+type = "s16"
+name = "VoltBC integer"
+
+[[registers]]
+address = 1219
+type = "s16"
+name = "VoltAC integer"
+
+# Frequency (s16, 0.1 Hz)
+[[registers]]
+address = 1220
+type = "s16"
+name = "Freq integer"
+
+# ----- Advanced Registers — Integer (FC03/04, R) -----
+
+# Per-phase energy (s32, 0.1 kWh)
+[[registers]]
+address = 1300
+type = "s32"
+name = "EnergyA integer"
+
+[[registers]]
+address = 1302
+type = "s32"
+name = "EnergyB integer"
+
+[[registers]]
+address = 1304
+type = "s32"
+name = "EnergyC integer"
+
+[[registers]]
+address = 1306
+type = "s32"
+name = "EnergyPosA integer"
+
+[[registers]]
+address = 1308
+type = "s32"
+name = "EnergyPosB integer"
+
+[[registers]]
+address = 1310
+type = "s32"
+name = "EnergyPosC integer"
+
+[[registers]]
+address = 1312
+type = "s32"
+name = "EnergyNegSum integer"
+
+[[registers]]
+address = 1314
+type = "s32"
+name = "EnergyNegSumNR integer"
+
+[[registers]]
+address = 1316
+type = "s32"
+name = "EnergyNegA integer"
+
+[[registers]]
+address = 1318
+type = "s32"
+name = "EnergyNegB integer"
+
+[[registers]]
+address = 1320
+type = "s32"
+name = "EnergyNegC integer"
+
+# Reactive energy (s32, 0.1 kVARh)
+[[registers]]
+address = 1322
+type = "s32"
+name = "EnergyReacSum integer"
+
+[[registers]]
+address = 1324
+type = "s32"
+name = "EnergyReacA integer"
+
+[[registers]]
+address = 1326
+type = "s32"
+name = "EnergyReacB integer"
+
+[[registers]]
+address = 1328
+type = "s32"
+name = "EnergyReacC integer"
+
+# Apparent energy (s32, 0.1 kVAh)
+[[registers]]
+address = 1330
+type = "s32"
+name = "EnergyAppSum integer"
+
+[[registers]]
+address = 1332
+type = "s32"
+name = "EnergyAppA integer"
+
+[[registers]]
+address = 1334
+type = "s32"
+name = "EnergyAppB integer"
+
+[[registers]]
+address = 1336
+type = "s32"
+name = "EnergyAppC integer"
+
+# Power factor (s16, 0.01)
+[[registers]]
+address = 1338
+type = "s16"
+name = "PowerFactorAvg integer"
+
+[[registers]]
+address = 1339
+type = "s16"
+name = "PowerFactorA integer"
+
+[[registers]]
+address = 1340
+type = "s16"
+name = "PowerFactorB integer"
+
+[[registers]]
+address = 1341
+type = "s16"
+name = "PowerFactorC integer"
+
+# Reactive power (s16, ×PowerIntScale VAR)
+[[registers]]
+address = 1342
+type = "s16"
+name = "PowerReacSum integer"
+
+[[registers]]
+address = 1343
+type = "s16"
+name = "PowerReacA integer"
+
+[[registers]]
+address = 1344
+type = "s16"
+name = "PowerReacB integer"
+
+[[registers]]
+address = 1345
+type = "s16"
+name = "PowerReacC integer"
+
+# Apparent power (s16, ×PowerIntScale VA)
+[[registers]]
+address = 1346
+type = "s16"
+name = "PowerAppSum integer"
+
+[[registers]]
+address = 1347
+type = "s16"
+name = "PowerAppA integer"
+
+[[registers]]
+address = 1348
+type = "s16"
+name = "PowerAppB integer"
+
+[[registers]]
+address = 1349
+type = "s16"
+name = "PowerAppC integer"
+
+# Current (s16, scaled by CtAmps/CurrentIntScale)
+[[registers]]
+address = 1350
+type = "s16"
+name = "CurrentA integer"
+
+[[registers]]
+address = 1351
+type = "s16"
+name = "CurrentB integer"
+
+[[registers]]
+address = 1352
+type = "s16"
+name = "CurrentC integer"
+
+# Demand (s16, ×PowerIntScale W or VA)
+[[registers]]
+address = 1353
+type = "s16"
+name = "Demand integer"
+
+[[registers]]
+address = 1354
+type = "s16"
+name = "DemandMin integer"
+
+[[registers]]
+address = 1355
+type = "s16"
+name = "DemandMax integer"
+
+[[registers]]
+address = 1356
+type = "s16"
+name = "DemandApp integer"
+
+[[registers]]
+address = 1357
+type = "s16"
+name = "DemandA integer"
+
+[[registers]]
+address = 1358
+type = "s16"
+name = "DemandB integer"
+
+[[registers]]
+address = 1359
+type = "s16"
+name = "DemandC integer"
+
+# I/O
+[[registers]]
+address = 1360
+type = "u16"
+name = "IoPinState"
+
+[[registers]]
+address = 1361
+type = "u16"
+name = "PulseCount"
+
+# ----- Configuration Registers (FC03/04/06/16, R/W, u16 unless noted) -----
+[[registers]]
+address = 1600
+type = "u32"
+name = "ConfigPasscode"
+
+[[registers]]
+address = 1602
+type = "u16"
+name = "CtAmps"
+
+[[registers]]
+address = 1603
+type = "u16"
+name = "CtAmpsA"
+
+[[registers]]
+address = 1604
+type = "u16"
+name = "CtAmpsB"
+
+[[registers]]
+address = 1605
+type = "u16"
+name = "CtAmpsC"
+
+[[registers]]
+address = 1606
+type = "u16"
+name = "CtDirections"
+
+[[registers]]
+address = 1607
+type = "u16"
+name = "Averaging"
+
+[[registers]]
+address = 1608
+type = "u16"
+name = "PowerIntScale"
+
+[[registers]]
+address = 1609
+type = "u16"
+name = "DemPerMins"
+
+[[registers]]
+address = 1610
+type = "u16"
+name = "DemSubints"
+
+[[registers]]
+address = 1611
+type = "u16"
+name = "GainAdjustA"
+
+[[registers]]
+address = 1612
+type = "u16"
+name = "GainAdjustB"
+
+[[registers]]
+address = 1613
+type = "u16"
+name = "GainAdjustC"
+
+[[registers]]
+address = 1614
+type = "s16"
+name = "PhaseAdjustA"
+
+[[registers]]
+address = 1615
+type = "s16"
+name = "PhaseAdjustB"
+
+[[registers]]
+address = 1616
+type = "s16"
+name = "PhaseAdjustC"
+
+[[registers]]
+address = 1617
+type = "u16"
+name = "CreepLimit"
+
+[[registers]]
+address = 1618
+type = "u16"
+name = "PhaseOffset"
+
+[[registers]]
+address = 1619
+type = "u16"
+name = "ZeroEnergy"
+
+[[registers]]
+address = 1620
+type = "u16"
+name = "ZeroDemand"
+
+[[registers]]
+address = 1621
+type = "u16"
+name = "CurrentIntScale"
+
+[[registers]]
+address = 1622
+type = "u16"
+name = "IoPinMode"
+
+# ----- Communication Registers (FC03/04/06/16, R/W, u16) -----
+[[registers]]
+address = 1650
+type = "u16"
+name = "ApplyComConfig"
+
+[[registers]]
+address = 1651
+type = "u16"
+name = "Address"
+
+[[registers]]
+address = 1652
+type = "u16"
+name = "BaudRate"
+
+[[registers]]
+address = 1653
+type = "u16"
+name = "ParityMode"
+
+[[registers]]
+address = 1654
+type = "u16"
+name = "ModbusMode"
+
+[[registers]]
+address = 1655
+type = "u16"
+name = "ReplyDelay"
+
+# ----- Diagnostic Registers (FC03/04, R) -----
+[[registers]]
+address = 0
+type = "u32"
+name = "Dummy"
+
+[[registers]]
+address = 1700
+type = "u32"
+name = "SerialNumber"
+
+[[registers]]
+address = 1702
+type = "u32"
+name = "UptimeSecs"
+
+[[registers]]
+address = 1704
+type = "u32"
+name = "TotalSecs"
+
+[[registers]]
+address = 1706
+type = "u16"
+name = "Model"
+
+[[registers]]
+address = 1707
+type = "u16"
+name = "Version"
+
+[[registers]]
+address = 1708
+type = "u16"
+name = "Options"
+
+[[registers]]
+address = 1709
+type = "u16"
+name = "ErrorStatus"
+
+[[registers]]
+address = 1710
+type = "u16"
+name = "PowerFailCount"
+
+[[registers]]
+address = 1711
+type = "u16"
+name = "CrcErrorCount"
+
+[[registers]]
+address = 1712
+type = "u16"
+name = "FrameErrorCount"
+
+[[registers]]
+address = 1713
+type = "u16"
+name = "PacketErrorCount"
+
+[[registers]]
+address = 1714
+type = "u16"
+name = "OverrunCount"

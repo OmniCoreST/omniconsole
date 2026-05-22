@@ -1,0 +1,26 @@
+# Moxa ioLogik E1210 Remote Ethernet I/O — 16-channel DI
+#
+# Source: ioLogik E1200 Series User Manual V16.2, August 2025 (Appendix A)
+# Protocol: Modbus/TCP (port 502); Modbus/TCP ID default = 1
+# Supported FC: 1(coils R/W), 2(discrete inputs R), 3(holding R/W), 4(input registers R), 5, 6, 15, 16
+#
+# ALL I/O data is in FC02 (discrete inputs) and FC04 (input registers); NO FC03 holding registers.
+# FC02 addr 0-15 (len 16): DI_status ch0-15 (0=OFF, 1=ON)
+# FC02 addr 1000-1015 (len 16): DI_counterOverflowFlag ch0-15 (0=normal, 1=overflow)
+# FC01 addr 256-271 (len 16): DI_counterStatus ch0-15 (0=STOP, 1=START; R/W)
+# FC01 addr 272-287 (len 16): DI_counterReset ch0-15 (1=reset to initial value; R/W)
+# FC01 addr 288-303 (len 16): DI_counterOverflowFlagClear ch0-15 (1=clear overflow; R/W)
+# FC04 addr 16-47 (2 words/ch, len 32): DI_counterValue ch0-15 (u32 hi/lo, R)
+# FC04 addr 48 (len 1): DI-all_statusFromDI-00 (packed DI bits as word, R)
+# FC04 System registers (all R, input register space):
+#   addr 5000-5009: modelName (10 words, ASCII)
+#   addr 5020-5021: deviceUpTime (2 words, seconds)
+#   addr 5024-5026: lanMac (3 words)
+#   addr 5027-5028: lanIp (2 words)
+#   addr 5029-5030: firmwareVersion (2 words)
+#   addr 5031-5032: firmwareBuildDate (2 words)
+#   addr 5040-5069: deviceName (30 words, ASCII)
+
+vendor = "Moxa"
+model = "ioLogik E1210"
+description = "16-DI remote Ethernet I/O, Modbus/TCP. NO FC03 holding registers. FC02: DI_status ch0-15 (addr 0), DI_counterOverflowFlag (addr 1000). FC01 R/W: DI_counterStatus (addr 256), DI_counterReset (addr 272), DI_counterOverflowFlagClear (addr 288). FC04: DI_counterValue ch0-15 u32 hi/lo (addr 16-47), DI-all_statusFromDI-00 (addr 48). FC04 system: modelName (5000), deviceUpTime (5020), lanMac (5024), lanIp (5027), firmwareVersion (5029), firmwareBuildDate (5031), deviceName (5040)."

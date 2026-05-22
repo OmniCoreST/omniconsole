@@ -1,0 +1,154 @@
+# Carlo Gavazzi EM111 — Modbus register map for Omni Console
+#
+# Source: carlo-gavazzi-em111-em112-et112-modbus.pdf (EM100/ET100 Series V2 Rev.14)
+# - Single-phase DIN-rail energy meter (EM111: direct measurement up to 65A).
+# - INT32: word order LSW->MSW (little-endian) → word_order = "le".
+# - INT16: single word — no word_order.
+# - FC03 and FC04 return identical data.
+# - Scale factors: V*10→0.1  A*1000→0.001  W/VA/var*10→0.1  PF*1000→0.001  Hz*10→0.1  kWh/kvarh*10→0.1
+# - Factory defaults: slave=1, baud=9600, 1 stop bit, no parity.
+
+vendor = "Carlo Gavazzi"
+model = "EM111"
+description = "Single-phase DIN-rail energy meter (direct ≤65A) — V/I/P/Q/S, PF, frequency, imported/exported energy (scaled INT32 LSW-first)."
+
+# ----- Voltage -----
+[[registers]]
+address = 0
+type = "s32"
+name = "Voltage L-N"
+unit = "V"
+word_order = "le"
+scale = 0.1
+
+# ----- Current -----
+[[registers]]
+address = 2
+type = "s32"
+name = "Current"
+unit = "A"
+word_order = "le"
+scale = 0.001
+
+# ----- Active power -----
+[[registers]]
+address = 4
+type = "s32"
+name = "Active power"
+unit = "W"
+word_order = "le"
+scale = 0.1
+
+# ----- Apparent power -----
+[[registers]]
+address = 6
+type = "s32"
+name = "Apparent power"
+unit = "VA"
+word_order = "le"
+scale = 0.1
+
+# ----- Reactive power -----
+[[registers]]
+address = 8
+type = "s32"
+name = "Reactive power"
+unit = "var"
+word_order = "le"
+scale = 0.1
+
+# ----- Power demand -----
+[[registers]]
+address = 10
+type = "s32"
+name = "Active power demand"
+unit = "W"
+word_order = "le"
+scale = 0.1
+
+[[registers]]
+address = 12
+type = "s32"
+name = "Active power demand peak"
+unit = "W"
+word_order = "le"
+scale = 0.1
+
+# ----- Power factor and frequency -----
+[[registers]]
+address = 14
+type = "s16"
+name = "Power factor"
+scale = 0.001
+
+[[registers]]
+address = 15
+type = "s16"
+name = "Frequency"
+unit = "Hz"
+scale = 0.1
+
+# ----- Energy -----
+[[registers]]
+address = 16
+type = "s32"
+name = "kWh (+) total"
+unit = "kWh"
+word_order = "le"
+scale = 0.1
+
+[[registers]]
+address = 18
+type = "s32"
+name = "kvarh (+) total"
+unit = "kvarh"
+word_order = "le"
+scale = 0.1
+
+[[registers]]
+address = 20
+type = "s32"
+name = "kWh (+) partial"
+unit = "kWh"
+word_order = "le"
+scale = 0.1
+
+[[registers]]
+address = 22
+type = "s32"
+name = "kvarh (+) partial"
+unit = "kvarh"
+word_order = "le"
+scale = 0.1
+
+[[registers]]
+address = 24
+type = "s32"
+name = "kWh (+) tariff 1"
+unit = "kWh"
+word_order = "le"
+scale = 0.1
+
+[[registers]]
+address = 26
+type = "s32"
+name = "kWh (+) tariff 2"
+unit = "kWh"
+word_order = "le"
+scale = 0.1
+
+[[registers]]
+address = 34
+type = "s32"
+name = "kWh (-) total"
+unit = "kWh"
+word_order = "le"
+scale = 0.1
+
+[[registers]]
+address = 36
+type = "s32"
+name = "kvarh (-) total"
+unit = "kvarh"
+word_order = "le"
+scale = 0.1

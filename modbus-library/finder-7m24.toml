@@ -1,0 +1,162 @@
+# Finder 7M24 — Modbus register map for Omni Console
+#
+# Source: finder-7m24-7m38-modbus-protocol.pdf
+# - Single-phase DIN-rail energy meter with RS485 Modbus.
+# - Input registers (FC04), IEEE-754 float (T_float), big-endian (MSW first).
+# - Using the IEEE-754 float section (registers 32480–32645) for simplest integration.
+# - Protocol addresses = register_number − 30001.
+# - Energy counters: n1=active import (Wh), n2=reactive import (varh),
+#   n3=active export (Wh), n4=reactive export (varh).
+# - Factory defaults: slave=21, baud=9600, 8N2.
+
+vendor = "Finder"
+model = "7M24"
+description = "Single-phase DIN-rail energy meter — voltage, current, active/reactive/apparent power, PF, frequency, THD, import/export energy (IEEE-754 float, input registers)."
+
+# ----- Voltage -----
+[[registers]]
+address = 2499
+type = "f32"
+area = "input"
+name = "Voltage U1"
+unit = "V"
+
+[[registers]]
+address = 2483
+type = "f32"
+area = "input"
+name = "Average voltage (phase to neutral)"
+unit = "V"
+
+# ----- Current -----
+[[registers]]
+address = 2515
+type = "f32"
+area = "input"
+name = "Current I1"
+unit = "A"
+
+[[registers]]
+address = 2487
+type = "f32"
+area = "input"
+name = "Apparent current (SI)"
+unit = "A"
+
+# ----- Active power -----
+[[registers]]
+address = 2529
+type = "f32"
+area = "input"
+name = "Active power L1"
+unit = "W"
+
+[[registers]]
+address = 2489
+type = "f32"
+area = "input"
+name = "Total active power"
+unit = "W"
+
+# ----- Reactive power -----
+[[registers]]
+address = 2537
+type = "f32"
+area = "input"
+name = "Reactive power L1"
+unit = "var"
+
+[[registers]]
+address = 2491
+type = "f32"
+area = "input"
+name = "Total reactive power"
+unit = "var"
+
+# ----- Apparent power -----
+[[registers]]
+address = 2545
+type = "f32"
+area = "input"
+name = "Apparent power L1"
+unit = "VA"
+
+[[registers]]
+address = 2493
+type = "f32"
+area = "input"
+name = "Total apparent power"
+unit = "VA"
+
+# ----- Power factor -----
+[[registers]]
+address = 2553
+type = "f32"
+area = "input"
+name = "Power factor L1"
+
+[[registers]]
+address = 2495
+type = "f32"
+area = "input"
+name = "Total power factor"
+
+# ----- Frequency -----
+[[registers]]
+address = 2497
+type = "f32"
+area = "input"
+name = "Frequency"
+unit = "Hz"
+
+# ----- Phase angle -----
+[[registers]]
+address = 2569
+type = "f32"
+area = "input"
+name = "Phase angle j1 (U1 to I1)"
+unit = "°"
+
+# ----- THD -----
+[[registers]]
+address = 2587
+type = "f32"
+area = "input"
+name = "Current THD I1"
+unit = "%"
+
+[[registers]]
+address = 2593
+type = "f32"
+area = "input"
+name = "Voltage THD U1"
+unit = "%"
+
+# ----- Energy counters (IEEE-754 float) -----
+[[registers]]
+address = 2637
+type = "f32"
+area = "input"
+name = "Energy counter n1 (active import)"
+unit = "Wh"
+
+[[registers]]
+address = 2639
+type = "f32"
+area = "input"
+name = "Energy counter n2 (reactive import)"
+unit = "varh"
+
+[[registers]]
+address = 2641
+type = "f32"
+area = "input"
+name = "Energy counter n3 (active export)"
+unit = "Wh"
+
+[[registers]]
+address = 2643
+type = "f32"
+area = "input"
+name = "Energy counter n4 (reactive export)"
+unit = "varh"

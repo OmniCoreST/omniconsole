@@ -1,0 +1,265 @@
+# Entes EPM-07S — Modbus register map for Omni Console
+#
+# Source: Entes EPM-07S Modbus Register Map (Doc. A3919/Rev.2, 01.12.2019)
+# - 3-phase energy multimeter, DIN-rail, RS485 Modbus RTU.
+# - Holding registers (FC03/read, FC16/write).
+# - All instantaneous values are 16-bit integers (unsigned int or signed int), Big-Endian.
+# - Energy counters are 64-bit integers (long int = 4 registers), Big-Endian.
+# - Protocol address = ADDRESS_column − 1 = HEX_column value (0-based).
+# - Note: addresses 2, 4 are reserved/unused between L2 and L3 phase values.
+# - Factory defaults: slave=1, baud=9600, 8N1.
+
+vendor = "Entes"
+model = "EPM-07S"
+description = "3-phase energy multimeter — per-phase V/I/P/Q/S/CoSφ, neutral current, totals, frequency, and 64-bit energy counters (16-bit integer registers, Big-Endian)."
+
+# ----- Phase-to-neutral voltages -----
+# HEX 0000-0003
+[[registers]]
+address = 0
+type = "u16"
+name = "Voltage L1"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 1
+type = "u16"
+name = "Voltage L2"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 3
+type = "u16"
+name = "Voltage L3"
+unit = "V"
+scale = 0.1
+
+# ----- Currents -----
+# HEX 0005-000B
+[[registers]]
+address = 5
+type = "u16"
+name = "Current L1"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 7
+type = "u16"
+name = "Current L2"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 9
+type = "u16"
+name = "Current L3"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 11
+type = "u16"
+name = "Neutral current"
+unit = "A"
+scale = 0.001
+
+# ----- Line-to-line voltages -----
+# HEX 000D-0011
+[[registers]]
+address = 13
+type = "u16"
+name = "Voltage L1-L2"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 15
+type = "u16"
+name = "Voltage L2-L3"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 17
+type = "u16"
+name = "Voltage L3-L1"
+unit = "V"
+scale = 0.1
+
+# ----- Active power per phase -----
+# HEX 0013-0017
+[[registers]]
+address = 19
+type = "s16"
+name = "Active power L1"
+unit = "W"
+scale = 0.1
+
+[[registers]]
+address = 21
+type = "s16"
+name = "Active power L2"
+unit = "W"
+scale = 0.1
+
+[[registers]]
+address = 23
+type = "s16"
+name = "Active power L3"
+unit = "W"
+scale = 0.1
+
+# ----- Reactive power per phase -----
+# HEX 0019-001D
+[[registers]]
+address = 25
+type = "s16"
+name = "Reactive power L1"
+unit = "var"
+scale = 0.1
+
+[[registers]]
+address = 27
+type = "s16"
+name = "Reactive power L2"
+unit = "var"
+scale = 0.1
+
+[[registers]]
+address = 29
+type = "s16"
+name = "Reactive power L3"
+unit = "var"
+scale = 0.1
+
+# ----- Apparent power per phase -----
+# HEX 001F-0023
+[[registers]]
+address = 31
+type = "u16"
+name = "Apparent power L1"
+unit = "VA"
+scale = 0.1
+
+[[registers]]
+address = 33
+type = "u16"
+name = "Apparent power L2"
+unit = "VA"
+scale = 0.1
+
+[[registers]]
+address = 35
+type = "u16"
+name = "Apparent power L3"
+unit = "VA"
+scale = 0.1
+
+# ----- CosPhi per phase -----
+# HEX 0025-0029; signed, range −1000..+1000, positive = lagging
+[[registers]]
+address = 37
+type = "s16"
+name = "CosPhi L1"
+scale = 0.001
+
+[[registers]]
+address = 39
+type = "s16"
+name = "CosPhi L2"
+scale = 0.001
+
+[[registers]]
+address = 41
+type = "s16"
+name = "CosPhi L3"
+scale = 0.001
+
+# ----- System totals -----
+# HEX 002B-002F
+[[registers]]
+address = 43
+type = "s16"
+name = "Total active import power"
+unit = "W"
+scale = 0.1
+
+[[registers]]
+address = 44
+type = "s16"
+name = "Total active export power"
+unit = "W"
+scale = 0.1
+
+[[registers]]
+address = 45
+type = "s16"
+name = "Total inductive reactive power"
+unit = "var"
+scale = 0.1
+
+[[registers]]
+address = 46
+type = "s16"
+name = "Total capacitive reactive power"
+unit = "var"
+scale = 0.1
+
+[[registers]]
+address = 47
+type = "u16"
+name = "Total apparent power"
+unit = "VA"
+scale = 0.1
+
+# ----- Average CosPhi -----
+# HEX 0030-0031
+[[registers]]
+address = 48
+type = "s16"
+name = "Average inductive CosPhi"
+scale = 0.001
+
+[[registers]]
+address = 49
+type = "s16"
+name = "Average capacitive CosPhi"
+scale = 0.001
+
+# ----- Frequency -----
+# HEX 0032
+[[registers]]
+address = 50
+type = "u16"
+name = "Frequency"
+unit = "Hz"
+scale = 0.01
+
+# ----- Energy counters (64-bit, Wh / varh, scale = 1) -----
+# HEX 0055 → ENERGY-1 tariff partition; 4 registers each (Big-Endian)
+[[registers]]
+address = 85
+type = "u64"
+name = "Import active energy"
+unit = "Wh"
+
+[[registers]]
+address = 89
+type = "u64"
+name = "Export active energy"
+unit = "Wh"
+
+[[registers]]
+address = 93
+type = "u64"
+name = "Inductive reactive energy"
+unit = "varh"
+
+[[registers]]
+address = 97
+type = "u64"
+name = "Capacitive reactive energy"
+unit = "varh"

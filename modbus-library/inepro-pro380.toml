@@ -1,0 +1,323 @@
+# Inepro Metering PRO380 — Modbus register map for Omni Console
+#
+# Source: inepro-pro380-modbus-register-list.pdf
+# - 3-phase DIN-rail energy meter with RS485 Modbus.
+# - All values: Float ABCD (IEEE-754 f32), MSW first (big-endian) — word_order omitted.
+# - Holding registers, FC03. Addresses are raw hex protocol addresses in decimal.
+# - Power values are in kW / kvar / kVA (not W), energy in kWh / kvarh.
+# - Factory defaults: slave=1, baud=9600, 8E1.
+
+vendor = "Inepro Metering"
+model = "PRO380"
+description = "3-phase DIN-rail energy meter — V/I/P/Q/S per phase and total, PF, frequency, forward/reverse import/export energy per phase and tariff (IEEE-754 float, holding registers)."
+
+# ----- Voltages -----
+[[registers]]
+address = 20480
+type = "f32"
+name = "System voltage (average)"
+unit = "V"
+
+[[registers]]
+address = 20482
+type = "f32"
+name = "Voltage L1"
+unit = "V"
+
+[[registers]]
+address = 20484
+type = "f32"
+name = "Voltage L2"
+unit = "V"
+
+[[registers]]
+address = 20486
+type = "f32"
+name = "Voltage L3"
+unit = "V"
+
+# ----- Frequency -----
+[[registers]]
+address = 20488
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# ----- Currents -----
+[[registers]]
+address = 20490
+type = "f32"
+name = "Current (average)"
+unit = "A"
+
+[[registers]]
+address = 20492
+type = "f32"
+name = "Current L1"
+unit = "A"
+
+[[registers]]
+address = 20494
+type = "f32"
+name = "Current L2"
+unit = "A"
+
+[[registers]]
+address = 20496
+type = "f32"
+name = "Current L3"
+unit = "A"
+
+# ----- Active power -----
+[[registers]]
+address = 20498
+type = "f32"
+name = "Total active power"
+unit = "kW"
+
+[[registers]]
+address = 20500
+type = "f32"
+name = "Active power L1"
+unit = "kW"
+
+[[registers]]
+address = 20502
+type = "f32"
+name = "Active power L2"
+unit = "kW"
+
+[[registers]]
+address = 20504
+type = "f32"
+name = "Active power L3"
+unit = "kW"
+
+# ----- Reactive power -----
+[[registers]]
+address = 20506
+type = "f32"
+name = "Total reactive power"
+unit = "kvar"
+
+[[registers]]
+address = 20508
+type = "f32"
+name = "Reactive power L1"
+unit = "kvar"
+
+[[registers]]
+address = 20510
+type = "f32"
+name = "Reactive power L2"
+unit = "kvar"
+
+[[registers]]
+address = 20512
+type = "f32"
+name = "Reactive power L3"
+unit = "kvar"
+
+# ----- Apparent power -----
+[[registers]]
+address = 20514
+type = "f32"
+name = "Total apparent power"
+unit = "kVA"
+
+[[registers]]
+address = 20516
+type = "f32"
+name = "Apparent power L1"
+unit = "kVA"
+
+[[registers]]
+address = 20518
+type = "f32"
+name = "Apparent power L2"
+unit = "kVA"
+
+[[registers]]
+address = 20520
+type = "f32"
+name = "Apparent power L3"
+unit = "kVA"
+
+# ----- Power factor -----
+[[registers]]
+address = 20522
+type = "f32"
+name = "Power factor (total)"
+
+[[registers]]
+address = 20524
+type = "f32"
+name = "Power factor L1"
+
+[[registers]]
+address = 20526
+type = "f32"
+name = "Power factor L2"
+
+[[registers]]
+address = 20528
+type = "f32"
+name = "Power factor L3"
+
+# ----- Active energy -----
+[[registers]]
+address = 24576
+type = "f32"
+name = "Total active energy"
+unit = "kWh"
+
+[[registers]]
+address = 24578
+type = "f32"
+name = "Total active energy T1"
+unit = "kWh"
+
+[[registers]]
+address = 24580
+type = "f32"
+name = "Total active energy T2"
+unit = "kWh"
+
+[[registers]]
+address = 24582
+type = "f32"
+name = "Total active energy L1"
+unit = "kWh"
+
+[[registers]]
+address = 24584
+type = "f32"
+name = "Total active energy L2"
+unit = "kWh"
+
+[[registers]]
+address = 24586
+type = "f32"
+name = "Total active energy L3"
+unit = "kWh"
+
+[[registers]]
+address = 24588
+type = "f32"
+name = "Forward active energy (import)"
+unit = "kWh"
+
+[[registers]]
+address = 24590
+type = "f32"
+name = "Forward active energy T1"
+unit = "kWh"
+
+[[registers]]
+address = 24592
+type = "f32"
+name = "Forward active energy T2"
+unit = "kWh"
+
+[[registers]]
+address = 24594
+type = "f32"
+name = "Forward active energy L1"
+unit = "kWh"
+
+[[registers]]
+address = 24596
+type = "f32"
+name = "Forward active energy L2"
+unit = "kWh"
+
+[[registers]]
+address = 24598
+type = "f32"
+name = "Forward active energy L3"
+unit = "kWh"
+
+[[registers]]
+address = 24600
+type = "f32"
+name = "Reverse active energy (export)"
+unit = "kWh"
+
+[[registers]]
+address = 24602
+type = "f32"
+name = "Reverse active energy T1"
+unit = "kWh"
+
+[[registers]]
+address = 24604
+type = "f32"
+name = "Reverse active energy T2"
+unit = "kWh"
+
+[[registers]]
+address = 24606
+type = "f32"
+name = "Reverse active energy L1"
+unit = "kWh"
+
+[[registers]]
+address = 24608
+type = "f32"
+name = "Reverse active energy L2"
+unit = "kWh"
+
+[[registers]]
+address = 24610
+type = "f32"
+name = "Reverse active energy L3"
+unit = "kWh"
+
+# ----- Reactive energy -----
+[[registers]]
+address = 24612
+type = "f32"
+name = "Total reactive energy"
+unit = "kvarh"
+
+[[registers]]
+address = 24614
+type = "f32"
+name = "Total reactive energy T1"
+unit = "kvarh"
+
+[[registers]]
+address = 24616
+type = "f32"
+name = "Total reactive energy T2"
+unit = "kvarh"
+
+[[registers]]
+address = 24618
+type = "f32"
+name = "Total reactive energy L1"
+unit = "kvarh"
+
+[[registers]]
+address = 24620
+type = "f32"
+name = "Total reactive energy L2"
+unit = "kvarh"
+
+[[registers]]
+address = 24622
+type = "f32"
+name = "Total reactive energy L3"
+unit = "kvarh"
+
+[[registers]]
+address = 24624
+type = "f32"
+name = "Forward reactive energy"
+unit = "kvarh"
+
+[[registers]]
+address = 24636
+type = "f32"
+name = "Reverse reactive energy"
+unit = "kvarh"

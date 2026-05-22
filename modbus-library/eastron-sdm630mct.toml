@@ -1,16 +1,15 @@
-# Eastron SDM630 — Modbus register map for Omni Console
+# Eastron SDM630MCT — Modbus register map for Omni Console
 #
-# Source: eastron-sdm630-modbus-protocol.pdf
-# - 3-phase 4-wire direct-connect energy meter.
+# Source: eastron-sdm630mct-modbus-protocol.pdf
+# - 3-phase 4-wire energy meter with CT inputs (5A secondary).
 # - Input registers (FC04), IEEE-754 float, big-endian (MSW first).
 # - All addresses are 0-based protocol addresses (register_number − 30001).
-# - Identical to SDM630MCT except: no CT ratio setting, no reactive power
-#   demand registers (108-110), and no resettable energy registers (384+).
+# - Energy in kWh/kVArh, power in W/VA/VAr, voltage in V, current in A.
 # - Factory defaults: slave=1, baud=9600, 8N1.
 
 vendor = "Eastron"
-model = "SDM630"
-description = "3-phase 4-wire direct-connect energy meter — per-phase V/I/P/Q/S/PF, totals, THD, demand, import/export/per-phase energy (IEEE-754 float, input registers)."
+model = "SDM630MCT"
+description = "3-phase 4-wire CT-connected energy meter — full per-phase V/I/P/Q/S/PF, totals, THD, demand, import/export energy per phase (IEEE-754 float, input registers)."
 
 # ----- Phase-to-neutral voltages -----
 [[registers]]
@@ -313,6 +312,20 @@ type = "f32"
 area = "input"
 name = "Maximum neutral current demand"
 unit = "A"
+
+[[registers]]
+address = 108
+type = "f32"
+area = "input"
+name = "Total reactive power demand"
+unit = "VAr"
+
+[[registers]]
+address = 110
+type = "f32"
+area = "input"
+name = "Maximum total reactive power demand"
+unit = "VAr"
 
 # ----- Line-to-line voltages -----
 [[registers]]
@@ -624,4 +637,47 @@ address = 380
 type = "f32"
 area = "input"
 name = "Total kVArh L3"
+unit = "kVArh"
+
+# ----- Resettable energy -----
+[[registers]]
+address = 384
+type = "f32"
+area = "input"
+name = "Resettable total active energy"
+unit = "kWh"
+
+[[registers]]
+address = 386
+type = "f32"
+area = "input"
+name = "Resettable total reactive energy"
+unit = "kVArh"
+
+[[registers]]
+address = 388
+type = "f32"
+area = "input"
+name = "Resettable import active energy"
+unit = "kWh"
+
+[[registers]]
+address = 390
+type = "f32"
+area = "input"
+name = "Resettable export active energy"
+unit = "kWh"
+
+[[registers]]
+address = 392
+type = "f32"
+area = "input"
+name = "Resettable import reactive energy"
+unit = "kVArh"
+
+[[registers]]
+address = 394
+type = "f32"
+area = "input"
+name = "Resettable export reactive energy"
 unit = "kVArh"

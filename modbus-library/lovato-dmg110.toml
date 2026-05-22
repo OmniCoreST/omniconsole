@@ -1,0 +1,201 @@
+# Lovato DMG110 — Modbus register map for Omni Console
+#
+# Source: lovato-dmg-modbus-i317.pdf (Doc. I317IGB02_22, 07/02/2022)
+# - Single or 3-phase power analyzer, DIN-rail, RS485 Modbus RTU.
+# - Holding registers (FC03); FC04 also accepted.
+# - UINT32/INT32 little-endian (LSW first), word_order = "le".
+# - Protocol address = table hex address − 1 (document states this explicitly).
+# - Factory defaults: slave=1, configurable baud, 8N1.
+
+vendor = "Lovato"
+model = "DMG110"
+description = "Single/3-phase power analyzer — per-phase V/I/P/Q/S/PF, frequency, holding registers (UINT32/INT32 LSW-first)."
+
+# ----- Phase-to-neutral voltages -----
+# Table 0x0002 → protocol 1
+[[registers]]
+address = 1
+type = "u32"
+word_order = "le"
+name = "Voltage L1-N"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 3
+type = "u32"
+word_order = "le"
+name = "Voltage L2-N"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 5
+type = "u32"
+word_order = "le"
+name = "Voltage L3-N"
+unit = "V"
+scale = 0.01
+
+# ----- Line-to-line voltages -----
+# Table 0x000E → protocol 13
+[[registers]]
+address = 13
+type = "u32"
+word_order = "le"
+name = "Voltage L1-L2"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 15
+type = "u32"
+word_order = "le"
+name = "Voltage L2-L3"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 17
+type = "u32"
+word_order = "le"
+name = "Voltage L3-L1"
+unit = "V"
+scale = 0.01
+
+# ----- Currents -----
+# Table 0x0008 → protocol 7
+[[registers]]
+address = 7
+type = "u32"
+word_order = "le"
+name = "Current L1"
+unit = "A"
+scale = 0.0001
+
+[[registers]]
+address = 9
+type = "u32"
+word_order = "le"
+name = "Current L2"
+unit = "A"
+scale = 0.0001
+
+[[registers]]
+address = 11
+type = "u32"
+word_order = "le"
+name = "Current L3"
+unit = "A"
+scale = 0.0001
+
+# ----- Active power per phase -----
+# Table 0x0014 → protocol 19
+[[registers]]
+address = 19
+type = "s32"
+word_order = "le"
+name = "Active power L1"
+unit = "W"
+scale = 0.01
+
+[[registers]]
+address = 21
+type = "s32"
+word_order = "le"
+name = "Active power L2"
+unit = "W"
+scale = 0.01
+
+[[registers]]
+address = 23
+type = "s32"
+word_order = "le"
+name = "Active power L3"
+unit = "W"
+scale = 0.01
+
+# ----- Reactive power per phase -----
+# Table 0x001A → protocol 25
+[[registers]]
+address = 25
+type = "s32"
+word_order = "le"
+name = "Reactive power L1"
+unit = "var"
+scale = 0.01
+
+[[registers]]
+address = 27
+type = "s32"
+word_order = "le"
+name = "Reactive power L2"
+unit = "var"
+scale = 0.01
+
+[[registers]]
+address = 29
+type = "s32"
+word_order = "le"
+name = "Reactive power L3"
+unit = "var"
+scale = 0.01
+
+# ----- Apparent power per phase -----
+# Table 0x0020 → protocol 31
+[[registers]]
+address = 31
+type = "u32"
+word_order = "le"
+name = "Apparent power L1"
+unit = "VA"
+scale = 0.01
+
+[[registers]]
+address = 33
+type = "u32"
+word_order = "le"
+name = "Apparent power L2"
+unit = "VA"
+scale = 0.01
+
+[[registers]]
+address = 35
+type = "u32"
+word_order = "le"
+name = "Apparent power L3"
+unit = "VA"
+scale = 0.01
+
+# ----- Power factor per phase -----
+# Table 0x0026 → protocol 37
+[[registers]]
+address = 37
+type = "s32"
+word_order = "le"
+name = "Power factor L1"
+scale = 0.0001
+
+[[registers]]
+address = 39
+type = "s32"
+word_order = "le"
+name = "Power factor L2"
+scale = 0.0001
+
+[[registers]]
+address = 41
+type = "s32"
+word_order = "le"
+name = "Power factor L3"
+scale = 0.0001
+
+# ----- Frequency -----
+# Table 0x0032 → protocol 49 (DMG110/210: ×0.01Hz)
+[[registers]]
+address = 49
+type = "u32"
+word_order = "le"
+name = "Frequency"
+unit = "Hz"
+scale = 0.01

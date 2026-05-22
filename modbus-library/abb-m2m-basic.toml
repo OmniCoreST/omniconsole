@@ -1,0 +1,419 @@
+# ABB M2M Basic — Modbus register map for Omni Console
+#
+# Source: abb-m2m-basic-modbus-protocol.pdf (Technical specification V1.0, 2CSG445012D0201)
+# - 3-phase energy and power quality meter, RS485 Modbus RTU.
+# - Holding registers FC03 only.
+# - All values are 2-word (32-bit); Big-Endian (MSW first).
+# - Two register banks:
+#   - Integer 32-bit bank at 0x1000 (= 4096 decimal): scaled integer readings
+#   - Float 32-bit bank at 0x3000 (= 12288 decimal): IEEE 754 float, SI units (preferred)
+# - This TOML covers the Float 32-bit bank (cleaner, no scaling needed).
+#   Energy accumulators at end of float bank are u32 (*100 scaled).
+# - Factory defaults: slave=1, baud=4800–38400, 8N1/E1/O1.
+
+vendor = "ABB"
+model = "M2M Basic"
+description = "3-phase energy and power quality meter — phase/line V/I, P/Q/S/PF, displacement factor, angles, frequency, THD, unbalance, demands, energy (IEEE 754 float32 + u32 energy, FC03, Big-Endian, 0x3000 bank)."
+
+# ----- Phase-to-neutral and phase-to-phase voltages -----
+# 0x3000 = 12288
+[[registers]]
+address = 12288
+type = "f32"
+name = "Voltage L1-N"
+unit = "V"
+
+[[registers]]
+address = 12290
+type = "f32"
+name = "Voltage L2-N"
+unit = "V"
+
+[[registers]]
+address = 12292
+type = "f32"
+name = "Voltage L3-N"
+unit = "V"
+
+[[registers]]
+address = 12294
+type = "f32"
+name = "Voltage L1-L2"
+unit = "V"
+
+[[registers]]
+address = 12296
+type = "f32"
+name = "Voltage L2-L3"
+unit = "V"
+
+[[registers]]
+address = 12298
+type = "f32"
+name = "Voltage L3-L1"
+unit = "V"
+
+[[registers]]
+address = 12300
+type = "f32"
+name = "System voltage"
+unit = "V"
+
+# ----- Currents -----
+# 0x3010 = 12304
+[[registers]]
+address = 12304
+type = "f32"
+name = "Current L1"
+unit = "A"
+
+[[registers]]
+address = 12306
+type = "f32"
+name = "Current L2"
+unit = "A"
+
+[[registers]]
+address = 12308
+type = "f32"
+name = "Current L3"
+unit = "A"
+
+[[registers]]
+address = 12310
+type = "f32"
+name = "Neutral current"
+unit = "A"
+
+[[registers]]
+address = 12312
+type = "f32"
+name = "System current"
+unit = "A"
+
+# ----- Active power -----
+# 0x301C = 12316
+[[registers]]
+address = 12316
+type = "f32"
+name = "Active power L1"
+unit = "W"
+
+[[registers]]
+address = 12318
+type = "f32"
+name = "Active power L2"
+unit = "W"
+
+[[registers]]
+address = 12320
+type = "f32"
+name = "Active power L3"
+unit = "W"
+
+[[registers]]
+address = 12322
+type = "f32"
+name = "Total active power"
+unit = "W"
+
+# ----- Reactive power -----
+[[registers]]
+address = 12324
+type = "f32"
+name = "Reactive power L1"
+unit = "var"
+
+[[registers]]
+address = 12326
+type = "f32"
+name = "Reactive power L2"
+unit = "var"
+
+[[registers]]
+address = 12328
+type = "f32"
+name = "Reactive power L3"
+unit = "var"
+
+[[registers]]
+address = 12330
+type = "f32"
+name = "Total reactive power"
+unit = "var"
+
+# ----- Apparent power -----
+[[registers]]
+address = 12332
+type = "f32"
+name = "Apparent power L1"
+unit = "VA"
+
+[[registers]]
+address = 12334
+type = "f32"
+name = "Apparent power L2"
+unit = "VA"
+
+[[registers]]
+address = 12336
+type = "f32"
+name = "Apparent power L3"
+unit = "VA"
+
+[[registers]]
+address = 12338
+type = "f32"
+name = "Total apparent power"
+unit = "VA"
+
+# ----- Power factor -----
+# 0x3036 = 12342
+[[registers]]
+address = 12342
+type = "f32"
+name = "Power factor L1"
+
+[[registers]]
+address = 12344
+type = "f32"
+name = "Power factor L2"
+
+[[registers]]
+address = 12346
+type = "f32"
+name = "Power factor L3"
+
+[[registers]]
+address = 12348
+type = "f32"
+name = "Total power factor"
+
+# ----- Displacement factor -----
+[[registers]]
+address = 12350
+type = "f32"
+name = "Displacement factor L1"
+
+[[registers]]
+address = 12352
+type = "f32"
+name = "Displacement factor L2"
+
+[[registers]]
+address = 12354
+type = "f32"
+name = "Displacement factor L3"
+
+[[registers]]
+address = 12356
+type = "f32"
+name = "Displacement factor total"
+
+# ----- Phase angles (power) -----
+# 0x3046 = 12358
+[[registers]]
+address = 12358
+type = "f32"
+name = "Phase angle power L1"
+unit = "°"
+
+[[registers]]
+address = 12360
+type = "f32"
+name = "Phase angle power L2"
+unit = "°"
+
+[[registers]]
+address = 12362
+type = "f32"
+name = "Phase angle power L3"
+unit = "°"
+
+[[registers]]
+address = 12364
+type = "f32"
+name = "Phase angle power total"
+unit = "°"
+
+# ----- Frequency -----
+# 0x304E = 12366
+[[registers]]
+address = 12366
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# ----- Current demands -----
+# 0x3050 = 12368
+[[registers]]
+address = 12368
+type = "f32"
+name = "Current demand L1"
+unit = "A"
+
+[[registers]]
+address = 12370
+type = "f32"
+name = "Current demand L2"
+unit = "A"
+
+[[registers]]
+address = 12372
+type = "f32"
+name = "Current demand L3"
+unit = "A"
+
+# ----- Power demands -----
+[[registers]]
+address = 12374
+type = "f32"
+name = "Active power demand"
+unit = "W"
+
+[[registers]]
+address = 12376
+type = "f32"
+name = "Reactive power demand"
+unit = "var"
+
+[[registers]]
+address = 12378
+type = "f32"
+name = "Apparent power demand"
+unit = "VA"
+
+# ----- Voltage angles -----
+# 0x305C = 12380
+[[registers]]
+address = 12380
+type = "f32"
+name = "Voltage angle L1"
+unit = "°"
+
+[[registers]]
+address = 12382
+type = "f32"
+name = "Voltage angle L2"
+unit = "°"
+
+[[registers]]
+address = 12384
+type = "f32"
+name = "Voltage angle L3"
+unit = "°"
+
+# ----- Current angles -----
+# 0x3062 = 12386
+[[registers]]
+address = 12386
+type = "f32"
+name = "Current angle L1"
+unit = "°"
+
+[[registers]]
+address = 12388
+type = "f32"
+name = "Current angle L2"
+unit = "°"
+
+[[registers]]
+address = 12390
+type = "f32"
+name = "Current angle L3"
+unit = "°"
+
+# ----- Voltage THD -----
+# 0x3068 = 12392
+[[registers]]
+address = 12392
+type = "f32"
+name = "Voltage THD L1"
+unit = "%"
+
+[[registers]]
+address = 12394
+type = "f32"
+name = "Voltage THD L2"
+unit = "%"
+
+[[registers]]
+address = 12396
+type = "f32"
+name = "Voltage THD L3"
+unit = "%"
+
+# ----- Current THD -----
+[[registers]]
+address = 12398
+type = "f32"
+name = "Current THD L1"
+unit = "%"
+
+[[registers]]
+address = 12400
+type = "f32"
+name = "Current THD L2"
+unit = "%"
+
+[[registers]]
+address = 12402
+type = "f32"
+name = "Current THD L3"
+unit = "%"
+
+# ----- Voltage/current unbalance -----
+[[registers]]
+address = 12404
+type = "f32"
+name = "Phase voltage unbalance"
+unit = "%"
+
+[[registers]]
+address = 12406
+type = "f32"
+name = "Line voltage unbalance"
+unit = "%"
+
+[[registers]]
+address = 12408
+type = "f32"
+name = "Current unbalance"
+unit = "%"
+
+# ----- Energy accumulators (u32, *100 scaled, stored in float bank) -----
+# 0x307A = 12410; raw = energy × 100
+[[registers]]
+address = 12410
+type = "u32"
+name = "Active energy import"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 12412
+type = "u32"
+name = "Active energy export"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 12414
+type = "u32"
+name = "Reactive energy import"
+unit = "kvarh"
+scale = 0.01
+
+[[registers]]
+address = 12416
+type = "u32"
+name = "Reactive energy export"
+unit = "kvarh"
+scale = 0.01
+
+[[registers]]
+address = 12418
+type = "u32"
+name = "Apparent energy"
+unit = "kVAh"
+scale = 0.01

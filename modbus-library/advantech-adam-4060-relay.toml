@@ -1,0 +1,12 @@
+# Advantech ADAM-4060 — 4-Channel Relay Output Module
+#
+# Source: advantech-adam-4000-modbus.pdf (Appendix G, Module 9)
+# - 4-channel relay output.
+# - Modbus RTU, FC01 for relay state (coil registers — NOT FC03).
+# - FC01 00017-00020 (coil addr 16-19): Relay Output Value ch0-3 (R/W).
+# - Factory defaults: slave=1, 9600 baud, 8N1.
+# - NOTE: Relay control uses coil function code FC01/FC05, not FC03.
+
+vendor = "Advantech"
+model = "ADAM-4060"
+description = "4-channel relay output module. Relay state via FC01 coils at coil addr 16-19 (R/W). No FC03 measurement registers."

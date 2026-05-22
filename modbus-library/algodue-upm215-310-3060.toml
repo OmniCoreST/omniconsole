@@ -1,0 +1,419 @@
+# Algodue UPM215 / UPM310 / UPM3060 — Modbus register map for Omni Console
+#
+# Source: algodue-upm-upt-modbus-protocol.pdf (Rev. 010, 03/09/2010)
+# - Covers: UPM215 (DIN rail), UPM310 (DIN 96×96), UPM3060 (DIN 144×144).
+# - 3-phase (or single-phase configurable) power quality meters.
+# - FC03 (Read Holding Registers) for all registers listed here.
+# - Two register banks:
+#   - Raw integer bank at 0x0000: 64-bit integers (4 registers), milli-units.
+#   - IEEE float bank at 0x1000: IEEE 754 f32 (2 registers), same milli-units.
+# - This TOML uses the IEEE float bank (0x1000 = 4096 decimal).
+# - All values stored in milli-units: mV→V, mA→A, mW→W etc. → scale=0.001.
+# - Energy in mWh, mvarh, mVAh → scale=0.001 for Wh/varh/VAh.
+# - Factory defaults: slave=1, 9600 baud, 8N1/E1.
+# - (*) = option-dependent register.
+
+vendor = "Algodue"
+model = "UPM215/310/3060"
+description = "3-phase power quality meter — V/I/P/Q/S/PF/COSφ/THD/frequency/energy/demands (f32 milli-units, FC03, 0x1000 IEEE float bank). Covers UPM215, UPM310, UPM3060."
+
+# ----- Voltages (f32, stored in mV, scale=0.001 → V) -----
+# 0x1000 = 4096
+[[registers]]
+address = 4096
+type = "f32"
+name = "System voltage"
+unit = "V"
+scale = 0.001
+
+[[registers]]
+address = 4098
+type = "f32"
+name = "Voltage L1-N"
+unit = "V"
+scale = 0.001
+
+[[registers]]
+address = 4100
+type = "f32"
+name = "Voltage L2-N"
+unit = "V"
+scale = 0.001
+
+[[registers]]
+address = 4102
+type = "f32"
+name = "Voltage L3-N"
+unit = "V"
+scale = 0.001
+
+[[registers]]
+address = 4104
+type = "f32"
+name = "Voltage L1-L2"
+unit = "V"
+scale = 0.001
+
+[[registers]]
+address = 4106
+type = "f32"
+name = "Voltage L2-L3"
+unit = "V"
+scale = 0.001
+
+[[registers]]
+address = 4108
+type = "f32"
+name = "Voltage L3-L1"
+unit = "V"
+scale = 0.001
+
+# ----- Currents (f32, stored in mA, scale=0.001 → A) -----
+# 0x100E = 4110
+[[registers]]
+address = 4110
+type = "f32"
+name = "System current"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4112
+type = "f32"
+name = "Current L1"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4114
+type = "f32"
+name = "Current L2"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4116
+type = "f32"
+name = "Current L3"
+unit = "A"
+scale = 0.001
+
+# ----- Power factor -----
+# 0x1016 = 4118
+[[registers]]
+address = 4118
+type = "f32"
+name = "System power factor"
+
+[[registers]]
+address = 4120
+type = "f32"
+name = "Power factor L1"
+
+[[registers]]
+address = 4122
+type = "f32"
+name = "Power factor L2"
+
+[[registers]]
+address = 4124
+type = "f32"
+name = "Power factor L3"
+
+# ----- COSφ (*) -----
+# 0x1020 = 4128
+[[registers]]
+address = 4128
+type = "f32"
+name = "COSφ L1"
+
+[[registers]]
+address = 4130
+type = "f32"
+name = "COSφ L2"
+
+[[registers]]
+address = 4132
+type = "f32"
+name = "COSφ L3"
+
+# ----- Apparent power (f32, stored in mVA, scale=0.001 → VA) -----
+# 0x1026 = 4134
+[[registers]]
+address = 4134
+type = "f32"
+name = "System apparent power"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4136
+type = "f32"
+name = "Apparent power L1"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4138
+type = "f32"
+name = "Apparent power L2"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4140
+type = "f32"
+name = "Apparent power L3"
+unit = "VA"
+scale = 0.001
+
+# ----- Active power (f32, stored in mW, scale=0.001 → W) -----
+# 0x102E = 4142
+[[registers]]
+address = 4142
+type = "f32"
+name = "System active power"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4144
+type = "f32"
+name = "Active power L1"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4146
+type = "f32"
+name = "Active power L2"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4148
+type = "f32"
+name = "Active power L3"
+unit = "W"
+scale = 0.001
+
+# ----- Reactive power (f32, stored in mvar, scale=0.001 → var) -----
+# 0x1036 = 4150
+[[registers]]
+address = 4150
+type = "f32"
+name = "System reactive power"
+unit = "var"
+scale = 0.001
+
+[[registers]]
+address = 4152
+type = "f32"
+name = "Reactive power L1"
+unit = "var"
+scale = 0.001
+
+[[registers]]
+address = 4154
+type = "f32"
+name = "Reactive power L2"
+unit = "var"
+scale = 0.001
+
+[[registers]]
+address = 4156
+type = "f32"
+name = "Reactive power L3"
+unit = "var"
+scale = 0.001
+
+# ----- Energy (f32, stored in mWh/mvarh/mVAh, scale=0.001 → Wh/varh/VAh) -----
+# 0x103E = 4158
+[[registers]]
+address = 4158
+type = "f32"
+name = "Active energy import"
+unit = "Wh"
+scale = 0.001
+
+[[registers]]
+address = 4160
+type = "f32"
+name = "Reactive inductive energy import"
+unit = "varh"
+scale = 0.001
+
+[[registers]]
+address = 4162
+type = "f32"
+name = "Active energy export"
+unit = "Wh"
+scale = 0.001
+
+[[registers]]
+address = 4164
+type = "f32"
+name = "Reactive inductive energy export"
+unit = "varh"
+scale = 0.001
+
+# ----- Frequency (f32, stored in mHz, scale=0.001 → Hz) -----
+# 0x1046 = 4166
+[[registers]]
+address = 4166
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+scale = 0.001
+
+# ----- Voltage THD (f32, stored in m%, scale=0.001 → %) -----
+# 0x1048 = 4168
+[[registers]]
+address = 4168
+type = "f32"
+name = "Voltage THD L1"
+unit = "%"
+scale = 0.001
+
+[[registers]]
+address = 4170
+type = "f32"
+name = "Voltage THD L2"
+unit = "%"
+scale = 0.001
+
+[[registers]]
+address = 4172
+type = "f32"
+name = "Voltage THD L3"
+unit = "%"
+scale = 0.001
+
+# ----- Current THD (f32, stored in m%, scale=0.001 → %) -----
+# 0x104E = 4174
+[[registers]]
+address = 4174
+type = "f32"
+name = "Current THD L1"
+unit = "%"
+scale = 0.001
+
+[[registers]]
+address = 4176
+type = "f32"
+name = "Current THD L2"
+unit = "%"
+scale = 0.001
+
+[[registers]]
+address = 4178
+type = "f32"
+name = "Current THD L3"
+unit = "%"
+scale = 0.001
+
+# ----- Reactive capacitive energy -----
+# 0x1058 = 4184
+[[registers]]
+address = 4184
+type = "f32"
+name = "Reactive capacitive energy import"
+unit = "varh"
+scale = 0.001
+
+[[registers]]
+address = 4186
+type = "f32"
+name = "Reactive capacitive energy export"
+unit = "varh"
+scale = 0.001
+
+# ----- Apparent energy -----
+# 0x105C = 4188
+[[registers]]
+address = 4188
+type = "f32"
+name = "Apparent energy import"
+unit = "VAh"
+scale = 0.001
+
+[[registers]]
+address = 4190
+type = "f32"
+name = "Apparent energy export"
+unit = "VAh"
+scale = 0.001
+
+# ----- Neutral current -----
+# 0x1060 = 4192
+[[registers]]
+address = 4192
+type = "f32"
+name = "Neutral current"
+unit = "A"
+scale = 0.001
+
+# ----- Demand and maximum values -----
+# 0x1062 = 4194
+[[registers]]
+address = 4194
+type = "f32"
+name = "System current demand"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4196
+type = "f32"
+name = "System active power demand"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4198
+type = "f32"
+name = "System apparent power demand"
+unit = "VA"
+scale = 0.001
+
+[[registers]]
+address = 4200
+type = "f32"
+name = "Maximum current L1"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4202
+type = "f32"
+name = "Maximum current L2"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4204
+type = "f32"
+name = "Maximum current L3"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4206
+type = "f32"
+name = "Maximum system current demand"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4208
+type = "f32"
+name = "Maximum system active power demand"
+unit = "W"
+scale = 0.001
+
+[[registers]]
+address = 4210
+type = "f32"
+name = "Maximum system apparent power demand"
+unit = "VA"
+scale = 0.001

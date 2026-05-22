@@ -1,0 +1,999 @@
+# Moxa ioLogik E2242 Ethernet Remote I/O — 4-channel AI + 12-channel DIO
+#
+# Source: ioLogik E2200 Series User Manual Edition 7.0, September 2018 (Appendix I)
+# Protocol: Modbus/TCP port 502
+#
+# DIO channels (ch0-11) are configurable as DI or DO via direction registers
+# FC01 (0xxxx R/W): DIO bit ctrl ch0-11 (0x0000-0x002F), DI counter ctrl (0x0030-0x0077)
+# FC02 (1xxxx R): DIO bit value ch0-11 (0x0000-0x000B)
+# FC04 (3xxxx R): DI count value u32 hi+lo ch0-11 (0x0000-0x0017),
+#   AI_rawValue ch0-3 (0x0200-0x0203)
+# FC03 (4xxxx R/W): primary register space below
+#
+# CAUTION: AI_scaleValue f32 at 0x0130-0x0137 uses reversed word order —
+#   lo-word at even address, hi-word at odd address (opposite of normal convention)
+
+vendor = "Moxa"
+model = "ioLogik E2242"
+description = "4-AI + 12-DIO Modbus/TCP Ethernet remote I/O (port 502). FC03: DO_pulseOutputCount u32 hi+lo ch0-11 (0-23), DO_pulseLowWidth u32 hi+lo ch0-11 (0x0018-0x002F=24-47, 2 words/ch), DO_pulseHighWidth u32 hi+lo ch0-11 (0x0030-0x0047=48-71, 2 words/ch), DO_mode ch0-11 (0x0048-0x0053=72-83, 0=DO 1=Pulse), DI_countFilter ch0-11 (0x0054-0x005F=84-95), DI_mode ch0-11 (0x0060-0x006B=96-107, 0=DI 1=Count), AI_enable ch0-3 (0x006C-0x006F=108-111, 1=Enable 0=Disable), DO_value ch0-11 (0x0080-0x008B=128-139), DO_powerOnValue ch0-11 (0x008C-0x0097=140-151), DO_safeModeValue ch0-11 (0x0098-0x00A3=152-163), AI_scalingEnable ch0-3 (0x011C-0x011F=284-287), AI_rawMin ch0-3 (0x0120-0x0123=288-291), AI_rawMax ch0-3 (0x0124-0x0127=292-295), AI_scaleMin ch0-3 (0x0128-0x012B=296-299), AI_scaleMax ch0-3 (0x012C-0x012F=300-303), AI_scaleValue f32 ch0-3 (0x0130-0x0137=304-311; REVERSED word order: lo-word at even addr hi-word at odd addr), IntReg00-23 working (0x0150-0x0167=336-359), AI_range ch0-3 (0x0200-0x0203=512-515, 0=+/-150mV 1=+/-500mV 2=+/-5V 3=+/-10V 4=0-20mA 5=4-20mA 6=0-150mV 7=0-500mV 8=0-5V 9=0-10V), DI_counterModeValue ch0-11 (0x0D00-0x0D0B=3328-3339). FC04: DI_countValue u32 hi+lo ch0-11, AI_rawValue ch0-3 (0x0200-0x0203). FC01: DIO bit ctrl, DI counter ctrl. FC02: DIO_bitValue ch0-11."
+
+# ===== FC03 Holding Registers =====
+
+# DO pulse output count ch0-11 (u32, hi-word + lo-word consecutive pairs, 0x0000-0x0017)
+[[registers]]
+address = 0
+type = "u16"
+name = "DO_pulseOutputCount ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "DO_pulseOutputCount ch0 lo-word"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "DO_pulseOutputCount ch1 hi-word"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "DO_pulseOutputCount ch1 lo-word"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "DO_pulseOutputCount ch2 hi-word"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "DO_pulseOutputCount ch2 lo-word"
+
+[[registers]]
+address = 6
+type = "u16"
+name = "DO_pulseOutputCount ch3 hi-word"
+
+[[registers]]
+address = 7
+type = "u16"
+name = "DO_pulseOutputCount ch3 lo-word"
+
+[[registers]]
+address = 8
+type = "u16"
+name = "DO_pulseOutputCount ch4 hi-word"
+
+[[registers]]
+address = 9
+type = "u16"
+name = "DO_pulseOutputCount ch4 lo-word"
+
+[[registers]]
+address = 10
+type = "u16"
+name = "DO_pulseOutputCount ch5 hi-word"
+
+[[registers]]
+address = 11
+type = "u16"
+name = "DO_pulseOutputCount ch5 lo-word"
+
+[[registers]]
+address = 12
+type = "u16"
+name = "DO_pulseOutputCount ch6 hi-word"
+
+[[registers]]
+address = 13
+type = "u16"
+name = "DO_pulseOutputCount ch6 lo-word"
+
+[[registers]]
+address = 14
+type = "u16"
+name = "DO_pulseOutputCount ch7 hi-word"
+
+[[registers]]
+address = 15
+type = "u16"
+name = "DO_pulseOutputCount ch7 lo-word"
+
+[[registers]]
+address = 16
+type = "u16"
+name = "DO_pulseOutputCount ch8 hi-word"
+
+[[registers]]
+address = 17
+type = "u16"
+name = "DO_pulseOutputCount ch8 lo-word"
+
+[[registers]]
+address = 18
+type = "u16"
+name = "DO_pulseOutputCount ch9 hi-word"
+
+[[registers]]
+address = 19
+type = "u16"
+name = "DO_pulseOutputCount ch9 lo-word"
+
+[[registers]]
+address = 20
+type = "u16"
+name = "DO_pulseOutputCount ch10 hi-word"
+
+[[registers]]
+address = 21
+type = "u16"
+name = "DO_pulseOutputCount ch10 lo-word"
+
+[[registers]]
+address = 22
+type = "u16"
+name = "DO_pulseOutputCount ch11 hi-word"
+
+[[registers]]
+address = 23
+type = "u16"
+name = "DO_pulseOutputCount ch11 lo-word"
+
+# DO pulse low signal width ch0-11 (u32, 2 words/ch, 0x0018-0x002F)
+[[registers]]
+address = 24
+type = "u16"
+name = "DO_pulseLowWidth ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 25
+type = "u16"
+name = "DO_pulseLowWidth ch0 lo-word"
+
+[[registers]]
+address = 26
+type = "u16"
+name = "DO_pulseLowWidth ch1 hi-word"
+
+[[registers]]
+address = 27
+type = "u16"
+name = "DO_pulseLowWidth ch1 lo-word"
+
+[[registers]]
+address = 28
+type = "u16"
+name = "DO_pulseLowWidth ch2 hi-word"
+
+[[registers]]
+address = 29
+type = "u16"
+name = "DO_pulseLowWidth ch2 lo-word"
+
+[[registers]]
+address = 30
+type = "u16"
+name = "DO_pulseLowWidth ch3 hi-word"
+
+[[registers]]
+address = 31
+type = "u16"
+name = "DO_pulseLowWidth ch3 lo-word"
+
+[[registers]]
+address = 32
+type = "u16"
+name = "DO_pulseLowWidth ch4 hi-word"
+
+[[registers]]
+address = 33
+type = "u16"
+name = "DO_pulseLowWidth ch4 lo-word"
+
+[[registers]]
+address = 34
+type = "u16"
+name = "DO_pulseLowWidth ch5 hi-word"
+
+[[registers]]
+address = 35
+type = "u16"
+name = "DO_pulseLowWidth ch5 lo-word"
+
+[[registers]]
+address = 36
+type = "u16"
+name = "DO_pulseLowWidth ch6 hi-word"
+
+[[registers]]
+address = 37
+type = "u16"
+name = "DO_pulseLowWidth ch6 lo-word"
+
+[[registers]]
+address = 38
+type = "u16"
+name = "DO_pulseLowWidth ch7 hi-word"
+
+[[registers]]
+address = 39
+type = "u16"
+name = "DO_pulseLowWidth ch7 lo-word"
+
+[[registers]]
+address = 40
+type = "u16"
+name = "DO_pulseLowWidth ch8 hi-word"
+
+[[registers]]
+address = 41
+type = "u16"
+name = "DO_pulseLowWidth ch8 lo-word"
+
+[[registers]]
+address = 42
+type = "u16"
+name = "DO_pulseLowWidth ch9 hi-word"
+
+[[registers]]
+address = 43
+type = "u16"
+name = "DO_pulseLowWidth ch9 lo-word"
+
+[[registers]]
+address = 44
+type = "u16"
+name = "DO_pulseLowWidth ch10 hi-word"
+
+[[registers]]
+address = 45
+type = "u16"
+name = "DO_pulseLowWidth ch10 lo-word"
+
+[[registers]]
+address = 46
+type = "u16"
+name = "DO_pulseLowWidth ch11 hi-word"
+
+[[registers]]
+address = 47
+type = "u16"
+name = "DO_pulseLowWidth ch11 lo-word"
+
+# DO pulse high signal width ch0-11 (u32, 2 words/ch, 0x0030-0x0047)
+[[registers]]
+address = 48
+type = "u16"
+name = "DO_pulseHighWidth ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 49
+type = "u16"
+name = "DO_pulseHighWidth ch0 lo-word"
+
+[[registers]]
+address = 50
+type = "u16"
+name = "DO_pulseHighWidth ch1 hi-word"
+
+[[registers]]
+address = 51
+type = "u16"
+name = "DO_pulseHighWidth ch1 lo-word"
+
+[[registers]]
+address = 52
+type = "u16"
+name = "DO_pulseHighWidth ch2 hi-word"
+
+[[registers]]
+address = 53
+type = "u16"
+name = "DO_pulseHighWidth ch2 lo-word"
+
+[[registers]]
+address = 54
+type = "u16"
+name = "DO_pulseHighWidth ch3 hi-word"
+
+[[registers]]
+address = 55
+type = "u16"
+name = "DO_pulseHighWidth ch3 lo-word"
+
+[[registers]]
+address = 56
+type = "u16"
+name = "DO_pulseHighWidth ch4 hi-word"
+
+[[registers]]
+address = 57
+type = "u16"
+name = "DO_pulseHighWidth ch4 lo-word"
+
+[[registers]]
+address = 58
+type = "u16"
+name = "DO_pulseHighWidth ch5 hi-word"
+
+[[registers]]
+address = 59
+type = "u16"
+name = "DO_pulseHighWidth ch5 lo-word"
+
+[[registers]]
+address = 60
+type = "u16"
+name = "DO_pulseHighWidth ch6 hi-word"
+
+[[registers]]
+address = 61
+type = "u16"
+name = "DO_pulseHighWidth ch6 lo-word"
+
+[[registers]]
+address = 62
+type = "u16"
+name = "DO_pulseHighWidth ch7 hi-word"
+
+[[registers]]
+address = 63
+type = "u16"
+name = "DO_pulseHighWidth ch7 lo-word"
+
+[[registers]]
+address = 64
+type = "u16"
+name = "DO_pulseHighWidth ch8 hi-word"
+
+[[registers]]
+address = 65
+type = "u16"
+name = "DO_pulseHighWidth ch8 lo-word"
+
+[[registers]]
+address = 66
+type = "u16"
+name = "DO_pulseHighWidth ch9 hi-word"
+
+[[registers]]
+address = 67
+type = "u16"
+name = "DO_pulseHighWidth ch9 lo-word"
+
+[[registers]]
+address = 68
+type = "u16"
+name = "DO_pulseHighWidth ch10 hi-word"
+
+[[registers]]
+address = 69
+type = "u16"
+name = "DO_pulseHighWidth ch10 lo-word"
+
+[[registers]]
+address = 70
+type = "u16"
+name = "DO_pulseHighWidth ch11 hi-word"
+
+[[registers]]
+address = 71
+type = "u16"
+name = "DO_pulseHighWidth ch11 lo-word"
+
+# DO mode ch0-11 (0x0048-0x0053)
+[[registers]]
+address = 72
+type = "u16"
+name = "DO_mode ch0 (0=DO, 1=Pulse; R/W)"
+
+[[registers]]
+address = 73
+type = "u16"
+name = "DO_mode ch1"
+
+[[registers]]
+address = 74
+type = "u16"
+name = "DO_mode ch2"
+
+[[registers]]
+address = 75
+type = "u16"
+name = "DO_mode ch3"
+
+[[registers]]
+address = 76
+type = "u16"
+name = "DO_mode ch4"
+
+[[registers]]
+address = 77
+type = "u16"
+name = "DO_mode ch5"
+
+[[registers]]
+address = 78
+type = "u16"
+name = "DO_mode ch6"
+
+[[registers]]
+address = 79
+type = "u16"
+name = "DO_mode ch7"
+
+[[registers]]
+address = 80
+type = "u16"
+name = "DO_mode ch8"
+
+[[registers]]
+address = 81
+type = "u16"
+name = "DO_mode ch9"
+
+[[registers]]
+address = 82
+type = "u16"
+name = "DO_mode ch10"
+
+[[registers]]
+address = 83
+type = "u16"
+name = "DO_mode ch11"
+
+# DI count filter ch0-11 (0x0054-0x005F)
+[[registers]]
+address = 84
+type = "u16"
+name = "DI_countFilter ch0 (R/W)"
+
+[[registers]]
+address = 85
+type = "u16"
+name = "DI_countFilter ch1"
+
+[[registers]]
+address = 86
+type = "u16"
+name = "DI_countFilter ch2"
+
+[[registers]]
+address = 87
+type = "u16"
+name = "DI_countFilter ch3"
+
+[[registers]]
+address = 88
+type = "u16"
+name = "DI_countFilter ch4"
+
+[[registers]]
+address = 89
+type = "u16"
+name = "DI_countFilter ch5"
+
+[[registers]]
+address = 90
+type = "u16"
+name = "DI_countFilter ch6"
+
+[[registers]]
+address = 91
+type = "u16"
+name = "DI_countFilter ch7"
+
+[[registers]]
+address = 92
+type = "u16"
+name = "DI_countFilter ch8"
+
+[[registers]]
+address = 93
+type = "u16"
+name = "DI_countFilter ch9"
+
+[[registers]]
+address = 94
+type = "u16"
+name = "DI_countFilter ch10"
+
+[[registers]]
+address = 95
+type = "u16"
+name = "DI_countFilter ch11"
+
+# DI mode ch0-11 (0x0060-0x006B)
+[[registers]]
+address = 96
+type = "u16"
+name = "DI_mode ch0 (0=DI, 1=Count; R/W)"
+
+[[registers]]
+address = 97
+type = "u16"
+name = "DI_mode ch1"
+
+[[registers]]
+address = 98
+type = "u16"
+name = "DI_mode ch2"
+
+[[registers]]
+address = 99
+type = "u16"
+name = "DI_mode ch3"
+
+[[registers]]
+address = 100
+type = "u16"
+name = "DI_mode ch4"
+
+[[registers]]
+address = 101
+type = "u16"
+name = "DI_mode ch5"
+
+[[registers]]
+address = 102
+type = "u16"
+name = "DI_mode ch6"
+
+[[registers]]
+address = 103
+type = "u16"
+name = "DI_mode ch7"
+
+[[registers]]
+address = 104
+type = "u16"
+name = "DI_mode ch8"
+
+[[registers]]
+address = 105
+type = "u16"
+name = "DI_mode ch9"
+
+[[registers]]
+address = 106
+type = "u16"
+name = "DI_mode ch10"
+
+[[registers]]
+address = 107
+type = "u16"
+name = "DI_mode ch11"
+
+# AI enable ch0-3 (0x006C-0x006F)
+[[registers]]
+address = 108
+type = "u16"
+name = "AI_enable ch0 (1=Enable, 0=Disable; R/W)"
+
+[[registers]]
+address = 109
+type = "u16"
+name = "AI_enable ch1"
+
+[[registers]]
+address = 110
+type = "u16"
+name = "AI_enable ch2"
+
+[[registers]]
+address = 111
+type = "u16"
+name = "AI_enable ch3"
+
+# DO value ch0-11 (0x0080-0x008B)
+[[registers]]
+address = 128
+type = "u16"
+name = "DO_value ch0 (0=Off, 1=On; R/W)"
+
+[[registers]]
+address = 129
+type = "u16"
+name = "DO_value ch1"
+
+[[registers]]
+address = 130
+type = "u16"
+name = "DO_value ch2"
+
+[[registers]]
+address = 131
+type = "u16"
+name = "DO_value ch3"
+
+[[registers]]
+address = 132
+type = "u16"
+name = "DO_value ch4"
+
+[[registers]]
+address = 133
+type = "u16"
+name = "DO_value ch5"
+
+[[registers]]
+address = 134
+type = "u16"
+name = "DO_value ch6"
+
+[[registers]]
+address = 135
+type = "u16"
+name = "DO_value ch7"
+
+[[registers]]
+address = 136
+type = "u16"
+name = "DO_value ch8"
+
+[[registers]]
+address = 137
+type = "u16"
+name = "DO_value ch9"
+
+[[registers]]
+address = 138
+type = "u16"
+name = "DO_value ch10"
+
+[[registers]]
+address = 139
+type = "u16"
+name = "DO_value ch11"
+
+# DO power-on value ch0-11 (0x008C-0x0097)
+[[registers]]
+address = 140
+type = "u16"
+name = "DO_powerOnValue ch0 (0=Off, 1=On; R/W)"
+
+[[registers]]
+address = 141
+type = "u16"
+name = "DO_powerOnValue ch1"
+
+[[registers]]
+address = 142
+type = "u16"
+name = "DO_powerOnValue ch2"
+
+[[registers]]
+address = 143
+type = "u16"
+name = "DO_powerOnValue ch3"
+
+[[registers]]
+address = 144
+type = "u16"
+name = "DO_powerOnValue ch4"
+
+[[registers]]
+address = 145
+type = "u16"
+name = "DO_powerOnValue ch5"
+
+[[registers]]
+address = 146
+type = "u16"
+name = "DO_powerOnValue ch6"
+
+[[registers]]
+address = 147
+type = "u16"
+name = "DO_powerOnValue ch7"
+
+[[registers]]
+address = 148
+type = "u16"
+name = "DO_powerOnValue ch8"
+
+[[registers]]
+address = 149
+type = "u16"
+name = "DO_powerOnValue ch9"
+
+[[registers]]
+address = 150
+type = "u16"
+name = "DO_powerOnValue ch10"
+
+[[registers]]
+address = 151
+type = "u16"
+name = "DO_powerOnValue ch11"
+
+# DO safe mode value ch0-11 (0x0098-0x00A3)
+[[registers]]
+address = 152
+type = "u16"
+name = "DO_safeModeValue ch0 (0=Off, 1=On; R/W)"
+
+[[registers]]
+address = 153
+type = "u16"
+name = "DO_safeModeValue ch1"
+
+[[registers]]
+address = 154
+type = "u16"
+name = "DO_safeModeValue ch2"
+
+[[registers]]
+address = 155
+type = "u16"
+name = "DO_safeModeValue ch3"
+
+[[registers]]
+address = 156
+type = "u16"
+name = "DO_safeModeValue ch4"
+
+[[registers]]
+address = 157
+type = "u16"
+name = "DO_safeModeValue ch5"
+
+[[registers]]
+address = 158
+type = "u16"
+name = "DO_safeModeValue ch6"
+
+[[registers]]
+address = 159
+type = "u16"
+name = "DO_safeModeValue ch7"
+
+[[registers]]
+address = 160
+type = "u16"
+name = "DO_safeModeValue ch8"
+
+[[registers]]
+address = 161
+type = "u16"
+name = "DO_safeModeValue ch9"
+
+[[registers]]
+address = 162
+type = "u16"
+name = "DO_safeModeValue ch10"
+
+[[registers]]
+address = 163
+type = "u16"
+name = "DO_safeModeValue ch11"
+
+# AI channel scaling enable ch0-3 (0x011C-0x011F)
+[[registers]]
+address = 284
+type = "u16"
+name = "AI_scalingEnable ch0 (0=Disable, 1=Enable; R/W)"
+
+[[registers]]
+address = 285
+type = "u16"
+name = "AI_scalingEnable ch1"
+
+[[registers]]
+address = 286
+type = "u16"
+name = "AI_scalingEnable ch2"
+
+[[registers]]
+address = 287
+type = "u16"
+name = "AI_scalingEnable ch3"
+
+# AI channel RAW min value ch0-3 (0x0120-0x0123)
+[[registers]]
+address = 288
+type = "u16"
+name = "AI_rawMin ch0 (R/W)"
+
+[[registers]]
+address = 289
+type = "u16"
+name = "AI_rawMin ch1"
+
+[[registers]]
+address = 290
+type = "u16"
+name = "AI_rawMin ch2"
+
+[[registers]]
+address = 291
+type = "u16"
+name = "AI_rawMin ch3"
+
+# AI channel RAW max value ch0-3 (0x0124-0x0127)
+[[registers]]
+address = 292
+type = "u16"
+name = "AI_rawMax ch0 (R/W)"
+
+[[registers]]
+address = 293
+type = "u16"
+name = "AI_rawMax ch1"
+
+[[registers]]
+address = 294
+type = "u16"
+name = "AI_rawMax ch2"
+
+[[registers]]
+address = 295
+type = "u16"
+name = "AI_rawMax ch3"
+
+# AI channel scale min value ch0-3 (0x0128-0x012B)
+[[registers]]
+address = 296
+type = "u16"
+name = "AI_scaleMin ch0 (R/W)"
+
+[[registers]]
+address = 297
+type = "u16"
+name = "AI_scaleMin ch1"
+
+[[registers]]
+address = 298
+type = "u16"
+name = "AI_scaleMin ch2"
+
+[[registers]]
+address = 299
+type = "u16"
+name = "AI_scaleMin ch3"
+
+# AI channel scale max value ch0-3 (0x012C-0x012F)
+[[registers]]
+address = 300
+type = "u16"
+name = "AI_scaleMax ch0 (R/W)"
+
+[[registers]]
+address = 301
+type = "u16"
+name = "AI_scaleMax ch1"
+
+[[registers]]
+address = 302
+type = "u16"
+name = "AI_scaleMax ch2"
+
+[[registers]]
+address = 303
+type = "u16"
+name = "AI_scaleMax ch3"
+
+# AI scale value float ch0-3 (f32, 0x0130-0x0137)
+# CAUTION: reversed word order — lo-word at even address, hi-word at odd address
+[[registers]]
+address = 304
+type = "u16"
+name = "AI_scaleValue ch0 lo-word (f32 REVERSED; lo@even hi@odd; R/W)"
+
+[[registers]]
+address = 305
+type = "u16"
+name = "AI_scaleValue ch0 hi-word"
+
+[[registers]]
+address = 306
+type = "u16"
+name = "AI_scaleValue ch1 lo-word"
+
+[[registers]]
+address = 307
+type = "u16"
+name = "AI_scaleValue ch1 hi-word"
+
+[[registers]]
+address = 308
+type = "u16"
+name = "AI_scaleValue ch2 lo-word"
+
+[[registers]]
+address = 309
+type = "u16"
+name = "AI_scaleValue ch2 hi-word"
+
+[[registers]]
+address = 310
+type = "u16"
+name = "AI_scaleValue ch3 lo-word"
+
+[[registers]]
+address = 311
+type = "u16"
+name = "AI_scaleValue ch3 hi-word"
+
+# AI range ch0-3 (0x0200-0x0203)
+[[registers]]
+address = 512
+type = "u16"
+name = "AI_range ch0 (0=+/-150mV, 1=+/-500mV, 2=+/-5V, 3=+/-10V, 4=0-20mA, 5=4-20mA, 6=0-150mV, 7=0-500mV, 8=0-5V, 9=0-10V; R/W)"
+
+[[registers]]
+address = 513
+type = "u16"
+name = "AI_range ch1"
+
+[[registers]]
+address = 514
+type = "u16"
+name = "AI_range ch2"
+
+[[registers]]
+address = 515
+type = "u16"
+name = "AI_range ch3"
+
+# DI counter mode value ch0-11 (0x0D00-0x0D0B)
+[[registers]]
+address = 3328
+type = "u16"
+name = "DI_counterModeValue ch0 (R)"
+
+[[registers]]
+address = 3329
+type = "u16"
+name = "DI_counterModeValue ch1"
+
+[[registers]]
+address = 3330
+type = "u16"
+name = "DI_counterModeValue ch2"
+
+[[registers]]
+address = 3331
+type = "u16"
+name = "DI_counterModeValue ch3"
+
+[[registers]]
+address = 3332
+type = "u16"
+name = "DI_counterModeValue ch4"
+
+[[registers]]
+address = 3333
+type = "u16"
+name = "DI_counterModeValue ch5"
+
+[[registers]]
+address = 3334
+type = "u16"
+name = "DI_counterModeValue ch6"
+
+[[registers]]
+address = 3335
+type = "u16"
+name = "DI_counterModeValue ch7"
+
+[[registers]]
+address = 3336
+type = "u16"
+name = "DI_counterModeValue ch8"
+
+[[registers]]
+address = 3337
+type = "u16"
+name = "DI_counterModeValue ch9"
+
+[[registers]]
+address = 3338
+type = "u16"
+name = "DI_counterModeValue ch10"
+
+[[registers]]
+address = 3339
+type = "u16"
+name = "DI_counterModeValue ch11"

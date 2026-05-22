@@ -1,0 +1,118 @@
+# Moxa ioLogik E1262 Remote Ethernet I/O — 8-channel Thermocouple
+#
+# Source: ioLogik E1200 Series User Manual V16.2, August 2025 (Appendix A)
+# Protocol: Modbus/TCP (port 502); Modbus/TCP ID default = 1
+#
+# TC channels (ch0-7):
+#   FC04 addr 2048-2063 (2 words/ch, len 16): TC_multipliedEngineeringValue hi/lo
+#         (unit: 0.1 °C/°F or 0.0001 mV, R)
+#   FC04 addr 2064-2079 (2 words/ch, len 16): TC_scaledValue hi/lo (u32, R)
+#   FC04 addr 2080-2095 (2 words/ch, len 16): TC_multipliedEngineeringValueMin hi/lo (R)
+#   FC04 addr 2096-2111 (2 words/ch, len 16): TC_multipliedEngineeringValueMax hi/lo (R)
+#   FC04 addr 2112-2127 (2 words/ch, len 16): TC_scaledValueMin hi/lo (u32, R)
+#   FC04 addr 2128-2143 (2 words/ch, len 16): TC_scaledValueMax hi/lo (u32, R)
+#   FC01 addr 4177-4184 (len 8): TC_resetMinValue ch0-7 (1=reset min; R/W)
+#   FC01 addr 4185-4192 (len 8): TC_resetMaxValue ch0-7 (1=reset max; R/W)
+#   FC01 addr 4193-4200 (len 8): TC_CJC ch0-7 (CJC calibration start; R/W)
+# FC03 addr 2144-2151: TC_refEngValue ch0-3 float calibration reference (2 words/ch)
+#   NOTE: document shows length=8, type="2 words" for 8 channels at addr 2144;
+#         this may be 8 registers total (4 channels × 2 words) or 16 (8 × 2).
+# System FC03 (E1262 exception): modelName at FC03 addr 5000 (not FC04 as in other models)
+#   FC04 system: deviceUpTime@5020, lanMac@5024, lanIp@5027, firmwareVersion@5029,
+#                firmwareBuildDate@5031, deviceName@5040
+
+vendor = "Moxa"
+model = "ioLogik E1262"
+description = "8-TC remote Ethernet I/O, Modbus/TCP. FC04: TC_multipliedEngineeringValue unit 0.1°C/°F or 0.0001mV hi/lo (addr 2048-2063), TC_scaledValue u32 hi/lo (2064-2079), TC_multipliedEngineeringValueMin hi/lo (2080-2095), TC_multipliedEngineeringValueMax hi/lo (2096-2111), TC_scaledValueMin (2112-2127), TC_scaledValueMax (2128-2143). FC01: TC_resetMinValue (4177-4184), TC_resetMaxValue (4185-4192), TC_CJC calibration start (4193-4200). FC03: TC_refEngValue float ch0-3 (addr 2144-2151), modelName (addr 5000, 10 words, R/W — NOTE: FC03 not FC04 for E1262)."
+
+# ===== FC03 Holding Registers =====
+
+[[registers]]
+address = 2144
+type = "u16"
+name = "TC_refEngValue ch0 hi-word (float, TC calibration reference)"
+
+[[registers]]
+address = 2145
+type = "u16"
+name = "TC_refEngValue ch0 lo-word"
+
+[[registers]]
+address = 2146
+type = "u16"
+name = "TC_refEngValue ch1 hi-word"
+
+[[registers]]
+address = 2147
+type = "u16"
+name = "TC_refEngValue ch1 lo-word"
+
+[[registers]]
+address = 2148
+type = "u16"
+name = "TC_refEngValue ch2 hi-word"
+
+[[registers]]
+address = 2149
+type = "u16"
+name = "TC_refEngValue ch2 lo-word"
+
+[[registers]]
+address = 2150
+type = "u16"
+name = "TC_refEngValue ch3 hi-word"
+
+[[registers]]
+address = 2151
+type = "u16"
+name = "TC_refEngValue ch3 lo-word"
+
+[[registers]]
+address = 5000
+type = "u16"
+name = "modelName word 0 (ASCII; FC03 for E1262, unlike other E1200 models using FC04)"
+
+[[registers]]
+address = 5001
+type = "u16"
+name = "modelName word 1"
+
+[[registers]]
+address = 5002
+type = "u16"
+name = "modelName word 2"
+
+[[registers]]
+address = 5003
+type = "u16"
+name = "modelName word 3"
+
+[[registers]]
+address = 5004
+type = "u16"
+name = "modelName word 4"
+
+[[registers]]
+address = 5005
+type = "u16"
+name = "modelName word 5"
+
+[[registers]]
+address = 5006
+type = "u16"
+name = "modelName word 6"
+
+[[registers]]
+address = 5007
+type = "u16"
+name = "modelName word 7"
+
+[[registers]]
+address = 5008
+type = "u16"
+name = "modelName word 8"
+
+[[registers]]
+address = 5009
+type = "u16"
+name = "modelName word 9"

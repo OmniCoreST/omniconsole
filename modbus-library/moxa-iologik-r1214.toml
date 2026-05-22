@@ -1,0 +1,243 @@
+# Moxa ioLogik R1214 Remote RTU I/O — 6-channel DI + 6-channel Relay
+#
+# Source: ioLogik R1200 Series User Manual V3.2, November 2017 (Appendix)
+# Protocol: Modbus RTU (RS-485); 9600 8N1 default, address configurable via software
+#
+# DI channels (ch0-5):
+#   FC03 addr 0x0000-0x0005 (0-5): DI Mode (0=DI, 1=Counter)
+#   FC03 addr 0x0020-0x0025 (32-37): DI filter value ch0-5
+#   FC03 addr 0x0040-0x0045 (64-69): DI counter trigger type (0=L2H, 1=H2L, 2=Both)
+#   FC04 addr 0x0000-0x0005 (0-5): DI value word ch0-5
+#   FC04 addr 0x0020,0x0022...0x002A (32,34,36,38,40,42): DI counter value u32 step-2 pairs
+#   FC02 addr 0x0000-0x0005 (0-5): DI bit value ch0-5
+# Relay channels (ch0-5):
+#   FC03 addr 0x0140-0x0145 (320-325): Relay value ch0-5
+#   FC03 addr 0x0160-0x016A (352-362): Relay pulse out count ch0-5 (u32, step-2 pairs)
+#   FC03 addr 0x0220-0x0225 (544-549): Relay power on delay ch0-5
+#   FC04 addr 0x0140,0x0142...0x014A (320,322,...330): Relay total count ch0-5 (u32, step-2 pairs)
+#   FC04 addr 0x0180,0x0182...0x018A (384,386,...394): Relay user count ch0-5 (u32, step-2 pairs)
+#   FC01 addr 0x0140: Relay bit; addr 0x0160: Relay power-on; addr 0x0180: Relay pulse start;
+#        addr 0x01A0: Relay power pulse; addr 0x01C0: Relay safe-mode pulse;
+#        addr 0x01E0: Relay reset user counter
+
+vendor = "Moxa"
+model = "ioLogik R1214"
+description = "6-DI + 6-Relay remote RTU I/O, Modbus RTU RS-485 9600 8N1. FC03 DI: DI_Mode ch0-5 (0-5), DI_filterValue ch0-5 (32-37), DI_counterTriggerType ch0-5 (64-69). FC03 Relay: Relay_value ch0-5 (320-325), Relay_pulseOutCount u32 ch0-5 (352,353,...362,363 step-2 pairs), Relay_powerOnDelay ch0-5 (544-549). FC04 DI: DI_value (0-5), DI_counterValue u32 step-2 (32-42). FC04 Relay: Relay_totalCount u32 step-2 (320-330), Relay_userCount u32 step-2 (384-394). FC02: DI_bitValue (0-5). FC01: DI counter ctrl (0-175), Relay ctrl (320-479)."
+
+# ===== FC03 Holding Registers =====
+
+# DI Mode ch0-5
+[[registers]]
+address = 0
+type = "u16"
+name = "DI_Mode ch0 (0=DI, 1=Counter)"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "DI_Mode ch1"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "DI_Mode ch2"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "DI_Mode ch3"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "DI_Mode ch4"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "DI_Mode ch5"
+
+# DI filter value ch0-5
+[[registers]]
+address = 32
+type = "u16"
+name = "DI_filterValue ch0"
+
+[[registers]]
+address = 33
+type = "u16"
+name = "DI_filterValue ch1"
+
+[[registers]]
+address = 34
+type = "u16"
+name = "DI_filterValue ch2"
+
+[[registers]]
+address = 35
+type = "u16"
+name = "DI_filterValue ch3"
+
+[[registers]]
+address = 36
+type = "u16"
+name = "DI_filterValue ch4"
+
+[[registers]]
+address = 37
+type = "u16"
+name = "DI_filterValue ch5"
+
+# DI counter trigger type ch0-5
+[[registers]]
+address = 64
+type = "u16"
+name = "DI_counterTriggerType ch0 (0=L2H, 1=H2L, 2=Both)"
+
+[[registers]]
+address = 65
+type = "u16"
+name = "DI_counterTriggerType ch1"
+
+[[registers]]
+address = 66
+type = "u16"
+name = "DI_counterTriggerType ch2"
+
+[[registers]]
+address = 67
+type = "u16"
+name = "DI_counterTriggerType ch3"
+
+[[registers]]
+address = 68
+type = "u16"
+name = "DI_counterTriggerType ch4"
+
+[[registers]]
+address = 69
+type = "u16"
+name = "DI_counterTriggerType ch5"
+
+# Relay value ch0-5
+[[registers]]
+address = 320
+type = "u16"
+name = "Relay_value ch0 (0=OFF, 1=ON; R/W)"
+
+[[registers]]
+address = 321
+type = "u16"
+name = "Relay_value ch1"
+
+[[registers]]
+address = 322
+type = "u16"
+name = "Relay_value ch2"
+
+[[registers]]
+address = 323
+type = "u16"
+name = "Relay_value ch3"
+
+[[registers]]
+address = 324
+type = "u16"
+name = "Relay_value ch4"
+
+[[registers]]
+address = 325
+type = "u16"
+name = "Relay_value ch5"
+
+# Relay pulse out count ch0-5 (u32, step-2 pairs)
+[[registers]]
+address = 352
+type = "u16"
+name = "Relay_pulseOutCount ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 353
+type = "u16"
+name = "Relay_pulseOutCount ch0 lo-word"
+
+[[registers]]
+address = 354
+type = "u16"
+name = "Relay_pulseOutCount ch1 hi-word"
+
+[[registers]]
+address = 355
+type = "u16"
+name = "Relay_pulseOutCount ch1 lo-word"
+
+[[registers]]
+address = 356
+type = "u16"
+name = "Relay_pulseOutCount ch2 hi-word"
+
+[[registers]]
+address = 357
+type = "u16"
+name = "Relay_pulseOutCount ch2 lo-word"
+
+[[registers]]
+address = 358
+type = "u16"
+name = "Relay_pulseOutCount ch3 hi-word"
+
+[[registers]]
+address = 359
+type = "u16"
+name = "Relay_pulseOutCount ch3 lo-word"
+
+[[registers]]
+address = 360
+type = "u16"
+name = "Relay_pulseOutCount ch4 hi-word"
+
+[[registers]]
+address = 361
+type = "u16"
+name = "Relay_pulseOutCount ch4 lo-word"
+
+[[registers]]
+address = 362
+type = "u16"
+name = "Relay_pulseOutCount ch5 hi-word"
+
+[[registers]]
+address = 363
+type = "u16"
+name = "Relay_pulseOutCount ch5 lo-word"
+
+# Relay power on delay ch0-5
+[[registers]]
+address = 544
+type = "u16"
+name = "Relay_powerOnDelay ch0 (R/W)"
+
+[[registers]]
+address = 545
+type = "u16"
+name = "Relay_powerOnDelay ch1"
+
+[[registers]]
+address = 546
+type = "u16"
+name = "Relay_powerOnDelay ch2"
+
+[[registers]]
+address = 547
+type = "u16"
+name = "Relay_powerOnDelay ch3"
+
+[[registers]]
+address = 548
+type = "u16"
+name = "Relay_powerOnDelay ch4"
+
+[[registers]]
+address = 549
+type = "u16"
+name = "Relay_powerOnDelay ch5"

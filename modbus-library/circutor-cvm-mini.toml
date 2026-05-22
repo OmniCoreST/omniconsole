@@ -1,0 +1,720 @@
+# Circutor CVM-MINI — DIN-Rail 3-Phase Power Analyzer (Modbus RTU RS-485)
+#
+# Source: circutor-cvm-mini-instruction-manual.pdf (section 6, pp. 23-26)
+# Models: CVM-MINI (base), CVM-MINI-HAR (+ harmonics up to 15th order)
+# Protocol: Modbus RTU, FC03/04 read, FC01 relay read, FC05 relay write
+# Baud: configurable (default 9600 8N1)
+# All MODBUS addresses are hexadecimal in source; converted to decimal here.
+# All parameters are s32 (2 consecutive registers, 32-bit signed).
+# Scaling: V×10, current in mA, Hz×10, kvar/kVA in W, PF×100, THD %×10.
+# Harmonics registers (HAR model only): RMS = s32 (Vx10 or mA); harmonics 2-15 = s32 (%).
+
+vendor = "Circutor"
+model = "CVM-MINI"
+description = "DIN-rail 3-phase power analyzer, Modbus RTU RS-485. FC03/04 read, FC01/FC05 relay. All params s32. Phase V(×10)/I(mA)/P/Q/PF per phase + 3-phase totals (addr 0-84). Energy (Wh) at 60-94. THD at 48-58. HAR model: voltage harmonics 1-15 for L1/L2/L3 at 686-774; current harmonics 1-15 at 500-588."
+
+# ----- Phase 1 instantaneous (FC03/04, R, s32) -----
+[[registers]]
+address = 0
+type = "s32"
+name = "Phase 1 voltage"
+
+[[registers]]
+address = 2
+type = "s32"
+name = "Phase 1 current"
+
+[[registers]]
+address = 4
+type = "s32"
+name = "Phase 1 active power"
+
+[[registers]]
+address = 6
+type = "s32"
+name = "Phase 1 reactive power"
+
+[[registers]]
+address = 8
+type = "s32"
+name = "Phase 1 power factor"
+
+[[registers]]
+address = 74
+type = "s32"
+name = "Phase 1 apparent power"
+
+# ----- Phase 2 instantaneous (FC03/04, R, s32) -----
+[[registers]]
+address = 10
+type = "s32"
+name = "Phase 2 voltage"
+
+[[registers]]
+address = 12
+type = "s32"
+name = "Phase 2 current"
+
+[[registers]]
+address = 14
+type = "s32"
+name = "Phase 2 active power"
+
+[[registers]]
+address = 16
+type = "s32"
+name = "Phase 2 reactive power"
+
+[[registers]]
+address = 18
+type = "s32"
+name = "Phase 2 power factor"
+
+[[registers]]
+address = 76
+type = "s32"
+name = "Phase 2 apparent power"
+
+# ----- Phase 3 instantaneous (FC03/04, R, s32) -----
+[[registers]]
+address = 20
+type = "s32"
+name = "Phase 3 voltage"
+
+[[registers]]
+address = 22
+type = "s32"
+name = "Phase 3 current"
+
+[[registers]]
+address = 24
+type = "s32"
+name = "Phase 3 active power"
+
+[[registers]]
+address = 26
+type = "s32"
+name = "Phase 3 reactive power"
+
+[[registers]]
+address = 28
+type = "s32"
+name = "Phase 3 power factor"
+
+[[registers]]
+address = 78
+type = "s32"
+name = "Phase 3 apparent power"
+
+# ----- Three-phase totals (FC03/04, R, s32) -----
+[[registers]]
+address = 30
+type = "s32"
+name = "Three-phase active power"
+
+[[registers]]
+address = 32
+type = "s32"
+name = "Three-phase inductive reactive power"
+
+[[registers]]
+address = 34
+type = "s32"
+name = "Three-phase capacitive reactive power"
+
+[[registers]]
+address = 36
+type = "s32"
+name = "Three-phase cos phi"
+
+[[registers]]
+address = 38
+type = "s32"
+name = "Three-phase power factor"
+
+[[registers]]
+address = 66
+type = "s32"
+name = "Three-phase apparent power"
+
+[[registers]]
+address = 70
+type = "s32"
+name = "Three-phase average current"
+
+# ----- System (FC03/04, R, s32) -----
+[[registers]]
+address = 40
+type = "s32"
+name = "Frequency"
+
+[[registers]]
+address = 42
+type = "s32"
+name = "Line voltage L1-L2"
+
+[[registers]]
+address = 44
+type = "s32"
+name = "Line voltage L2-L3"
+
+[[registers]]
+address = 46
+type = "s32"
+name = "Line voltage L3-L1"
+
+[[registers]]
+address = 72
+type = "s32"
+name = "Neutral current"
+
+[[registers]]
+address = 80
+type = "s32"
+name = "Temperature"
+
+# ----- THD (FC03/04, R, s32, %×10) -----
+[[registers]]
+address = 48
+type = "s32"
+name = "THD voltage phase 1"
+
+[[registers]]
+address = 50
+type = "s32"
+name = "THD voltage phase 2"
+
+[[registers]]
+address = 52
+type = "s32"
+name = "THD voltage phase 3"
+
+[[registers]]
+address = 54
+type = "s32"
+name = "THD current phase 1"
+
+[[registers]]
+address = 56
+type = "s32"
+name = "THD current phase 2"
+
+[[registers]]
+address = 58
+type = "s32"
+name = "THD current phase 3"
+
+# ----- Maximum demand (FC03/04, R, s32) -----
+[[registers]]
+address = 68
+type = "s32"
+name = "Maximum demand"
+
+[[registers]]
+address = 82
+type = "s32"
+name = "Maximum demand phase 2 current"
+
+[[registers]]
+address = 84
+type = "s32"
+name = "Maximum demand phase 3 current"
+
+# ----- Energy (FC03/04, R, s32, Wh) -----
+[[registers]]
+address = 60
+type = "s32"
+name = "Active energy consumed"
+
+[[registers]]
+address = 62
+type = "s32"
+name = "Inductive reactive energy consumed"
+
+[[registers]]
+address = 64
+type = "s32"
+name = "Capacitive reactive energy consumed"
+
+[[registers]]
+address = 86
+type = "s32"
+name = "Apparent energy consumed"
+
+[[registers]]
+address = 88
+type = "s32"
+name = "Active energy generated"
+
+[[registers]]
+address = 90
+type = "s32"
+name = "Inductive reactive energy generated"
+
+[[registers]]
+address = 92
+type = "s32"
+name = "Capacitive reactive energy generated"
+
+[[registers]]
+address = 94
+type = "s32"
+name = "Apparent energy generated"
+
+# ----- Voltage harmonics L1 (FC03/04, R, s32; HAR model only) -----
+# RMS in Vx10; harmonics 2-15 in %
+[[registers]]
+address = 686
+type = "s32"
+name = "RMS voltage L1"
+
+[[registers]]
+address = 688
+type = "s32"
+name = "Harmonic 2 voltage L1"
+
+[[registers]]
+address = 690
+type = "s32"
+name = "Harmonic 3 voltage L1"
+
+[[registers]]
+address = 692
+type = "s32"
+name = "Harmonic 4 voltage L1"
+
+[[registers]]
+address = 694
+type = "s32"
+name = "Harmonic 5 voltage L1"
+
+[[registers]]
+address = 696
+type = "s32"
+name = "Harmonic 6 voltage L1"
+
+[[registers]]
+address = 698
+type = "s32"
+name = "Harmonic 7 voltage L1"
+
+[[registers]]
+address = 700
+type = "s32"
+name = "Harmonic 8 voltage L1"
+
+[[registers]]
+address = 702
+type = "s32"
+name = "Harmonic 9 voltage L1"
+
+[[registers]]
+address = 704
+type = "s32"
+name = "Harmonic 10 voltage L1"
+
+[[registers]]
+address = 706
+type = "s32"
+name = "Harmonic 11 voltage L1"
+
+[[registers]]
+address = 708
+type = "s32"
+name = "Harmonic 12 voltage L1"
+
+[[registers]]
+address = 710
+type = "s32"
+name = "Harmonic 13 voltage L1"
+
+[[registers]]
+address = 712
+type = "s32"
+name = "Harmonic 14 voltage L1"
+
+[[registers]]
+address = 714
+type = "s32"
+name = "Harmonic 15 voltage L1"
+
+# ----- Voltage harmonics L2 -----
+[[registers]]
+address = 716
+type = "s32"
+name = "RMS voltage L2"
+
+[[registers]]
+address = 718
+type = "s32"
+name = "Harmonic 2 voltage L2"
+
+[[registers]]
+address = 720
+type = "s32"
+name = "Harmonic 3 voltage L2"
+
+[[registers]]
+address = 722
+type = "s32"
+name = "Harmonic 4 voltage L2"
+
+[[registers]]
+address = 724
+type = "s32"
+name = "Harmonic 5 voltage L2"
+
+[[registers]]
+address = 726
+type = "s32"
+name = "Harmonic 6 voltage L2"
+
+[[registers]]
+address = 728
+type = "s32"
+name = "Harmonic 7 voltage L2"
+
+[[registers]]
+address = 730
+type = "s32"
+name = "Harmonic 8 voltage L2"
+
+[[registers]]
+address = 732
+type = "s32"
+name = "Harmonic 9 voltage L2"
+
+[[registers]]
+address = 734
+type = "s32"
+name = "Harmonic 10 voltage L2"
+
+[[registers]]
+address = 736
+type = "s32"
+name = "Harmonic 11 voltage L2"
+
+[[registers]]
+address = 738
+type = "s32"
+name = "Harmonic 12 voltage L2"
+
+[[registers]]
+address = 740
+type = "s32"
+name = "Harmonic 13 voltage L2"
+
+[[registers]]
+address = 742
+type = "s32"
+name = "Harmonic 14 voltage L2"
+
+[[registers]]
+address = 744
+type = "s32"
+name = "Harmonic 15 voltage L2"
+
+# ----- Voltage harmonics L3 -----
+[[registers]]
+address = 746
+type = "s32"
+name = "RMS voltage L3"
+
+[[registers]]
+address = 748
+type = "s32"
+name = "Harmonic 2 voltage L3"
+
+[[registers]]
+address = 750
+type = "s32"
+name = "Harmonic 3 voltage L3"
+
+[[registers]]
+address = 752
+type = "s32"
+name = "Harmonic 4 voltage L3"
+
+[[registers]]
+address = 754
+type = "s32"
+name = "Harmonic 5 voltage L3"
+
+[[registers]]
+address = 756
+type = "s32"
+name = "Harmonic 6 voltage L3"
+
+[[registers]]
+address = 758
+type = "s32"
+name = "Harmonic 7 voltage L3"
+
+[[registers]]
+address = 760
+type = "s32"
+name = "Harmonic 8 voltage L3"
+
+[[registers]]
+address = 762
+type = "s32"
+name = "Harmonic 9 voltage L3"
+
+[[registers]]
+address = 764
+type = "s32"
+name = "Harmonic 10 voltage L3"
+
+[[registers]]
+address = 766
+type = "s32"
+name = "Harmonic 11 voltage L3"
+
+[[registers]]
+address = 768
+type = "s32"
+name = "Harmonic 12 voltage L3"
+
+[[registers]]
+address = 770
+type = "s32"
+name = "Harmonic 13 voltage L3"
+
+[[registers]]
+address = 772
+type = "s32"
+name = "Harmonic 14 voltage L3"
+
+[[registers]]
+address = 774
+type = "s32"
+name = "Harmonic 15 voltage L3"
+
+# ----- Current harmonics L1 (FC03/04, R, s32; HAR model only) -----
+# RMS in mA; harmonics 2-15 in %
+[[registers]]
+address = 500
+type = "s32"
+name = "RMS current L1"
+
+[[registers]]
+address = 502
+type = "s32"
+name = "Harmonic 2 current L1"
+
+[[registers]]
+address = 504
+type = "s32"
+name = "Harmonic 3 current L1"
+
+[[registers]]
+address = 506
+type = "s32"
+name = "Harmonic 4 current L1"
+
+[[registers]]
+address = 508
+type = "s32"
+name = "Harmonic 5 current L1"
+
+[[registers]]
+address = 510
+type = "s32"
+name = "Harmonic 6 current L1"
+
+[[registers]]
+address = 512
+type = "s32"
+name = "Harmonic 7 current L1"
+
+[[registers]]
+address = 514
+type = "s32"
+name = "Harmonic 8 current L1"
+
+[[registers]]
+address = 516
+type = "s32"
+name = "Harmonic 9 current L1"
+
+[[registers]]
+address = 518
+type = "s32"
+name = "Harmonic 10 current L1"
+
+[[registers]]
+address = 520
+type = "s32"
+name = "Harmonic 11 current L1"
+
+[[registers]]
+address = 522
+type = "s32"
+name = "Harmonic 12 current L1"
+
+[[registers]]
+address = 524
+type = "s32"
+name = "Harmonic 13 current L1"
+
+[[registers]]
+address = 526
+type = "s32"
+name = "Harmonic 14 current L1"
+
+[[registers]]
+address = 528
+type = "s32"
+name = "Harmonic 15 current L1"
+
+# ----- Current harmonics L2 -----
+[[registers]]
+address = 530
+type = "s32"
+name = "RMS current L2"
+
+[[registers]]
+address = 532
+type = "s32"
+name = "Harmonic 2 current L2"
+
+[[registers]]
+address = 534
+type = "s32"
+name = "Harmonic 3 current L2"
+
+[[registers]]
+address = 536
+type = "s32"
+name = "Harmonic 4 current L2"
+
+[[registers]]
+address = 538
+type = "s32"
+name = "Harmonic 5 current L2"
+
+[[registers]]
+address = 540
+type = "s32"
+name = "Harmonic 6 current L2"
+
+[[registers]]
+address = 542
+type = "s32"
+name = "Harmonic 7 current L2"
+
+[[registers]]
+address = 544
+type = "s32"
+name = "Harmonic 8 current L2"
+
+[[registers]]
+address = 546
+type = "s32"
+name = "Harmonic 9 current L2"
+
+[[registers]]
+address = 548
+type = "s32"
+name = "Harmonic 10 current L2"
+
+[[registers]]
+address = 550
+type = "s32"
+name = "Harmonic 11 current L2"
+
+[[registers]]
+address = 552
+type = "s32"
+name = "Harmonic 12 current L2"
+
+[[registers]]
+address = 554
+type = "s32"
+name = "Harmonic 13 current L2"
+
+[[registers]]
+address = 556
+type = "s32"
+name = "Harmonic 14 current L2"
+
+[[registers]]
+address = 558
+type = "s32"
+name = "Harmonic 15 current L2"
+
+# ----- Current harmonics L3 -----
+[[registers]]
+address = 560
+type = "s32"
+name = "RMS current L3"
+
+[[registers]]
+address = 562
+type = "s32"
+name = "Harmonic 2 current L3"
+
+[[registers]]
+address = 564
+type = "s32"
+name = "Harmonic 3 current L3"
+
+[[registers]]
+address = 566
+type = "s32"
+name = "Harmonic 4 current L3"
+
+[[registers]]
+address = 568
+type = "s32"
+name = "Harmonic 5 current L3"
+
+[[registers]]
+address = 570
+type = "s32"
+name = "Harmonic 6 current L3"
+
+[[registers]]
+address = 572
+type = "s32"
+name = "Harmonic 7 current L3"
+
+[[registers]]
+address = 574
+type = "s32"
+name = "Harmonic 8 current L3"
+
+[[registers]]
+address = 576
+type = "s32"
+name = "Harmonic 9 current L3"
+
+[[registers]]
+address = 578
+type = "s32"
+name = "Harmonic 10 current L3"
+
+[[registers]]
+address = 580
+type = "s32"
+name = "Harmonic 11 current L3"
+
+[[registers]]
+address = 582
+type = "s32"
+name = "Harmonic 12 current L3"
+
+[[registers]]
+address = 584
+type = "s32"
+name = "Harmonic 13 current L3"
+
+[[registers]]
+address = 586
+type = "s32"
+name = "Harmonic 14 current L3"
+
+[[registers]]
+address = 588
+type = "s32"
+name = "Harmonic 15 current L3"

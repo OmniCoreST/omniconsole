@@ -1,0 +1,476 @@
+# Circutor CVM-C10 — Panel-Mount 3-Phase Power Analyzer (Modbus RTU / BACnet RS-485)
+#
+# Source: circutor-cvm-c10-instruction-manual.pdf (section 4.10.3, pp. 74-83)
+# Models: CVM-C10-ITF, CVM-C10-ITF-IN, CVM-C10-MC, CVM-C10-MC-IN, CVM-C10-mV, CVM-C10-FLEX
+# Protocol: Modbus RTU or BACnet MS/TP; FC03/04 read, FC10 write
+# Baud: 9600/19200 bps (configurable)
+# All MODBUS addresses are hexadecimal in source; converted to decimal here.
+# All measurement parameters are s32 (2 consecutive registers, 32-bit signed).
+# Scaling: V×10, current in mA, Hz×100, PF×100, THD %×10.
+# Energy registers are u32 (2 regs). Three tariffs + Total; Total column mapped here.
+# Harmonics (Tables 21/22): Fundamental is s32 (2 regs); harmonics 2-31 are u16 single regs.
+
+vendor = "Circutor"
+model = "CVM-C10"
+description = "3-phase panel power analyzer, Modbus RTU/BACnet RS-485. FC03/04 read, FC10 write. Phase V(×10)/I(mA)/P/Q(L+C)/kVA/PF/cosφ per phase (s32) at addr 0-46; 3-phase totals at 48-58; Hz/THD/max demand at 60-92. Total energy (u32) consumed/generated at 220-260. Voltage fundamental harmonics s32 at 2600/2632/2664; current at 2696/2728/2760 (harmonics 2-31 as u16 at consecutive addr). Comms config at 10050. TX ratios at 10000."
+
+# ----- Phase 1 instantaneous (FC03/04, R, s32) -----
+[[registers]]
+address = 0
+type = "s32"
+name = "Phase 1 voltage"
+
+[[registers]]
+address = 2
+type = "s32"
+name = "Phase 1 current"
+
+[[registers]]
+address = 4
+type = "s32"
+name = "Phase 1 active power"
+
+[[registers]]
+address = 6
+type = "s32"
+name = "Phase 1 inductive reactive power"
+
+[[registers]]
+address = 8
+type = "s32"
+name = "Phase 1 capacitive reactive power"
+
+[[registers]]
+address = 10
+type = "s32"
+name = "Phase 1 apparent power"
+
+[[registers]]
+address = 12
+type = "s32"
+name = "Phase 1 power factor"
+
+[[registers]]
+address = 14
+type = "s32"
+name = "Phase 1 cos phi"
+
+# ----- Phase 2 instantaneous (FC03/04, R, s32) -----
+[[registers]]
+address = 16
+type = "s32"
+name = "Phase 2 voltage"
+
+[[registers]]
+address = 18
+type = "s32"
+name = "Phase 2 current"
+
+[[registers]]
+address = 20
+type = "s32"
+name = "Phase 2 active power"
+
+[[registers]]
+address = 22
+type = "s32"
+name = "Phase 2 inductive reactive power"
+
+[[registers]]
+address = 24
+type = "s32"
+name = "Phase 2 capacitive reactive power"
+
+[[registers]]
+address = 26
+type = "s32"
+name = "Phase 2 apparent power"
+
+[[registers]]
+address = 28
+type = "s32"
+name = "Phase 2 power factor"
+
+[[registers]]
+address = 30
+type = "s32"
+name = "Phase 2 cos phi"
+
+# ----- Phase 3 instantaneous (FC03/04, R, s32) -----
+[[registers]]
+address = 32
+type = "s32"
+name = "Phase 3 voltage"
+
+[[registers]]
+address = 34
+type = "s32"
+name = "Phase 3 current"
+
+[[registers]]
+address = 36
+type = "s32"
+name = "Phase 3 active power"
+
+[[registers]]
+address = 38
+type = "s32"
+name = "Phase 3 inductive reactive power"
+
+[[registers]]
+address = 40
+type = "s32"
+name = "Phase 3 capacitive reactive power"
+
+[[registers]]
+address = 42
+type = "s32"
+name = "Phase 3 apparent power"
+
+[[registers]]
+address = 44
+type = "s32"
+name = "Phase 3 power factor"
+
+[[registers]]
+address = 46
+type = "s32"
+name = "Phase 3 cos phi"
+
+# ----- Three-phase totals (FC03/04, R, s32) -----
+[[registers]]
+address = 48
+type = "s32"
+name = "Three-phase active power"
+
+[[registers]]
+address = 50
+type = "s32"
+name = "Three-phase inductive reactive power"
+
+[[registers]]
+address = 52
+type = "s32"
+name = "Three-phase capacitive reactive power"
+
+[[registers]]
+address = 54
+type = "s32"
+name = "Three-phase apparent power"
+
+[[registers]]
+address = 56
+type = "s32"
+name = "Three-phase power factor"
+
+[[registers]]
+address = 58
+type = "s32"
+name = "Three-phase cos phi"
+
+# ----- System (FC03/04, R, s32) -----
+[[registers]]
+address = 60
+type = "s32"
+name = "Frequency"
+
+[[registers]]
+address = 62
+type = "s32"
+name = "Line voltage L1-L2"
+
+[[registers]]
+address = 64
+type = "s32"
+name = "Line voltage L2-L3"
+
+[[registers]]
+address = 66
+type = "s32"
+name = "Line voltage L3-L1"
+
+[[registers]]
+address = 68
+type = "s32"
+name = "Neutral current"
+
+# ----- THD (FC03/04, R, s32, %×10) -----
+[[registers]]
+address = 70
+type = "s32"
+name = "THD voltage phase 1"
+
+[[registers]]
+address = 72
+type = "s32"
+name = "THD voltage phase 2"
+
+[[registers]]
+address = 74
+type = "s32"
+name = "THD voltage phase 3"
+
+[[registers]]
+address = 76
+type = "s32"
+name = "THD current phase 1"
+
+[[registers]]
+address = 78
+type = "s32"
+name = "THD current phase 2"
+
+[[registers]]
+address = 80
+type = "s32"
+name = "THD current phase 3"
+
+# ----- Maximum demand (FC03/04, R, s32) -----
+[[registers]]
+address = 82
+type = "s32"
+name = "Maximum demand active power"
+
+[[registers]]
+address = 84
+type = "s32"
+name = "Maximum demand apparent power"
+
+[[registers]]
+address = 86
+type = "s32"
+name = "Maximum demand average current"
+
+[[registers]]
+address = 88
+type = "s32"
+name = "Maximum demand phase 1 current"
+
+[[registers]]
+address = 90
+type = "s32"
+name = "Maximum demand phase 2 current"
+
+[[registers]]
+address = 92
+type = "s32"
+name = "Maximum demand phase 3 current"
+
+[[registers]]
+address = 512
+type = "s32"
+name = "Maximum demand inductive reactive power"
+
+[[registers]]
+address = 514
+type = "s32"
+name = "Maximum demand capacitive reactive power"
+
+# ----- Status / identity (FC04, R) -----
+[[registers]]
+address = 1400
+type = "u32"
+name = "Serial number"
+
+[[registers]]
+address = 2001
+type = "u16"
+name = "Power status"
+
+[[registers]]
+address = 2005
+type = "u16"
+name = "Phase rotation fault"
+
+# ----- Total energy consumed (FC03/04, R, u32) -----
+[[registers]]
+address = 220
+type = "u32"
+name = "Total consumed active energy kWh"
+
+[[registers]]
+address = 222
+type = "u32"
+name = "Total consumed active energy Wh"
+
+[[registers]]
+address = 224
+type = "u32"
+name = "Total consumed inductive reactive energy kvarhL"
+
+[[registers]]
+address = 226
+type = "u32"
+name = "Total consumed inductive reactive energy varhL"
+
+[[registers]]
+address = 228
+type = "u32"
+name = "Total consumed capacitive reactive energy kvarhC"
+
+[[registers]]
+address = 230
+type = "u32"
+name = "Total consumed capacitive reactive energy varhC"
+
+[[registers]]
+address = 232
+type = "u32"
+name = "Total consumed apparent energy kVAh"
+
+[[registers]]
+address = 234
+type = "u32"
+name = "Total consumed apparent energy VAh"
+
+[[registers]]
+address = 236
+type = "u32"
+name = "Total consumed CO2 emissions"
+
+[[registers]]
+address = 238
+type = "u32"
+name = "Total consumption cost"
+
+# ----- Total energy generated (FC03/04, R, u32) -----
+[[registers]]
+address = 240
+type = "u32"
+name = "Total generated active energy kWh"
+
+[[registers]]
+address = 242
+type = "u32"
+name = "Total generated active energy Wh"
+
+[[registers]]
+address = 244
+type = "u32"
+name = "Total generated inductive reactive energy kvarhL"
+
+[[registers]]
+address = 246
+type = "u32"
+name = "Total generated inductive reactive energy varhL"
+
+[[registers]]
+address = 248
+type = "u32"
+name = "Total generated capacitive reactive energy kvarhC"
+
+[[registers]]
+address = 250
+type = "u32"
+name = "Total generated capacitive reactive energy varhC"
+
+[[registers]]
+address = 252
+type = "u32"
+name = "Total generated apparent energy kVAh"
+
+[[registers]]
+address = 254
+type = "u32"
+name = "Total generated apparent energy VAh"
+
+[[registers]]
+address = 256
+type = "u32"
+name = "Total generated CO2 emissions"
+
+[[registers]]
+address = 258
+type = "u32"
+name = "Total generation cost"
+
+[[registers]]
+address = 260
+type = "u32"
+name = "Total hours per tariff"
+
+# ----- Voltage harmonics — fundamentals (FC03/04, R, s32, V×10) -----
+# Harmonics 2-31 follow as single u16 registers at consecutive addresses: addr+2, addr+3, ..., addr+31
+[[registers]]
+address = 2600
+type = "s32"
+name = "Fundamental voltage L1"
+
+[[registers]]
+address = 2632
+type = "s32"
+name = "Fundamental voltage L2"
+
+[[registers]]
+address = 2664
+type = "s32"
+name = "Fundamental voltage L3"
+
+# ----- Current harmonics — fundamentals (FC03/04, R, s32, mA) -----
+# Harmonics 2-31 follow as single u16 registers at consecutive addresses: addr+2, addr+3, ..., addr+31
+[[registers]]
+address = 2696
+type = "s32"
+name = "Fundamental current L1"
+
+[[registers]]
+address = 2728
+type = "s32"
+name = "Fundamental current L2"
+
+[[registers]]
+address = 2760
+type = "s32"
+name = "Fundamental current L3"
+
+# ----- Transformation ratios (FC04/FC10, R/W, u32) -----
+[[registers]]
+address = 10000
+type = "u32"
+name = "Voltage primary ratio"
+
+[[registers]]
+address = 10002
+type = "u16"
+name = "Voltage secondary ratio"
+
+[[registers]]
+address = 10003
+type = "u16"
+name = "Current primary ratio"
+
+[[registers]]
+address = 10004
+type = "u16"
+name = "Current secondary ratio"
+
+# ----- Communications configuration (FC04/FC10, R/W, u16) -----
+[[registers]]
+address = 10050
+type = "u16"
+name = "Protocol"
+
+[[registers]]
+address = 10051
+type = "u16"
+name = "Peripheral number"
+
+[[registers]]
+address = 10052
+type = "u16"
+name = "Transmission speed"
+
+[[registers]]
+address = 10053
+type = "u16"
+name = "Parity"
+
+[[registers]]
+address = 10054
+type = "u16"
+name = "Data bits"
+
+[[registers]]
+address = 10055
+type = "u16"
+name = "Stop bits"

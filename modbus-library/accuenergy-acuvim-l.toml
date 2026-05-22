@@ -1,0 +1,420 @@
+# Accuenergy AcuVim-L — Modbus register map for Omni Console
+#
+# Source: accuenergy-acuvim-l-modbus.pdf
+# - 3-phase advanced power quality meter, DIN-rail mount.
+# - FC03 (Read Holding Registers) for all registers listed here.
+# - Two measurement banks; this TOML uses the primary Float bank (0x0600H) exclusively:
+#   real-time in IEEE 754 float32, SI units — no CT/PT-ratio scaling needed.
+# - THD bank at 0x0400H (1024 decimal): u16, real = Rx/10000×100% → scale=0.01 %.
+# - Energy bank at 0x0156H (342 decimal): u32 Dword, real = Rx/10 → scale=0.1 kWh.
+# - All addresses are raw protocol addresses.
+# - Factory defaults: slave=1, baud=9600, 8N1.
+
+vendor = "Accuenergy"
+model = "AcuVim-L"
+description = "3-phase power quality meter — V/I/P/Q/S/PF/unbalance/demands (f32 SI, FC03, Big-Endian, 0x0600 float bank), THD (u16 ×0.01 %, 0x0400), energy (u32 Rx/10 kWh, 0x0156)."
+
+# ----- Real-time float bank -----
+# 0x0600 = 1536
+
+[[registers]]
+address = 1536
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# Phase-to-neutral voltages (f32, V)
+[[registers]]
+address = 1538
+type = "f32"
+name = "Voltage L1-N"
+unit = "V"
+
+[[registers]]
+address = 1540
+type = "f32"
+name = "Voltage L2-N"
+unit = "V"
+
+[[registers]]
+address = 1542
+type = "f32"
+name = "Voltage L3-N"
+unit = "V"
+
+# Line voltages (f32, V)
+[[registers]]
+address = 1544
+type = "f32"
+name = "Voltage L1-L2"
+unit = "V"
+
+[[registers]]
+address = 1546
+type = "f32"
+name = "Voltage L2-L3"
+unit = "V"
+
+[[registers]]
+address = 1548
+type = "f32"
+name = "Voltage L3-L1"
+unit = "V"
+
+# Currents (f32, A)
+[[registers]]
+address = 1550
+type = "f32"
+name = "Current L1"
+unit = "A"
+
+[[registers]]
+address = 1552
+type = "f32"
+name = "Current L2"
+unit = "A"
+
+[[registers]]
+address = 1554
+type = "f32"
+name = "Current L3"
+unit = "A"
+
+[[registers]]
+address = 1556
+type = "f32"
+name = "Neutral current"
+unit = "A"
+
+# Active power (f32, W)
+[[registers]]
+address = 1558
+type = "f32"
+name = "Active power L1"
+unit = "W"
+
+[[registers]]
+address = 1560
+type = "f32"
+name = "Active power L2"
+unit = "W"
+
+[[registers]]
+address = 1562
+type = "f32"
+name = "Active power L3"
+unit = "W"
+
+[[registers]]
+address = 1564
+type = "f32"
+name = "Total active power"
+unit = "W"
+
+# Reactive power (f32, var)
+[[registers]]
+address = 1566
+type = "f32"
+name = "Reactive power L1"
+unit = "var"
+
+[[registers]]
+address = 1568
+type = "f32"
+name = "Reactive power L2"
+unit = "var"
+
+[[registers]]
+address = 1570
+type = "f32"
+name = "Reactive power L3"
+unit = "var"
+
+[[registers]]
+address = 1572
+type = "f32"
+name = "Total reactive power"
+unit = "var"
+
+# Apparent power (f32, VA)
+[[registers]]
+address = 1574
+type = "f32"
+name = "Total apparent power"
+unit = "VA"
+
+# Power factor
+[[registers]]
+address = 1576
+type = "f32"
+name = "Power factor L1"
+
+[[registers]]
+address = 1578
+type = "f32"
+name = "Power factor L2"
+
+[[registers]]
+address = 1580
+type = "f32"
+name = "Power factor L3"
+
+[[registers]]
+address = 1582
+type = "f32"
+name = "Total power factor"
+
+# Unbalance (f32, %)
+[[registers]]
+address = 1584
+type = "f32"
+name = "Voltage unbalance"
+unit = "%"
+
+[[registers]]
+address = 1586
+type = "f32"
+name = "Current unbalance"
+unit = "%"
+
+# Phase apparent power (f32, VA)
+[[registers]]
+address = 1590
+type = "f32"
+name = "Apparent power L1"
+unit = "VA"
+
+[[registers]]
+address = 1592
+type = "f32"
+name = "Apparent power L2"
+unit = "VA"
+
+[[registers]]
+address = 1594
+type = "f32"
+name = "Apparent power L3"
+unit = "VA"
+
+# Demands (f32)
+[[registers]]
+address = 1598
+type = "f32"
+name = "Apparent power demand"
+unit = "VA"
+
+[[registers]]
+address = 1600
+type = "f32"
+name = "Active power demand"
+unit = "W"
+
+[[registers]]
+address = 1602
+type = "f32"
+name = "Reactive power demand"
+unit = "var"
+
+[[registers]]
+address = 1604
+type = "f32"
+name = "Current demand L1"
+unit = "A"
+
+[[registers]]
+address = 1606
+type = "f32"
+name = "Current demand L2"
+unit = "A"
+
+[[registers]]
+address = 1608
+type = "f32"
+name = "Current demand L3"
+unit = "A"
+
+# ----- THD bank (u16, real = Rx/10000×100% = Rx×0.01 %) -----
+# 0x0400 = 1024
+[[registers]]
+address = 1024
+type = "u16"
+name = "Voltage THD L1"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 1025
+type = "u16"
+name = "Voltage THD L2"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 1026
+type = "u16"
+name = "Voltage THD L3"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 1027
+type = "u16"
+name = "Current THD L1"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 1028
+type = "u16"
+name = "Current THD L2"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 1029
+type = "u16"
+name = "Current THD L3"
+unit = "%"
+scale = 0.01
+
+# ----- Energy bank (u32 Dword, real = Rx/10 kWh) -----
+# 0x0156 = 342
+[[registers]]
+address = 342
+type = "u32"
+name = "Active energy import"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 344
+type = "u32"
+name = "Active energy export"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 346
+type = "u32"
+name = "Reactive energy import"
+unit = "kvarh"
+scale = 0.1
+
+[[registers]]
+address = 348
+type = "u32"
+name = "Reactive energy export"
+unit = "kvarh"
+scale = 0.1
+
+[[registers]]
+address = 350
+type = "u32"
+name = "Apparent energy"
+unit = "kVAh"
+scale = 0.1
+
+[[registers]]
+address = 352
+type = "u32"
+name = "Active energy import L1"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 354
+type = "u32"
+name = "Active energy export L1"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 356
+type = "u32"
+name = "Active energy import L2"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 358
+type = "u32"
+name = "Active energy export L2"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 360
+type = "u32"
+name = "Active energy import L3"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 362
+type = "u32"
+name = "Active energy export L3"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 364
+type = "u32"
+name = "Reactive energy import L1"
+unit = "kvarh"
+scale = 0.1
+
+[[registers]]
+address = 366
+type = "u32"
+name = "Reactive energy export L1"
+unit = "kvarh"
+scale = 0.1
+
+[[registers]]
+address = 368
+type = "u32"
+name = "Reactive energy import L2"
+unit = "kvarh"
+scale = 0.1
+
+[[registers]]
+address = 370
+type = "u32"
+name = "Reactive energy export L2"
+unit = "kvarh"
+scale = 0.1
+
+[[registers]]
+address = 372
+type = "u32"
+name = "Reactive energy import L3"
+unit = "kvarh"
+scale = 0.1
+
+[[registers]]
+address = 374
+type = "u32"
+name = "Reactive energy export L3"
+unit = "kvarh"
+scale = 0.1
+
+[[registers]]
+address = 376
+type = "u32"
+name = "Apparent energy L1"
+unit = "kVAh"
+scale = 0.1
+
+[[registers]]
+address = 378
+type = "u32"
+name = "Apparent energy L2"
+unit = "kVAh"
+scale = 0.1
+
+[[registers]]
+address = 380
+type = "u32"
+name = "Apparent energy L3"
+unit = "kVAh"
+scale = 0.1

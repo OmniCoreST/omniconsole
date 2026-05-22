@@ -1,0 +1,261 @@
+# ENTES MPR-53CS 3-Phase Power Analyzer (Modbus RTU RS-485)
+#
+# Source: entes-mpr-53cs-modbus-register-map-en.pdf (01.12.2019)
+# Protocol: Modbus RTU; FC03 read, FC06 write single register
+# All measurements use 32-bit format — each data point occupies 2 consecutive Modbus registers.
+# Addresses are word addresses; address N = Modbus register N (first of a 32-bit pair).
+# Addresses increment by 2 for each measurement entry.
+#
+# Scale factors (from visible MULTIPLIER column):
+#   Voltage:       raw × 0.01 = V  (includes VT ratio; max range ×VT ×Vmax)
+#   Current:       raw × 0.001 = A (includes CT ratio)
+#   Active/reactive power: raw × 0.01 = W/VAr (signed)
+#   Apparent power: raw × 0.01 = VA
+#   Power factor:  raw × 0.001 = dimensionless (-1.000..1.000, signed)
+#   Frequency:     raw × 0.01 = Hz
+#   Energy:        see energy counters section
+#
+# NOTE: Addresses above 52 (min/max/demand, energy counters, configuration) are estimated
+#       from image analysis. Verify against original register map before use.
+# Setpoints (alarm outputs 1-10): start at 0x8000 (addr 32768), 8 registers each.
+# Configuration (CT/VT ratio, Modbus address, baud rate, parity, connection type,
+#   energy counter selection, password, pulse ratio): at higher addresses — see datasheet.
+# Baud rate codes: 1=4800, 2=9600, 3=19200, 4=38400, 5=115200
+# Connection selection: 0=Star(Y), 1=Delta(D)
+# Pulse ratio: 0=1kWh, 1=10kWh, 2=100kWh, 3=1kWh, 4=10kWh, 5=100kWh, 6=1MWh
+
+vendor = "ENTES"
+model = "MPR-53CS"
+description = "3-phase power analyzer, Modbus RTU. 32-bit registers (2 words each, addr+=2 per entry). Measurements at addr 0-52: L1-L2/L2-L3/L3-L1 line voltages, L1-N/L2-N/L3-N phase voltages (×0.01 V), L1/L2/L3/N currents (×0.001 A), total+per-phase active/reactive/apparent power (×0.01 W/VAr/VA), power factor L1/L2/L3/total (×0.001), frequency (×0.01 Hz). Min/max/demand and energy counters (import/export active, inductive/capacitive reactive × 2 tariffs) at higher addresses. Setpoints (up to 10) at 0x8000 (32768): activation, parameter type, high/low set, fail/recovery delay, hysteresis, output, parameter (8 registers each)."
+
+# ----- Measurements (FC03, R, all 32-bit) -----
+
+# Line voltages (u32, ×0.01 V, includes VT ratio)
+[[registers]]
+address = 0
+type = "u32"
+name = "Voltage L1-L2"
+
+[[registers]]
+address = 2
+type = "u32"
+name = "Voltage L2-L3"
+
+[[registers]]
+address = 4
+type = "u32"
+name = "Voltage L3-L1"
+
+# Phase voltages (u32, ×0.01 V)
+[[registers]]
+address = 6
+type = "u32"
+name = "Voltage L1-N"
+
+[[registers]]
+address = 8
+type = "u32"
+name = "Voltage L2-N"
+
+[[registers]]
+address = 10
+type = "u32"
+name = "Voltage L3-N"
+
+# Currents (u32, ×0.001 A, includes CT ratio)
+[[registers]]
+address = 12
+type = "u32"
+name = "Current L1"
+
+[[registers]]
+address = 14
+type = "u32"
+name = "Current L2"
+
+[[registers]]
+address = 16
+type = "u32"
+name = "Current L3"
+
+[[registers]]
+address = 18
+type = "u32"
+name = "Neutral current"
+
+# Active power (s32, ×0.01 W, signed)
+[[registers]]
+address = 20
+type = "s32"
+name = "Total active power"
+
+[[registers]]
+address = 22
+type = "s32"
+name = "Active power L1"
+
+[[registers]]
+address = 24
+type = "s32"
+name = "Active power L2"
+
+[[registers]]
+address = 26
+type = "s32"
+name = "Active power L3"
+
+# Reactive power (s32, ×0.01 VAr, signed)
+[[registers]]
+address = 28
+type = "s32"
+name = "Total reactive power"
+
+[[registers]]
+address = 30
+type = "s32"
+name = "Reactive power L1"
+
+[[registers]]
+address = 32
+type = "s32"
+name = "Reactive power L2"
+
+[[registers]]
+address = 34
+type = "s32"
+name = "Reactive power L3"
+
+# Apparent power (u32, ×0.01 VA)
+[[registers]]
+address = 36
+type = "u32"
+name = "Total apparent power"
+
+[[registers]]
+address = 38
+type = "u32"
+name = "Apparent power L1"
+
+[[registers]]
+address = 40
+type = "u32"
+name = "Apparent power L2"
+
+[[registers]]
+address = 42
+type = "u32"
+name = "Apparent power L3"
+
+# Power factor (s32, ×0.001, signed)
+[[registers]]
+address = 44
+type = "s32"
+name = "Power factor L1"
+
+[[registers]]
+address = 46
+type = "s32"
+name = "Power factor L2"
+
+[[registers]]
+address = 48
+type = "s32"
+name = "Power factor L3"
+
+[[registers]]
+address = 50
+type = "s32"
+name = "Total power factor"
+
+# Frequency (u32, ×0.01 Hz)
+[[registers]]
+address = 52
+type = "u32"
+name = "Frequency"
+
+# ----- Setpoints (FC03/06, R/W) — 10 setpoints at addr 32768-32847 -----
+# Each setpoint: 8 consecutive registers (activation, parameter type, high/low set,
+# fail delay, recovery delay, hysteresis value, output number)
+# ACTIVATION encoding: high byte A = threshold type, low byte B = 0 disabled/1 low/2 high
+# Set A=BB (A==B) to disable setpoint
+
+[[registers]]
+address = 32768
+type = "u16"
+name = "Setpoint 1 activation"
+
+[[registers]]
+address = 32769
+type = "u16"
+name = "Setpoint 1 parameter type"
+
+[[registers]]
+address = 32770
+type = "u16"
+name = "Setpoint 1 high set value"
+
+[[registers]]
+address = 32771
+type = "u16"
+name = "Setpoint 1 low set value"
+
+[[registers]]
+address = 32772
+type = "u16"
+name = "Setpoint 1 fail to trip delay"
+
+[[registers]]
+address = 32773
+type = "u16"
+name = "Setpoint 1 recovery delay"
+
+[[registers]]
+address = 32774
+type = "u16"
+name = "Setpoint 1 hysteresis value"
+
+# 0=Output1..7=Output8
+[[registers]]
+address = 32775
+type = "u16"
+name = "Setpoint 1 output number"
+
+[[registers]]
+address = 32776
+type = "u16"
+name = "Setpoint 2 activation"
+
+[[registers]]
+address = 32777
+type = "u16"
+name = "Setpoint 2 parameter type"
+
+[[registers]]
+address = 32778
+type = "u16"
+name = "Setpoint 2 high set value"
+
+[[registers]]
+address = 32779
+type = "u16"
+name = "Setpoint 2 low set value"
+
+[[registers]]
+address = 32780
+type = "u16"
+name = "Setpoint 2 fail to trip delay"
+
+[[registers]]
+address = 32781
+type = "u16"
+name = "Setpoint 2 recovery delay"
+
+[[registers]]
+address = 32782
+type = "u16"
+name = "Setpoint 2 hysteresis value"
+
+[[registers]]
+address = 32783
+type = "u16"
+name = "Setpoint 2 output number"

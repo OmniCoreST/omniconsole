@@ -1,0 +1,963 @@
+# ENTES EPC-12 Data Logger / Pulse Counter (Modbus RTU RS-485)
+#
+# Source: entes-epc-12-modbus-register-table-tr.pdf
+# Protocol: Modbus RTU; FC03 read holding registers, FC06/16 write
+# All addresses are 0-based decimal.
+# Total counter registers (addr 0-47): 64-bit unsigned (4 regs each); only low u32 at base listed.
+#   High u32 word is at base+2 (e.g. IN1 high word at addr 2).
+# Tariff counters (addr 48-239): 8 tariffs × 12 inputs, each u32 (2 regs).
+# Tariff time schedule tables (addr 32848-32959) not listed; see datasheet.
+
+vendor = "ENTES"
+model = "EPC-12"
+description = "12-input data logger/pulse counter, Modbus RTU. IN1-IN12 total counters (64-bit, 4 regs each) at addr 0-47; tariff counters T1-T8 per input (u32) at 48-239; device clock/status at 240-249; comm settings at 32768; counter multiplier/divisor/unit at 32775; date-time R/W at 32811; annual+weekly tariff schedules at 32848-32959; device ID at 60416."
+
+# ----- Total counters IN1-IN12 (FC03, R/W, 64-bit; low u32 at base, high u32 at base+2) -----
+[[registers]]
+address = 0
+type = "u32"
+name = "IN1 total counter low"
+
+[[registers]]
+address = 2
+type = "u32"
+name = "IN1 total counter high"
+
+[[registers]]
+address = 4
+type = "u32"
+name = "IN2 total counter low"
+
+[[registers]]
+address = 6
+type = "u32"
+name = "IN2 total counter high"
+
+[[registers]]
+address = 8
+type = "u32"
+name = "IN3 total counter low"
+
+[[registers]]
+address = 10
+type = "u32"
+name = "IN3 total counter high"
+
+[[registers]]
+address = 12
+type = "u32"
+name = "IN4 total counter low"
+
+[[registers]]
+address = 14
+type = "u32"
+name = "IN4 total counter high"
+
+[[registers]]
+address = 16
+type = "u32"
+name = "IN5 total counter low"
+
+[[registers]]
+address = 18
+type = "u32"
+name = "IN5 total counter high"
+
+[[registers]]
+address = 20
+type = "u32"
+name = "IN6 total counter low"
+
+[[registers]]
+address = 22
+type = "u32"
+name = "IN6 total counter high"
+
+[[registers]]
+address = 24
+type = "u32"
+name = "IN7 total counter low"
+
+[[registers]]
+address = 26
+type = "u32"
+name = "IN7 total counter high"
+
+[[registers]]
+address = 28
+type = "u32"
+name = "IN8 total counter low"
+
+[[registers]]
+address = 30
+type = "u32"
+name = "IN8 total counter high"
+
+[[registers]]
+address = 32
+type = "u32"
+name = "IN9 total counter low"
+
+[[registers]]
+address = 34
+type = "u32"
+name = "IN9 total counter high"
+
+[[registers]]
+address = 36
+type = "u32"
+name = "IN10 total counter low"
+
+[[registers]]
+address = 38
+type = "u32"
+name = "IN10 total counter high"
+
+[[registers]]
+address = 40
+type = "u32"
+name = "IN11 total counter low"
+
+[[registers]]
+address = 42
+type = "u32"
+name = "IN11 total counter high"
+
+[[registers]]
+address = 44
+type = "u32"
+name = "IN12 total counter low"
+
+[[registers]]
+address = 46
+type = "u32"
+name = "IN12 total counter high"
+
+# ----- Tariff T1 counters IN1-IN12 (FC03, R/W, u32) -----
+[[registers]]
+address = 48
+type = "u32"
+name = "IN1 T1 tariff counter"
+
+[[registers]]
+address = 50
+type = "u32"
+name = "IN2 T1 tariff counter"
+
+[[registers]]
+address = 52
+type = "u32"
+name = "IN3 T1 tariff counter"
+
+[[registers]]
+address = 54
+type = "u32"
+name = "IN4 T1 tariff counter"
+
+[[registers]]
+address = 56
+type = "u32"
+name = "IN5 T1 tariff counter"
+
+[[registers]]
+address = 58
+type = "u32"
+name = "IN6 T1 tariff counter"
+
+[[registers]]
+address = 60
+type = "u32"
+name = "IN7 T1 tariff counter"
+
+[[registers]]
+address = 62
+type = "u32"
+name = "IN8 T1 tariff counter"
+
+[[registers]]
+address = 64
+type = "u32"
+name = "IN9 T1 tariff counter"
+
+[[registers]]
+address = 66
+type = "u32"
+name = "IN10 T1 tariff counter"
+
+[[registers]]
+address = 68
+type = "u32"
+name = "IN11 T1 tariff counter"
+
+[[registers]]
+address = 70
+type = "u32"
+name = "IN12 T1 tariff counter"
+
+# ----- Tariff T2 counters IN1-IN12 (FC03, R/W, u32) -----
+[[registers]]
+address = 72
+type = "u32"
+name = "IN1 T2 tariff counter"
+
+[[registers]]
+address = 74
+type = "u32"
+name = "IN2 T2 tariff counter"
+
+[[registers]]
+address = 76
+type = "u32"
+name = "IN3 T2 tariff counter"
+
+[[registers]]
+address = 78
+type = "u32"
+name = "IN4 T2 tariff counter"
+
+[[registers]]
+address = 80
+type = "u32"
+name = "IN5 T2 tariff counter"
+
+[[registers]]
+address = 82
+type = "u32"
+name = "IN6 T2 tariff counter"
+
+[[registers]]
+address = 84
+type = "u32"
+name = "IN7 T2 tariff counter"
+
+[[registers]]
+address = 86
+type = "u32"
+name = "IN8 T2 tariff counter"
+
+[[registers]]
+address = 88
+type = "u32"
+name = "IN9 T2 tariff counter"
+
+[[registers]]
+address = 90
+type = "u32"
+name = "IN10 T2 tariff counter"
+
+[[registers]]
+address = 92
+type = "u32"
+name = "IN11 T2 tariff counter"
+
+[[registers]]
+address = 94
+type = "u32"
+name = "IN12 T2 tariff counter"
+
+# ----- Tariff T3 counters IN1-IN12 (FC03, R/W, u32) -----
+[[registers]]
+address = 96
+type = "u32"
+name = "IN1 T3 tariff counter"
+
+[[registers]]
+address = 98
+type = "u32"
+name = "IN2 T3 tariff counter"
+
+[[registers]]
+address = 100
+type = "u32"
+name = "IN3 T3 tariff counter"
+
+[[registers]]
+address = 102
+type = "u32"
+name = "IN4 T3 tariff counter"
+
+[[registers]]
+address = 104
+type = "u32"
+name = "IN5 T3 tariff counter"
+
+[[registers]]
+address = 106
+type = "u32"
+name = "IN6 T3 tariff counter"
+
+[[registers]]
+address = 108
+type = "u32"
+name = "IN7 T3 tariff counter"
+
+[[registers]]
+address = 110
+type = "u32"
+name = "IN8 T3 tariff counter"
+
+[[registers]]
+address = 112
+type = "u32"
+name = "IN9 T3 tariff counter"
+
+[[registers]]
+address = 114
+type = "u32"
+name = "IN10 T3 tariff counter"
+
+[[registers]]
+address = 116
+type = "u32"
+name = "IN11 T3 tariff counter"
+
+[[registers]]
+address = 118
+type = "u32"
+name = "IN12 T3 tariff counter"
+
+# ----- Tariff T4 counters IN1-IN12 (FC03, R/W, u32) -----
+[[registers]]
+address = 120
+type = "u32"
+name = "IN1 T4 tariff counter"
+
+[[registers]]
+address = 122
+type = "u32"
+name = "IN2 T4 tariff counter"
+
+[[registers]]
+address = 124
+type = "u32"
+name = "IN3 T4 tariff counter"
+
+[[registers]]
+address = 126
+type = "u32"
+name = "IN4 T4 tariff counter"
+
+[[registers]]
+address = 128
+type = "u32"
+name = "IN5 T4 tariff counter"
+
+[[registers]]
+address = 130
+type = "u32"
+name = "IN6 T4 tariff counter"
+
+[[registers]]
+address = 132
+type = "u32"
+name = "IN7 T4 tariff counter"
+
+[[registers]]
+address = 134
+type = "u32"
+name = "IN8 T4 tariff counter"
+
+[[registers]]
+address = 136
+type = "u32"
+name = "IN9 T4 tariff counter"
+
+[[registers]]
+address = 138
+type = "u32"
+name = "IN10 T4 tariff counter"
+
+[[registers]]
+address = 140
+type = "u32"
+name = "IN11 T4 tariff counter"
+
+[[registers]]
+address = 142
+type = "u32"
+name = "IN12 T4 tariff counter"
+
+# ----- Tariff T5 counters IN1-IN12 (FC03, R/W, u32) -----
+[[registers]]
+address = 144
+type = "u32"
+name = "IN1 T5 tariff counter"
+
+[[registers]]
+address = 146
+type = "u32"
+name = "IN2 T5 tariff counter"
+
+[[registers]]
+address = 148
+type = "u32"
+name = "IN3 T5 tariff counter"
+
+[[registers]]
+address = 150
+type = "u32"
+name = "IN4 T5 tariff counter"
+
+[[registers]]
+address = 152
+type = "u32"
+name = "IN5 T5 tariff counter"
+
+[[registers]]
+address = 154
+type = "u32"
+name = "IN6 T5 tariff counter"
+
+[[registers]]
+address = 156
+type = "u32"
+name = "IN7 T5 tariff counter"
+
+[[registers]]
+address = 158
+type = "u32"
+name = "IN8 T5 tariff counter"
+
+[[registers]]
+address = 160
+type = "u32"
+name = "IN9 T5 tariff counter"
+
+[[registers]]
+address = 162
+type = "u32"
+name = "IN10 T5 tariff counter"
+
+[[registers]]
+address = 164
+type = "u32"
+name = "IN11 T5 tariff counter"
+
+[[registers]]
+address = 166
+type = "u32"
+name = "IN12 T5 tariff counter"
+
+# ----- Tariff T6 counters IN1-IN12 (FC03, R/W, u32) -----
+[[registers]]
+address = 168
+type = "u32"
+name = "IN1 T6 tariff counter"
+
+[[registers]]
+address = 170
+type = "u32"
+name = "IN2 T6 tariff counter"
+
+[[registers]]
+address = 172
+type = "u32"
+name = "IN3 T6 tariff counter"
+
+[[registers]]
+address = 174
+type = "u32"
+name = "IN4 T6 tariff counter"
+
+[[registers]]
+address = 176
+type = "u32"
+name = "IN5 T6 tariff counter"
+
+[[registers]]
+address = 178
+type = "u32"
+name = "IN6 T6 tariff counter"
+
+[[registers]]
+address = 180
+type = "u32"
+name = "IN7 T6 tariff counter"
+
+[[registers]]
+address = 182
+type = "u32"
+name = "IN8 T6 tariff counter"
+
+[[registers]]
+address = 184
+type = "u32"
+name = "IN9 T6 tariff counter"
+
+[[registers]]
+address = 186
+type = "u32"
+name = "IN10 T6 tariff counter"
+
+[[registers]]
+address = 188
+type = "u32"
+name = "IN11 T6 tariff counter"
+
+[[registers]]
+address = 190
+type = "u32"
+name = "IN12 T6 tariff counter"
+
+# ----- Tariff T7 counters IN1-IN12 (FC03, R/W, u32) -----
+[[registers]]
+address = 192
+type = "u32"
+name = "IN1 T7 tariff counter"
+
+[[registers]]
+address = 194
+type = "u32"
+name = "IN2 T7 tariff counter"
+
+[[registers]]
+address = 196
+type = "u32"
+name = "IN3 T7 tariff counter"
+
+[[registers]]
+address = 198
+type = "u32"
+name = "IN4 T7 tariff counter"
+
+[[registers]]
+address = 200
+type = "u32"
+name = "IN5 T7 tariff counter"
+
+[[registers]]
+address = 202
+type = "u32"
+name = "IN6 T7 tariff counter"
+
+[[registers]]
+address = 204
+type = "u32"
+name = "IN7 T7 tariff counter"
+
+[[registers]]
+address = 206
+type = "u32"
+name = "IN8 T7 tariff counter"
+
+[[registers]]
+address = 208
+type = "u32"
+name = "IN9 T7 tariff counter"
+
+[[registers]]
+address = 210
+type = "u32"
+name = "IN10 T7 tariff counter"
+
+[[registers]]
+address = 212
+type = "u32"
+name = "IN11 T7 tariff counter"
+
+[[registers]]
+address = 214
+type = "u32"
+name = "IN12 T7 tariff counter"
+
+# ----- Tariff T8 counters IN1-IN12 (FC03, R/W, u32) -----
+[[registers]]
+address = 216
+type = "u32"
+name = "IN1 T8 tariff counter"
+
+[[registers]]
+address = 218
+type = "u32"
+name = "IN2 T8 tariff counter"
+
+[[registers]]
+address = 220
+type = "u32"
+name = "IN3 T8 tariff counter"
+
+[[registers]]
+address = 222
+type = "u32"
+name = "IN4 T8 tariff counter"
+
+[[registers]]
+address = 224
+type = "u32"
+name = "IN5 T8 tariff counter"
+
+[[registers]]
+address = 226
+type = "u32"
+name = "IN6 T8 tariff counter"
+
+[[registers]]
+address = 228
+type = "u32"
+name = "IN7 T8 tariff counter"
+
+[[registers]]
+address = 230
+type = "u32"
+name = "IN8 T8 tariff counter"
+
+[[registers]]
+address = 232
+type = "u32"
+name = "IN9 T8 tariff counter"
+
+[[registers]]
+address = 234
+type = "u32"
+name = "IN10 T8 tariff counter"
+
+[[registers]]
+address = 236
+type = "u32"
+name = "IN11 T8 tariff counter"
+
+[[registers]]
+address = 238
+type = "u32"
+name = "IN12 T8 tariff counter"
+
+# ----- Device status (FC03, R, u16) -----
+[[registers]]
+address = 240
+type = "u16"
+name = "RTC day"
+
+[[registers]]
+address = 241
+type = "u16"
+name = "RTC month"
+
+[[registers]]
+address = 242
+type = "u16"
+name = "RTC year"
+
+[[registers]]
+address = 243
+type = "u16"
+name = "RTC hour"
+
+[[registers]]
+address = 244
+type = "u16"
+name = "RTC minute"
+
+[[registers]]
+address = 245
+type = "u16"
+name = "RTC second"
+
+# 0=Monday, 1=Tuesday, 2=Wednesday, 3=Thursday, 4=Friday, 5=Saturday, 6=Sunday
+[[registers]]
+address = 246
+type = "u16"
+name = "Day of week"
+
+# 0-8: active tariff index
+[[registers]]
+address = 247
+type = "u16"
+name = "Active tariff"
+
+[[registers]]
+address = 248
+type = "u16"
+name = "Next write block number"
+
+# 0=No alarm, 1-7: alarm type
+[[registers]]
+address = 249
+type = "u16"
+name = "Alarm status"
+
+# ----- Communication settings (FC03/16, R/W, u16) -----
+# 0=1200, 1=2400, 2=4800, 3=9600, 4=19200, 5=38400
+[[registers]]
+address = 32768
+type = "u16"
+name = "Baud rate"
+
+# 0=None, 1=Odd, 2=Even
+[[registers]]
+address = 32769
+type = "u16"
+name = "Parity"
+
+[[registers]]
+address = 32770
+type = "u16"
+name = "Modbus address"
+
+[[registers]]
+address = 32771
+type = "u16"
+name = "Password"
+
+# 0=Passive, 1=Active
+[[registers]]
+address = 32772
+type = "u16"
+name = "Password enable"
+
+[[registers]]
+address = 32773
+type = "u16"
+name = "Flash record period"
+
+# 0=Disabled, 1=Active
+[[registers]]
+address = 32774
+type = "u16"
+name = "Daylight saving enable"
+
+# ----- Counter multipliers IN1-IN12 (FC03/16, R/W, u16, 0-65535) -----
+[[registers]]
+address = 32775
+type = "u16"
+name = "IN1 pulse multiplier"
+
+[[registers]]
+address = 32776
+type = "u16"
+name = "IN2 pulse multiplier"
+
+[[registers]]
+address = 32777
+type = "u16"
+name = "IN3 pulse multiplier"
+
+[[registers]]
+address = 32778
+type = "u16"
+name = "IN4 pulse multiplier"
+
+[[registers]]
+address = 32779
+type = "u16"
+name = "IN5 pulse multiplier"
+
+[[registers]]
+address = 32780
+type = "u16"
+name = "IN6 pulse multiplier"
+
+[[registers]]
+address = 32781
+type = "u16"
+name = "IN7 pulse multiplier"
+
+[[registers]]
+address = 32782
+type = "u16"
+name = "IN8 pulse multiplier"
+
+[[registers]]
+address = 32783
+type = "u16"
+name = "IN9 pulse multiplier"
+
+[[registers]]
+address = 32784
+type = "u16"
+name = "IN10 pulse multiplier"
+
+[[registers]]
+address = 32785
+type = "u16"
+name = "IN11 pulse multiplier"
+
+[[registers]]
+address = 32786
+type = "u16"
+name = "IN12 pulse multiplier"
+
+# ----- Counter divisors IN1-IN12 (FC03/16, R/W, u16, 1-65535) -----
+[[registers]]
+address = 32787
+type = "u16"
+name = "IN1 pulse divisor"
+
+[[registers]]
+address = 32788
+type = "u16"
+name = "IN2 pulse divisor"
+
+[[registers]]
+address = 32789
+type = "u16"
+name = "IN3 pulse divisor"
+
+[[registers]]
+address = 32790
+type = "u16"
+name = "IN4 pulse divisor"
+
+[[registers]]
+address = 32791
+type = "u16"
+name = "IN5 pulse divisor"
+
+[[registers]]
+address = 32792
+type = "u16"
+name = "IN6 pulse divisor"
+
+[[registers]]
+address = 32793
+type = "u16"
+name = "IN7 pulse divisor"
+
+[[registers]]
+address = 32794
+type = "u16"
+name = "IN8 pulse divisor"
+
+[[registers]]
+address = 32795
+type = "u16"
+name = "IN9 pulse divisor"
+
+[[registers]]
+address = 32796
+type = "u16"
+name = "IN10 pulse divisor"
+
+[[registers]]
+address = 32797
+type = "u16"
+name = "IN11 pulse divisor"
+
+[[registers]]
+address = 32798
+type = "u16"
+name = "IN12 pulse divisor"
+
+# ----- Counter units IN1-IN12 (FC03/16, R/W, u16) -----
+# 0=Wh, 1=kWh, 2=MWh, 3=GWh, 4=kWh, 5=kVAh, 6=kJ, 7=ImWh, 8=ImVAh, 9=IVAh,
+# 10=CVAh, 11=EkWh, 12=EkVAh, 13=EkVArh, 14=kVAr, 15=VArh, 16=kVArh, 17=cal,
+# 18=kcal, 19=BTU, 20=TEP, 21=kVArh, 22=L, 23=kL, 24=mL, 25=ml, 26=in^2,
+# 27=ft^2, 28=gal, 29=gal^3 (US), 30=bbl, 31=pk, 32=pk, 33=qt, 34=qt,
+# 35=lt, 36=lt, 37=l, 38=l, 39=i, 40=i, 41=m, 42=m, 43=cm, 44=cm,
+# 45=km, 46=km, 47=yd, 48=yd, 49=mi, 50=nmi, 51=s, 52=s, 53=min, 54=d
+[[registers]]
+address = 32799
+type = "u16"
+name = "IN1 unit"
+
+[[registers]]
+address = 32800
+type = "u16"
+name = "IN2 unit"
+
+[[registers]]
+address = 32801
+type = "u16"
+name = "IN3 unit"
+
+[[registers]]
+address = 32802
+type = "u16"
+name = "IN4 unit"
+
+[[registers]]
+address = 32803
+type = "u16"
+name = "IN5 unit"
+
+[[registers]]
+address = 32804
+type = "u16"
+name = "IN6 unit"
+
+[[registers]]
+address = 32805
+type = "u16"
+name = "IN7 unit"
+
+[[registers]]
+address = 32806
+type = "u16"
+name = "IN8 unit"
+
+[[registers]]
+address = 32807
+type = "u16"
+name = "IN9 unit"
+
+[[registers]]
+address = 32808
+type = "u16"
+name = "IN10 unit"
+
+[[registers]]
+address = 32809
+type = "u16"
+name = "IN11 unit"
+
+[[registers]]
+address = 32810
+type = "u16"
+name = "IN12 unit"
+
+# ----- Date/time settings (FC03/16, R/W, u16) -----
+[[registers]]
+address = 32811
+type = "u16"
+name = "Set day"
+
+[[registers]]
+address = 32812
+type = "u16"
+name = "Set month"
+
+[[registers]]
+address = 32813
+type = "u16"
+name = "Set year"
+
+[[registers]]
+address = 32814
+type = "u16"
+name = "Set hour"
+
+[[registers]]
+address = 32815
+type = "u16"
+name = "Set minute"
+
+[[registers]]
+address = 32816
+type = "u16"
+name = "Set second"
+
+# 0=Monday...6=Sunday
+[[registers]]
+address = 32817
+type = "u16"
+name = "Set day of week"
+
+# ----- Device identification (FC03, R, u16) -----
+[[registers]]
+address = 60416
+type = "u16"
+name = "Device ID"
+
+[[registers]]
+address = 60417
+type = "u16"
+name = "Device ID version"
+
+[[registers]]
+address = 60418
+type = "u16"
+name = "Serial number high"
+
+[[registers]]
+address = 60419
+type = "u16"
+name = "Serial number low"

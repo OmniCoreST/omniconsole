@@ -1,0 +1,654 @@
+# Moxa ioLogik E2240 Ethernet Remote I/O — 8-channel AI + 2-channel AO
+#
+# Source: ioLogik E2200 Series User Manual Edition 7.0, September 2018 (Appendix I)
+# Protocol: Modbus/TCP port 502
+#
+# FC03 (4xxxx R/W): AO + AI configuration registers (primary space below)
+# FC04 (3xxxx R): AI values — raw ch0-7 (0x0280-0x0287), min raw (0x0290-0x0297),
+#   max raw (0x02A0-0x02A7), scale value f32 step-2 (0x02B0-0x02BF),
+#   min scale value f32 step-2 (0x02C0-0x02CF), max scale value f32 step-2 (0x02D0-0x02DF)
+# FC01 (0xxxx R/W): AO channel output clear (write 1 to clear)
+#
+# NOTE: AI RAW max block starts at 0x01A0 (ref 40417), NOT 0x00A0 — documented gap in address space.
+
+vendor = "Moxa"
+model = "ioLogik E2240"
+description = "8-AI + 2-AO Modbus/TCP Ethernet remote I/O (port 502). FC03: AO_value ch0-1 (0-1, 0-4095), AO_powerOnValue ch0-1 (2-3), AO_safeValue ch0-1 (4-5), AO_range ch0-1 (6-7, 0=0-10V 1=4-20mA), AO_powerOnRange ch0-1 (8-9), AO_safeRange ch0-1 (10-11), AI_range ch0-7 (12-19, 0=+/-150mV 1=+/-500mV 2=+/-5V 3=+/-10V 4=0-20mA 5=4-20mA), AI_powerOnRange ch0-7 (20-27), AI_safeRange ch0-7 (28-35), AI_scalingEnable ch0-7 (136-143), AI_rawMin u32 hi+lo ch0-7 (144-159), AI_rawMax u32 hi+lo ch0-7 (0x01A0-0x01AF=416-431; gap from 0x009F to 0x01A0), AI_scaleMin u32 hi+lo ch0-7 (432-447), AI_scaleMax u32 hi+lo ch0-7 (448-463), AI_scaleValue f32 hi+lo ch0-7 (0x0100-0x010F=256-271), IntReg00-23 working (0x0150-0x0167=336-359). FC04: AI_rawValue ch0-7, AI_rawValueMin, AI_rawValueMax, AI_scaleValue f32 step-2, AI_scaleValueMin f32 step-2, AI_scaleValueMax f32 step-2."
+
+# ===== FC03 Holding Registers =====
+
+# AO value ch0-1
+[[registers]]
+address = 0
+type = "u16"
+name = "AO_value ch0 (0-4095; R/W)"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "AO_value ch1"
+
+# AO power-on value ch0-1
+[[registers]]
+address = 2
+type = "u16"
+name = "AO_powerOnValue ch0 (0-4095; R/W)"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "AO_powerOnValue ch1"
+
+# AO safe value ch0-1
+[[registers]]
+address = 4
+type = "u16"
+name = "AO_safeValue ch0 (0-4095; R/W)"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "AO_safeValue ch1"
+
+# AO range ch0-1
+[[registers]]
+address = 6
+type = "u16"
+name = "AO_range ch0 (0=0-10V, 1=4-20mA; R/W)"
+
+[[registers]]
+address = 7
+type = "u16"
+name = "AO_range ch1"
+
+# AO power-on range ch0-1
+[[registers]]
+address = 8
+type = "u16"
+name = "AO_powerOnRange ch0 (0=0-10V, 1=4-20mA; R/W)"
+
+[[registers]]
+address = 9
+type = "u16"
+name = "AO_powerOnRange ch1"
+
+# AO safe range ch0-1
+[[registers]]
+address = 10
+type = "u16"
+name = "AO_safeRange ch0 (0=0-10V, 1=4-20mA; R/W)"
+
+[[registers]]
+address = 11
+type = "u16"
+name = "AO_safeRange ch1"
+
+# AI range ch0-7
+[[registers]]
+address = 12
+type = "u16"
+name = "AI_range ch0 (0=+/-150mV, 1=+/-500mV, 2=+/-5V, 3=+/-10V, 4=0-20mA, 5=4-20mA; R/W)"
+
+[[registers]]
+address = 13
+type = "u16"
+name = "AI_range ch1"
+
+[[registers]]
+address = 14
+type = "u16"
+name = "AI_range ch2"
+
+[[registers]]
+address = 15
+type = "u16"
+name = "AI_range ch3"
+
+[[registers]]
+address = 16
+type = "u16"
+name = "AI_range ch4"
+
+[[registers]]
+address = 17
+type = "u16"
+name = "AI_range ch5"
+
+[[registers]]
+address = 18
+type = "u16"
+name = "AI_range ch6"
+
+[[registers]]
+address = 19
+type = "u16"
+name = "AI_range ch7"
+
+# AI power-on range ch0-7
+[[registers]]
+address = 20
+type = "u16"
+name = "AI_powerOnRange ch0 (same values as AI_range; R/W)"
+
+[[registers]]
+address = 21
+type = "u16"
+name = "AI_powerOnRange ch1"
+
+[[registers]]
+address = 22
+type = "u16"
+name = "AI_powerOnRange ch2"
+
+[[registers]]
+address = 23
+type = "u16"
+name = "AI_powerOnRange ch3"
+
+[[registers]]
+address = 24
+type = "u16"
+name = "AI_powerOnRange ch4"
+
+[[registers]]
+address = 25
+type = "u16"
+name = "AI_powerOnRange ch5"
+
+[[registers]]
+address = 26
+type = "u16"
+name = "AI_powerOnRange ch6"
+
+[[registers]]
+address = 27
+type = "u16"
+name = "AI_powerOnRange ch7"
+
+# AI safe range ch0-7
+[[registers]]
+address = 28
+type = "u16"
+name = "AI_safeRange ch0 (same values as AI_range; R/W)"
+
+[[registers]]
+address = 29
+type = "u16"
+name = "AI_safeRange ch1"
+
+[[registers]]
+address = 30
+type = "u16"
+name = "AI_safeRange ch2"
+
+[[registers]]
+address = 31
+type = "u16"
+name = "AI_safeRange ch3"
+
+[[registers]]
+address = 32
+type = "u16"
+name = "AI_safeRange ch4"
+
+[[registers]]
+address = 33
+type = "u16"
+name = "AI_safeRange ch5"
+
+[[registers]]
+address = 34
+type = "u16"
+name = "AI_safeRange ch6"
+
+[[registers]]
+address = 35
+type = "u16"
+name = "AI_safeRange ch7"
+
+# AI channel scaling enable ch0-7 (0x0088-0x008F)
+[[registers]]
+address = 136
+type = "u16"
+name = "AI_scalingEnable ch0 (0=Disable, 1=Enable; R/W)"
+
+[[registers]]
+address = 137
+type = "u16"
+name = "AI_scalingEnable ch1"
+
+[[registers]]
+address = 138
+type = "u16"
+name = "AI_scalingEnable ch2"
+
+[[registers]]
+address = 139
+type = "u16"
+name = "AI_scalingEnable ch3"
+
+[[registers]]
+address = 140
+type = "u16"
+name = "AI_scalingEnable ch4"
+
+[[registers]]
+address = 141
+type = "u16"
+name = "AI_scalingEnable ch5"
+
+[[registers]]
+address = 142
+type = "u16"
+name = "AI_scalingEnable ch6"
+
+[[registers]]
+address = 143
+type = "u16"
+name = "AI_scalingEnable ch7"
+
+# AI RAW min value ch0-7 (u32, hi+lo consecutive pairs, 0x0090-0x009F)
+[[registers]]
+address = 144
+type = "u16"
+name = "AI_rawMin ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 145
+type = "u16"
+name = "AI_rawMin ch0 lo-word"
+
+[[registers]]
+address = 146
+type = "u16"
+name = "AI_rawMin ch1 hi-word"
+
+[[registers]]
+address = 147
+type = "u16"
+name = "AI_rawMin ch1 lo-word"
+
+[[registers]]
+address = 148
+type = "u16"
+name = "AI_rawMin ch2 hi-word"
+
+[[registers]]
+address = 149
+type = "u16"
+name = "AI_rawMin ch2 lo-word"
+
+[[registers]]
+address = 150
+type = "u16"
+name = "AI_rawMin ch3 hi-word"
+
+[[registers]]
+address = 151
+type = "u16"
+name = "AI_rawMin ch3 lo-word"
+
+[[registers]]
+address = 152
+type = "u16"
+name = "AI_rawMin ch4 hi-word"
+
+[[registers]]
+address = 153
+type = "u16"
+name = "AI_rawMin ch4 lo-word"
+
+[[registers]]
+address = 154
+type = "u16"
+name = "AI_rawMin ch5 hi-word"
+
+[[registers]]
+address = 155
+type = "u16"
+name = "AI_rawMin ch5 lo-word"
+
+[[registers]]
+address = 156
+type = "u16"
+name = "AI_rawMin ch6 hi-word"
+
+[[registers]]
+address = 157
+type = "u16"
+name = "AI_rawMin ch6 lo-word"
+
+[[registers]]
+address = 158
+type = "u16"
+name = "AI_rawMin ch7 hi-word"
+
+[[registers]]
+address = 159
+type = "u16"
+name = "AI_rawMin ch7 lo-word"
+
+# AI scale value float ch0-7 (f32, hi+lo consecutive pairs, 0x0100-0x010F)
+[[registers]]
+address = 256
+type = "u16"
+name = "AI_scaleValue ch0 hi-word (f32; R/W)"
+
+[[registers]]
+address = 257
+type = "u16"
+name = "AI_scaleValue ch0 lo-word"
+
+[[registers]]
+address = 258
+type = "u16"
+name = "AI_scaleValue ch1 hi-word"
+
+[[registers]]
+address = 259
+type = "u16"
+name = "AI_scaleValue ch1 lo-word"
+
+[[registers]]
+address = 260
+type = "u16"
+name = "AI_scaleValue ch2 hi-word"
+
+[[registers]]
+address = 261
+type = "u16"
+name = "AI_scaleValue ch2 lo-word"
+
+[[registers]]
+address = 262
+type = "u16"
+name = "AI_scaleValue ch3 hi-word"
+
+[[registers]]
+address = 263
+type = "u16"
+name = "AI_scaleValue ch3 lo-word"
+
+[[registers]]
+address = 264
+type = "u16"
+name = "AI_scaleValue ch4 hi-word"
+
+[[registers]]
+address = 265
+type = "u16"
+name = "AI_scaleValue ch4 lo-word"
+
+[[registers]]
+address = 266
+type = "u16"
+name = "AI_scaleValue ch5 hi-word"
+
+[[registers]]
+address = 267
+type = "u16"
+name = "AI_scaleValue ch5 lo-word"
+
+[[registers]]
+address = 268
+type = "u16"
+name = "AI_scaleValue ch6 hi-word"
+
+[[registers]]
+address = 269
+type = "u16"
+name = "AI_scaleValue ch6 lo-word"
+
+[[registers]]
+address = 270
+type = "u16"
+name = "AI_scaleValue ch7 hi-word"
+
+[[registers]]
+address = 271
+type = "u16"
+name = "AI_scaleValue ch7 lo-word"
+
+# AI RAW max value ch0-7 (u32, hi+lo consecutive pairs, 0x01A0-0x01AF)
+# NOTE: gap from 0x009F to 0x01A0 is as documented in the manual
+[[registers]]
+address = 416
+type = "u16"
+name = "AI_rawMax ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 417
+type = "u16"
+name = "AI_rawMax ch0 lo-word"
+
+[[registers]]
+address = 418
+type = "u16"
+name = "AI_rawMax ch1 hi-word"
+
+[[registers]]
+address = 419
+type = "u16"
+name = "AI_rawMax ch1 lo-word"
+
+[[registers]]
+address = 420
+type = "u16"
+name = "AI_rawMax ch2 hi-word"
+
+[[registers]]
+address = 421
+type = "u16"
+name = "AI_rawMax ch2 lo-word"
+
+[[registers]]
+address = 422
+type = "u16"
+name = "AI_rawMax ch3 hi-word"
+
+[[registers]]
+address = 423
+type = "u16"
+name = "AI_rawMax ch3 lo-word"
+
+[[registers]]
+address = 424
+type = "u16"
+name = "AI_rawMax ch4 hi-word"
+
+[[registers]]
+address = 425
+type = "u16"
+name = "AI_rawMax ch4 lo-word"
+
+[[registers]]
+address = 426
+type = "u16"
+name = "AI_rawMax ch5 hi-word"
+
+[[registers]]
+address = 427
+type = "u16"
+name = "AI_rawMax ch5 lo-word"
+
+[[registers]]
+address = 428
+type = "u16"
+name = "AI_rawMax ch6 hi-word"
+
+[[registers]]
+address = 429
+type = "u16"
+name = "AI_rawMax ch6 lo-word"
+
+[[registers]]
+address = 430
+type = "u16"
+name = "AI_rawMax ch7 hi-word"
+
+[[registers]]
+address = 431
+type = "u16"
+name = "AI_rawMax ch7 lo-word"
+
+# AI scale min value ch0-7 (u32, hi+lo consecutive pairs, 0x01B0-0x01BF)
+[[registers]]
+address = 432
+type = "u16"
+name = "AI_scaleMin ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 433
+type = "u16"
+name = "AI_scaleMin ch0 lo-word"
+
+[[registers]]
+address = 434
+type = "u16"
+name = "AI_scaleMin ch1 hi-word"
+
+[[registers]]
+address = 435
+type = "u16"
+name = "AI_scaleMin ch1 lo-word"
+
+[[registers]]
+address = 436
+type = "u16"
+name = "AI_scaleMin ch2 hi-word"
+
+[[registers]]
+address = 437
+type = "u16"
+name = "AI_scaleMin ch2 lo-word"
+
+[[registers]]
+address = 438
+type = "u16"
+name = "AI_scaleMin ch3 hi-word"
+
+[[registers]]
+address = 439
+type = "u16"
+name = "AI_scaleMin ch3 lo-word"
+
+[[registers]]
+address = 440
+type = "u16"
+name = "AI_scaleMin ch4 hi-word"
+
+[[registers]]
+address = 441
+type = "u16"
+name = "AI_scaleMin ch4 lo-word"
+
+[[registers]]
+address = 442
+type = "u16"
+name = "AI_scaleMin ch5 hi-word"
+
+[[registers]]
+address = 443
+type = "u16"
+name = "AI_scaleMin ch5 lo-word"
+
+[[registers]]
+address = 444
+type = "u16"
+name = "AI_scaleMin ch6 hi-word"
+
+[[registers]]
+address = 445
+type = "u16"
+name = "AI_scaleMin ch6 lo-word"
+
+[[registers]]
+address = 446
+type = "u16"
+name = "AI_scaleMin ch7 hi-word"
+
+[[registers]]
+address = 447
+type = "u16"
+name = "AI_scaleMin ch7 lo-word"
+
+# AI scale max value ch0-7 (u32, hi+lo consecutive pairs, 0x01C0-0x01CF)
+[[registers]]
+address = 448
+type = "u16"
+name = "AI_scaleMax ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 449
+type = "u16"
+name = "AI_scaleMax ch0 lo-word"
+
+[[registers]]
+address = 450
+type = "u16"
+name = "AI_scaleMax ch1 hi-word"
+
+[[registers]]
+address = 451
+type = "u16"
+name = "AI_scaleMax ch1 lo-word"
+
+[[registers]]
+address = 452
+type = "u16"
+name = "AI_scaleMax ch2 hi-word"
+
+[[registers]]
+address = 453
+type = "u16"
+name = "AI_scaleMax ch2 lo-word"
+
+[[registers]]
+address = 454
+type = "u16"
+name = "AI_scaleMax ch3 hi-word"
+
+[[registers]]
+address = 455
+type = "u16"
+name = "AI_scaleMax ch3 lo-word"
+
+[[registers]]
+address = 456
+type = "u16"
+name = "AI_scaleMax ch4 hi-word"
+
+[[registers]]
+address = 457
+type = "u16"
+name = "AI_scaleMax ch4 lo-word"
+
+[[registers]]
+address = 458
+type = "u16"
+name = "AI_scaleMax ch5 hi-word"
+
+[[registers]]
+address = 459
+type = "u16"
+name = "AI_scaleMax ch5 lo-word"
+
+[[registers]]
+address = 460
+type = "u16"
+name = "AI_scaleMax ch6 hi-word"
+
+[[registers]]
+address = 461
+type = "u16"
+name = "AI_scaleMax ch6 lo-word"
+
+[[registers]]
+address = 462
+type = "u16"
+name = "AI_scaleMax ch7 hi-word"
+
+[[registers]]
+address = 463
+type = "u16"
+name = "AI_scaleMax ch7 lo-word"

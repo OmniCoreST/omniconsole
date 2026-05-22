@@ -1,0 +1,1780 @@
+# Klemsan KLEA 110P / ECRAS / POWYS Shared Register Map (Modbus RTU RS-485)
+#
+# Source: klemsan-klea110p-ecras-powys-user-manual-en.pdf (Section 4, pp.33-44)
+# Models: KLEA 110P (Energy Analyzer), ECRAS 200/220 (Electronic Multimeter),
+#         POWYS 3100/3101 (Rail Mounted Energy Analyzer)
+# Note: Ecras 200, Ecras 220, Powys 3100, Powys 3101 support RS485. Not all
+#       addresses may be available on every model variant.
+# Protocol: Modbus RTU; FC03 read, FC10 write
+# All registers 32-bit (2 Modbus words each); address stride +2 per entry.
+# Types: float = IEEE 754 f32; 32 bit integer = u32 (settings/counters) or s32 (n/a here)
+# Addresses are 0-based PDU word addresses.
+
+vendor = "Klemsan"
+model = "KLEA 110P/ECRAS/POWYS"
+description = "3-phase energy analyzer / multimeter, Modbus RTU. Shared map for KLEA 110P, ECRAS 200/220, POWYS 3100/3101. All registers 32-bit (stride +2). Phase measurements 0-58 (V/I/PF/P/Q/S/THDV/THDI per phase, f32 RO); common 60-76 (avg V/I/total P/Q/S/freq/neutral, f32 RO); harmonics 78-268 (odd 1st-31st voltage+current per phase, f32 RO); max 270-346 / min 348-424 (same structure, f32 RO); alarm flags at 426 (u32 bitmask RO, 32 bits); demand 428-458 (current/active/reactive/apparent per phase+total, f32 RO); digital input/hour/interruption counters 460-468 (u32 R/W); energy meters 470-532 (T1/T2 import/export active+reactive, total+per-phase, u32 R/W); device settings 534-590 (CTR/VTR/connection/relay/demand/password/comms/DIO/pulse, u32/f32 R/W); alarm limits 592-652 (V-LN/V-LL/I/IN/cosφ/PF/freq high+low+hyst+delay, f32/u32 R/W); reset commands 1000-1014 (WO); save 2000 (WO); relay control 4000-4004 (WO); counter enable 5000 (WO)."
+
+# ===== Phase-1 Basic Measurements (RO) =====
+
+[[registers]]
+address = 0
+type = "f32"
+name = "Phase 1 Voltage (L-N)"
+
+[[registers]]
+address = 2
+type = "f32"
+name = "Phase 1-2 Voltage (L-L)"
+
+[[registers]]
+address = 4
+type = "f32"
+name = "Phase 1 Current"
+
+[[registers]]
+address = 6
+type = "f32"
+name = "Phase 1 Cosφ"
+
+[[registers]]
+address = 8
+type = "f32"
+name = "Phase 1 Power Factor"
+
+[[registers]]
+address = 10
+type = "f32"
+name = "Phase 1 Active Power"
+
+[[registers]]
+address = 12
+type = "f32"
+name = "Phase 1 Reactive Power"
+
+[[registers]]
+address = 14
+type = "f32"
+name = "Phase 1 Apparent Power"
+
+[[registers]]
+address = 16
+type = "f32"
+name = "Phase 1 THDV"
+
+[[registers]]
+address = 18
+type = "f32"
+name = "Phase 1 THDI"
+
+# ===== Phase-2 Basic Measurements (RO) =====
+
+[[registers]]
+address = 20
+type = "f32"
+name = "Phase 2 Voltage (L-N)"
+
+[[registers]]
+address = 22
+type = "f32"
+name = "Phase 2-3 Voltage (L-L)"
+
+[[registers]]
+address = 24
+type = "f32"
+name = "Phase 2 Current"
+
+[[registers]]
+address = 26
+type = "f32"
+name = "Phase 2 Cosφ"
+
+[[registers]]
+address = 28
+type = "f32"
+name = "Phase 2 Power Factor"
+
+[[registers]]
+address = 30
+type = "f32"
+name = "Phase 2 Active Power"
+
+[[registers]]
+address = 32
+type = "f32"
+name = "Phase 2 Reactive Power"
+
+[[registers]]
+address = 34
+type = "f32"
+name = "Phase 2 Apparent Power"
+
+[[registers]]
+address = 36
+type = "f32"
+name = "Phase 2 THDV"
+
+[[registers]]
+address = 38
+type = "f32"
+name = "Phase 2 THDI"
+
+# ===== Phase-3 Basic Measurements (RO) =====
+
+[[registers]]
+address = 40
+type = "f32"
+name = "Phase 3 Voltage (L-N)"
+
+[[registers]]
+address = 42
+type = "f32"
+name = "Phase 3-1 Voltage (L-L)"
+
+[[registers]]
+address = 44
+type = "f32"
+name = "Phase 3 Current"
+
+[[registers]]
+address = 46
+type = "f32"
+name = "Phase 3 Cosφ"
+
+[[registers]]
+address = 48
+type = "f32"
+name = "Phase 3 Power Factor"
+
+[[registers]]
+address = 50
+type = "f32"
+name = "Phase 3 Active Power"
+
+[[registers]]
+address = 52
+type = "f32"
+name = "Phase 3 Reactive Power"
+
+[[registers]]
+address = 54
+type = "f32"
+name = "Phase 3 Apparent Power"
+
+[[registers]]
+address = 56
+type = "f32"
+name = "Phase 3 THDV"
+
+[[registers]]
+address = 58
+type = "f32"
+name = "Phase 3 THDI"
+
+# ===== Common Measurements — Phase-1, Phase-2, Phase-3 (RO) =====
+
+[[registers]]
+address = 60
+type = "f32"
+name = "Average Voltage (L-N)"
+
+[[registers]]
+address = 62
+type = "f32"
+name = "Average Voltage (L-L)"
+
+[[registers]]
+address = 64
+type = "f32"
+name = "Total Current"
+
+[[registers]]
+address = 66
+type = "f32"
+name = "System Power Factor"
+
+[[registers]]
+address = 68
+type = "f32"
+name = "Total Active Power"
+
+[[registers]]
+address = 70
+type = "f32"
+name = "Total Reactive Power"
+
+[[registers]]
+address = 72
+type = "f32"
+name = "Total Apparent Power"
+
+[[registers]]
+address = 74
+type = "f32"
+name = "System Frequency"
+
+[[registers]]
+address = 76
+type = "f32"
+name = "Neutral Current"
+
+# ===== Phase-1 Voltage Harmonic Measurements (odd harmonics 1-31, RO) =====
+
+[[registers]]
+address = 78
+type = "f32"
+name = "Phase 1 Voltage Harmonics 1"
+
+[[registers]]
+address = 80
+type = "f32"
+name = "Phase 1 Voltage Harmonics 3"
+
+[[registers]]
+address = 82
+type = "f32"
+name = "Phase 1 Voltage Harmonics 5"
+
+[[registers]]
+address = 84
+type = "f32"
+name = "Phase 1 Voltage Harmonics 7"
+
+[[registers]]
+address = 86
+type = "f32"
+name = "Phase 1 Voltage Harmonics 9"
+
+[[registers]]
+address = 88
+type = "f32"
+name = "Phase 1 Voltage Harmonics 11"
+
+[[registers]]
+address = 90
+type = "f32"
+name = "Phase 1 Voltage Harmonics 13"
+
+[[registers]]
+address = 92
+type = "f32"
+name = "Phase 1 Voltage Harmonics 15"
+
+[[registers]]
+address = 94
+type = "f32"
+name = "Phase 1 Voltage Harmonics 17"
+
+[[registers]]
+address = 96
+type = "f32"
+name = "Phase 1 Voltage Harmonics 19"
+
+[[registers]]
+address = 98
+type = "f32"
+name = "Phase 1 Voltage Harmonics 21"
+
+[[registers]]
+address = 100
+type = "f32"
+name = "Phase 1 Voltage Harmonics 23"
+
+[[registers]]
+address = 102
+type = "f32"
+name = "Phase 1 Voltage Harmonics 25"
+
+[[registers]]
+address = 104
+type = "f32"
+name = "Phase 1 Voltage Harmonics 27"
+
+[[registers]]
+address = 106
+type = "f32"
+name = "Phase 1 Voltage Harmonics 29"
+
+[[registers]]
+address = 108
+type = "f32"
+name = "Phase 1 Voltage Harmonics 31"
+
+# ===== Phase-1 Current Harmonic Measurements (odd harmonics 1-31, RO) =====
+
+[[registers]]
+address = 110
+type = "f32"
+name = "Phase 1 Current Harmonics 1"
+
+[[registers]]
+address = 112
+type = "f32"
+name = "Phase 1 Current Harmonics 3"
+
+[[registers]]
+address = 114
+type = "f32"
+name = "Phase 1 Current Harmonics 5"
+
+[[registers]]
+address = 116
+type = "f32"
+name = "Phase 1 Current Harmonics 7"
+
+[[registers]]
+address = 118
+type = "f32"
+name = "Phase 1 Current Harmonics 9"
+
+[[registers]]
+address = 120
+type = "f32"
+name = "Phase 1 Current Harmonics 11"
+
+[[registers]]
+address = 122
+type = "f32"
+name = "Phase 1 Current Harmonics 13"
+
+[[registers]]
+address = 124
+type = "f32"
+name = "Phase 1 Current Harmonics 15"
+
+[[registers]]
+address = 126
+type = "f32"
+name = "Phase 1 Current Harmonics 17"
+
+[[registers]]
+address = 128
+type = "f32"
+name = "Phase 1 Current Harmonics 19"
+
+[[registers]]
+address = 130
+type = "f32"
+name = "Phase 1 Current Harmonics 21"
+
+[[registers]]
+address = 132
+type = "f32"
+name = "Phase 1 Current Harmonics 23"
+
+[[registers]]
+address = 134
+type = "f32"
+name = "Phase 1 Current Harmonics 25"
+
+[[registers]]
+address = 136
+type = "f32"
+name = "Phase 1 Current Harmonics 27"
+
+[[registers]]
+address = 138
+type = "f32"
+name = "Phase 1 Current Harmonics 29"
+
+[[registers]]
+address = 140
+type = "f32"
+name = "Phase 1 Current Harmonics 31"
+
+# ===== Phase-2 Voltage Harmonic Measurements (odd harmonics 1-31, RO) =====
+
+[[registers]]
+address = 142
+type = "f32"
+name = "Phase 2 Voltage Harmonics 1"
+
+[[registers]]
+address = 144
+type = "f32"
+name = "Phase 2 Voltage Harmonics 3"
+
+[[registers]]
+address = 146
+type = "f32"
+name = "Phase 2 Voltage Harmonics 5"
+
+[[registers]]
+address = 148
+type = "f32"
+name = "Phase 2 Voltage Harmonics 7"
+
+[[registers]]
+address = 150
+type = "f32"
+name = "Phase 2 Voltage Harmonics 9"
+
+[[registers]]
+address = 152
+type = "f32"
+name = "Phase 2 Voltage Harmonics 11"
+
+[[registers]]
+address = 154
+type = "f32"
+name = "Phase 2 Voltage Harmonics 13"
+
+[[registers]]
+address = 156
+type = "f32"
+name = "Phase 2 Voltage Harmonics 15"
+
+[[registers]]
+address = 158
+type = "f32"
+name = "Phase 2 Voltage Harmonics 17"
+
+[[registers]]
+address = 160
+type = "f32"
+name = "Phase 2 Voltage Harmonics 19"
+
+[[registers]]
+address = 162
+type = "f32"
+name = "Phase 2 Voltage Harmonics 21"
+
+[[registers]]
+address = 164
+type = "f32"
+name = "Phase 2 Voltage Harmonics 23"
+
+[[registers]]
+address = 166
+type = "f32"
+name = "Phase 2 Voltage Harmonics 25"
+
+[[registers]]
+address = 168
+type = "f32"
+name = "Phase 2 Voltage Harmonics 27"
+
+[[registers]]
+address = 170
+type = "f32"
+name = "Phase 2 Voltage Harmonics 29"
+
+[[registers]]
+address = 172
+type = "f32"
+name = "Phase 2 Voltage Harmonics 31"
+
+# ===== Phase-2 Current Harmonic Measurements (odd harmonics 1-31, RO) =====
+
+[[registers]]
+address = 174
+type = "f32"
+name = "Phase 2 Current Harmonics 1"
+
+[[registers]]
+address = 176
+type = "f32"
+name = "Phase 2 Current Harmonics 3"
+
+[[registers]]
+address = 178
+type = "f32"
+name = "Phase 2 Current Harmonics 5"
+
+[[registers]]
+address = 180
+type = "f32"
+name = "Phase 2 Current Harmonics 7"
+
+[[registers]]
+address = 182
+type = "f32"
+name = "Phase 2 Current Harmonics 9"
+
+[[registers]]
+address = 184
+type = "f32"
+name = "Phase 2 Current Harmonics 11"
+
+[[registers]]
+address = 186
+type = "f32"
+name = "Phase 2 Current Harmonics 13"
+
+[[registers]]
+address = 188
+type = "f32"
+name = "Phase 2 Current Harmonics 15"
+
+[[registers]]
+address = 190
+type = "f32"
+name = "Phase 2 Current Harmonics 17"
+
+[[registers]]
+address = 192
+type = "f32"
+name = "Phase 2 Current Harmonics 19"
+
+[[registers]]
+address = 194
+type = "f32"
+name = "Phase 2 Current Harmonics 21"
+
+[[registers]]
+address = 196
+type = "f32"
+name = "Phase 2 Current Harmonics 23"
+
+[[registers]]
+address = 198
+type = "f32"
+name = "Phase 2 Current Harmonics 25"
+
+[[registers]]
+address = 200
+type = "f32"
+name = "Phase 2 Current Harmonics 27"
+
+[[registers]]
+address = 202
+type = "f32"
+name = "Phase 2 Current Harmonics 29"
+
+[[registers]]
+address = 204
+type = "f32"
+name = "Phase 2 Current Harmonics 31"
+
+# ===== Phase-3 Voltage Harmonic Measurements (odd harmonics 1-31, RO) =====
+
+[[registers]]
+address = 206
+type = "f32"
+name = "Phase 3 Voltage Harmonics 1"
+
+[[registers]]
+address = 208
+type = "f32"
+name = "Phase 3 Voltage Harmonics 3"
+
+[[registers]]
+address = 210
+type = "f32"
+name = "Phase 3 Voltage Harmonics 5"
+
+[[registers]]
+address = 212
+type = "f32"
+name = "Phase 3 Voltage Harmonics 7"
+
+[[registers]]
+address = 214
+type = "f32"
+name = "Phase 3 Voltage Harmonics 9"
+
+[[registers]]
+address = 216
+type = "f32"
+name = "Phase 3 Voltage Harmonics 11"
+
+[[registers]]
+address = 218
+type = "f32"
+name = "Phase 3 Voltage Harmonics 13"
+
+[[registers]]
+address = 220
+type = "f32"
+name = "Phase 3 Voltage Harmonics 15"
+
+[[registers]]
+address = 222
+type = "f32"
+name = "Phase 3 Voltage Harmonics 17"
+
+[[registers]]
+address = 224
+type = "f32"
+name = "Phase 3 Voltage Harmonics 19"
+
+[[registers]]
+address = 226
+type = "f32"
+name = "Phase 3 Voltage Harmonics 21"
+
+[[registers]]
+address = 228
+type = "f32"
+name = "Phase 3 Voltage Harmonics 23"
+
+[[registers]]
+address = 230
+type = "f32"
+name = "Phase 3 Voltage Harmonics 25"
+
+[[registers]]
+address = 232
+type = "f32"
+name = "Phase 3 Voltage Harmonics 27"
+
+[[registers]]
+address = 234
+type = "f32"
+name = "Phase 3 Voltage Harmonics 29"
+
+[[registers]]
+address = 236
+type = "f32"
+name = "Phase 3 Voltage Harmonics 31"
+
+# ===== Phase-3 Current Harmonic Measurements (odd harmonics 1-31, RO) =====
+
+[[registers]]
+address = 238
+type = "f32"
+name = "Phase 3 Current Harmonics 1"
+
+[[registers]]
+address = 240
+type = "f32"
+name = "Phase 3 Current Harmonics 3"
+
+[[registers]]
+address = 242
+type = "f32"
+name = "Phase 3 Current Harmonics 5"
+
+[[registers]]
+address = 244
+type = "f32"
+name = "Phase 3 Current Harmonics 7"
+
+[[registers]]
+address = 246
+type = "f32"
+name = "Phase 3 Current Harmonics 9"
+
+[[registers]]
+address = 248
+type = "f32"
+name = "Phase 3 Current Harmonics 11"
+
+[[registers]]
+address = 250
+type = "f32"
+name = "Phase 3 Current Harmonics 13"
+
+[[registers]]
+address = 252
+type = "f32"
+name = "Phase 3 Current Harmonics 15"
+
+[[registers]]
+address = 254
+type = "f32"
+name = "Phase 3 Current Harmonics 17"
+
+[[registers]]
+address = 256
+type = "f32"
+name = "Phase 3 Current Harmonics 19"
+
+[[registers]]
+address = 258
+type = "f32"
+name = "Phase 3 Current Harmonics 21"
+
+[[registers]]
+address = 260
+type = "f32"
+name = "Phase 3 Current Harmonics 23"
+
+[[registers]]
+address = 262
+type = "f32"
+name = "Phase 3 Current Harmonics 25"
+
+[[registers]]
+address = 264
+type = "f32"
+name = "Phase 3 Current Harmonics 27"
+
+[[registers]]
+address = 266
+type = "f32"
+name = "Phase 3 Current Harmonics 29"
+
+[[registers]]
+address = 268
+type = "f32"
+name = "Phase 3 Current Harmonics 31"
+
+# ===== Phase-1 Maximum Measurements (RO) =====
+
+[[registers]]
+address = 270
+type = "f32"
+name = "Phase 1 Max. Voltage (L-N)"
+
+[[registers]]
+address = 272
+type = "f32"
+name = "Phase 1-2 Max. Voltage (L-L)"
+
+[[registers]]
+address = 274
+type = "f32"
+name = "Phase 1 Max. Current"
+
+[[registers]]
+address = 276
+type = "f32"
+name = "Phase 1 Max. Cosφ"
+
+[[registers]]
+address = 278
+type = "f32"
+name = "Phase 1 Max. Power Factor"
+
+[[registers]]
+address = 280
+type = "f32"
+name = "Phase 1 Max. Active Power"
+
+[[registers]]
+address = 282
+type = "f32"
+name = "Phase 1 Max. Reactive Power"
+
+[[registers]]
+address = 284
+type = "f32"
+name = "Phase 1 Max. Apparent Power"
+
+[[registers]]
+address = 286
+type = "f32"
+name = "Phase 1 Max. THDV"
+
+[[registers]]
+address = 288
+type = "f32"
+name = "Phase 1 Max. THDI"
+
+# ===== Phase-2 Maximum Measurements (RO) =====
+
+[[registers]]
+address = 290
+type = "f32"
+name = "Phase 2 Max. Voltage (L-N)"
+
+[[registers]]
+address = 292
+type = "f32"
+name = "Phase 2-3 Max. Voltage (L-L)"
+
+[[registers]]
+address = 294
+type = "f32"
+name = "Phase 2 Max. Current"
+
+[[registers]]
+address = 296
+type = "f32"
+name = "Phase 2 Max. Cosφ"
+
+[[registers]]
+address = 298
+type = "f32"
+name = "Phase 2 Max. Power Factor"
+
+[[registers]]
+address = 300
+type = "f32"
+name = "Phase 2 Max. Active Power"
+
+[[registers]]
+address = 302
+type = "f32"
+name = "Phase 2 Max. Reactive Power"
+
+[[registers]]
+address = 304
+type = "f32"
+name = "Phase 2 Max. Apparent Power"
+
+[[registers]]
+address = 306
+type = "f32"
+name = "Phase 2 Max. THDV"
+
+[[registers]]
+address = 308
+type = "f32"
+name = "Phase 2 Max. THDI"
+
+# ===== Phase-3 Maximum Measurements (RO) =====
+
+[[registers]]
+address = 310
+type = "f32"
+name = "Phase 3 Max. Voltage (L-N)"
+
+[[registers]]
+address = 312
+type = "f32"
+name = "Phase 3-1 Max. Voltage (L-L)"
+
+[[registers]]
+address = 314
+type = "f32"
+name = "Phase 3 Max. Current"
+
+[[registers]]
+address = 316
+type = "f32"
+name = "Phase 3 Max. Cosφ"
+
+[[registers]]
+address = 318
+type = "f32"
+name = "Phase 3 Max. Power Factor"
+
+[[registers]]
+address = 320
+type = "f32"
+name = "Phase 3 Max. Active Power"
+
+[[registers]]
+address = 322
+type = "f32"
+name = "Phase 3 Max. Reactive Power"
+
+[[registers]]
+address = 324
+type = "f32"
+name = "Phase 3 Max. Apparent Power"
+
+[[registers]]
+address = 326
+type = "f32"
+name = "Phase 3 Max. THDV"
+
+[[registers]]
+address = 328
+type = "f32"
+name = "Phase 3 Max. THDI"
+
+# ===== Maximum Common Measurements (RO) =====
+
+[[registers]]
+address = 330
+type = "f32"
+name = "Max. Average Voltage (L-N)"
+
+[[registers]]
+address = 332
+type = "f32"
+name = "Max. Average Voltage (L-L)"
+
+[[registers]]
+address = 334
+type = "f32"
+name = "Max. Total Current"
+
+[[registers]]
+address = 336
+type = "f32"
+name = "Max. System Power Factor"
+
+[[registers]]
+address = 338
+type = "f32"
+name = "Max. Total Active Power"
+
+[[registers]]
+address = 340
+type = "f32"
+name = "Max. Total Reactive Power"
+
+[[registers]]
+address = 342
+type = "f32"
+name = "Max. Total Apparent Power"
+
+[[registers]]
+address = 344
+type = "f32"
+name = "Max. System Frequency"
+
+[[registers]]
+address = 346
+type = "f32"
+name = "Max. Neutral Current"
+
+# ===== Phase-1 Minimum Measurements (RO) =====
+
+[[registers]]
+address = 348
+type = "f32"
+name = "Phase 1 Min. Voltage (L-N)"
+
+[[registers]]
+address = 350
+type = "f32"
+name = "Phase 1-2 Min. Voltage (L-L)"
+
+[[registers]]
+address = 352
+type = "f32"
+name = "Phase 1 Min. Current"
+
+[[registers]]
+address = 354
+type = "f32"
+name = "Phase 1 Min. Cosφ"
+
+[[registers]]
+address = 356
+type = "f32"
+name = "Phase 1 Min. Power Factor"
+
+[[registers]]
+address = 358
+type = "f32"
+name = "Phase 1 Min. Active Power"
+
+[[registers]]
+address = 360
+type = "f32"
+name = "Phase 1 Min. Reactive Power"
+
+[[registers]]
+address = 362
+type = "f32"
+name = "Phase 1 Min. Apparent Power"
+
+[[registers]]
+address = 364
+type = "f32"
+name = "Phase 1 Min. THDV"
+
+[[registers]]
+address = 366
+type = "f32"
+name = "Phase 1 Min. THDI"
+
+# ===== Phase-2 Minimum Measurements (RO) =====
+
+[[registers]]
+address = 368
+type = "f32"
+name = "Phase 2 Min. Voltage (L-N)"
+
+[[registers]]
+address = 370
+type = "f32"
+name = "Phase 2-3 Min. Voltage (L-L)"
+
+[[registers]]
+address = 372
+type = "f32"
+name = "Phase 2 Min. Current"
+
+[[registers]]
+address = 374
+type = "f32"
+name = "Phase 2 Min. Cosφ"
+
+[[registers]]
+address = 376
+type = "f32"
+name = "Phase 2 Min. Power Factor"
+
+[[registers]]
+address = 378
+type = "f32"
+name = "Phase 2 Min. Active Power"
+
+[[registers]]
+address = 380
+type = "f32"
+name = "Phase 2 Min. Reactive Power"
+
+[[registers]]
+address = 382
+type = "f32"
+name = "Phase 2 Min. Apparent Power"
+
+[[registers]]
+address = 384
+type = "f32"
+name = "Phase 2 Min. THDV"
+
+[[registers]]
+address = 386
+type = "f32"
+name = "Phase 2 Min. THDI"
+
+# ===== Phase-3 Minimum Measurements (RO) =====
+
+[[registers]]
+address = 388
+type = "f32"
+name = "Phase 3 Min. Voltage (L-N)"
+
+[[registers]]
+address = 390
+type = "f32"
+name = "Phase 3-1 Min. Voltage (L-L)"
+
+[[registers]]
+address = 392
+type = "f32"
+name = "Phase 3 Min. Current"
+
+[[registers]]
+address = 394
+type = "f32"
+name = "Phase 3 Min. Cosφ"
+
+[[registers]]
+address = 396
+type = "f32"
+name = "Phase 3 Min. Power Factor"
+
+[[registers]]
+address = 398
+type = "f32"
+name = "Phase 3 Min. Active Power"
+
+[[registers]]
+address = 400
+type = "f32"
+name = "Phase 3 Min. Reactive Power"
+
+[[registers]]
+address = 402
+type = "f32"
+name = "Phase 3 Min. Apparent Power"
+
+[[registers]]
+address = 404
+type = "f32"
+name = "Phase 3 Min. THDV"
+
+[[registers]]
+address = 406
+type = "f32"
+name = "Phase 3 Min. THDI"
+
+# ===== Minimum Common Measurements (RO) =====
+
+[[registers]]
+address = 408
+type = "f32"
+name = "Min. Average Voltage (L-N)"
+
+[[registers]]
+address = 410
+type = "f32"
+name = "Min. Average Voltage (L-L)"
+
+[[registers]]
+address = 412
+type = "f32"
+name = "Min. Total Current"
+
+[[registers]]
+address = 414
+type = "f32"
+name = "Min. System Power Factor"
+
+[[registers]]
+address = 416
+type = "f32"
+name = "Min. Total Active Power"
+
+[[registers]]
+address = 418
+type = "f32"
+name = "Min. Total Reactive Power"
+
+[[registers]]
+address = 420
+type = "f32"
+name = "Min. Total Apparent Power"
+
+[[registers]]
+address = 422
+type = "f32"
+name = "Min. System Frequency"
+
+[[registers]]
+address = 424
+type = "f32"
+name = "Min. Neutral Current"
+
+# ===== Alarm Flags (RO) =====
+# Bits 0-15: V(L-N) High/Low, V(L-L) High/Low, I High/Low, I Low/High,
+#   I(N) High/Low, Cosφ High/Low, PF High/Low
+# Bits 16-20: V1/V2/V3 OFF, I1/I2/I3 OFF, SEQ alarm
+# Bits 26-31: DO1/DO2/Relay1/Relay2/DI1/DI2 status
+
+[[registers]]
+address = 426
+type = "u32"
+name = "Alarm Flags"
+
+# ===== Demand Measurements (RO) =====
+
+[[registers]]
+address = 428
+type = "f32"
+name = "Phase 1 Current Demand"
+
+[[registers]]
+address = 430
+type = "f32"
+name = "Phase 2 Current Demand"
+
+[[registers]]
+address = 432
+type = "f32"
+name = "Phase 3 Current Demand"
+
+[[registers]]
+address = 434
+type = "f32"
+name = "Total Current Demand"
+
+[[registers]]
+address = 436
+type = "f32"
+name = "Phase 1 Active Power Demand"
+
+[[registers]]
+address = 438
+type = "f32"
+name = "Phase 2 Active Power Demand"
+
+[[registers]]
+address = 440
+type = "f32"
+name = "Phase 3 Active Power Demand"
+
+[[registers]]
+address = 442
+type = "f32"
+name = "Total Active Power Demand"
+
+[[registers]]
+address = 444
+type = "f32"
+name = "Phase 1 Reactive Power Demand"
+
+[[registers]]
+address = 446
+type = "f32"
+name = "Phase 2 Reactive Power Demand"
+
+[[registers]]
+address = 448
+type = "f32"
+name = "Phase 3 Reactive Power Demand"
+
+[[registers]]
+address = 450
+type = "f32"
+name = "Total Reactive Power Demand"
+
+[[registers]]
+address = 452
+type = "f32"
+name = "Phase 1 Apparent Power Demand"
+
+[[registers]]
+address = 454
+type = "f32"
+name = "Phase 2 Apparent Power Demand"
+
+[[registers]]
+address = 456
+type = "f32"
+name = "Phase 3 Apparent Power Demand"
+
+[[registers]]
+address = 458
+type = "f32"
+name = "Total Apparent Power Demand"
+
+# ===== Digital Input / Hour Counters (R/W) =====
+
+[[registers]]
+address = 460
+type = "u32"
+name = "Digital Input 1 Counter"
+
+[[registers]]
+address = 462
+type = "u32"
+name = "Digital Input 2 Counter"
+
+[[registers]]
+address = 464
+type = "u32"
+name = "Run Hour Counter"
+
+[[registers]]
+address = 466
+type = "u32"
+name = "On Hour Counter"
+
+[[registers]]
+address = 468
+type = "u32"
+name = "Power Interruptions Counter"
+
+# ===== Energy Meters — Tariff 1 Total (Phase1+Phase2+Phase3, R/W) =====
+
+[[registers]]
+address = 470
+type = "u32"
+name = "Import Active Energy T1 (Tariff 1)"
+
+[[registers]]
+address = 472
+type = "u32"
+name = "Export Active Energy T1 (Tariff 1)"
+
+[[registers]]
+address = 474
+type = "u32"
+name = "Import Reactive Energy T1 (Tariff 1)"
+
+[[registers]]
+address = 476
+type = "u32"
+name = "Export Reactive Energy T1 (Tariff 1)"
+
+# ===== Energy Meters — Tariff 2 Total (Phase1+Phase2+Phase3, R/W) =====
+
+[[registers]]
+address = 478
+type = "u32"
+name = "Import Active Energy T2 (Tariff 2)"
+
+[[registers]]
+address = 480
+type = "u32"
+name = "Export Active Energy T2 (Tariff 2)"
+
+[[registers]]
+address = 482
+type = "u32"
+name = "Import Reactive Energy T2 (Tariff 2)"
+
+[[registers]]
+address = 484
+type = "u32"
+name = "Export Reactive Energy T2 (Tariff 2)"
+
+# ===== Tariff 1 Phase 1 Energy Values (R/W) =====
+
+[[registers]]
+address = 486
+type = "u32"
+name = "Import Active Energy T1-Phase1 (Tariff 1)"
+
+[[registers]]
+address = 488
+type = "u32"
+name = "Export Active Energy T1-Phase1 (Tariff 1)"
+
+[[registers]]
+address = 490
+type = "u32"
+name = "Import Reactive Energy T1-Phase1 (Tariff 1)"
+
+[[registers]]
+address = 492
+type = "u32"
+name = "Export Reactive Energy T1-Phase1 (Tariff 1)"
+
+# ===== Tariff 1 Phase 2 Energy Values (R/W) =====
+
+[[registers]]
+address = 494
+type = "u32"
+name = "Import Active Energy T1-Phase2 (Tariff 1)"
+
+[[registers]]
+address = 496
+type = "u32"
+name = "Export Active Energy T1-Phase2 (Tariff 1)"
+
+[[registers]]
+address = 498
+type = "u32"
+name = "Import Reactive Energy T1-Phase2 (Tariff 1)"
+
+[[registers]]
+address = 500
+type = "u32"
+name = "Export Reactive Energy T1-Phase2 (Tariff 1)"
+
+# ===== Tariff 1 Phase 3 Energy Values (R/W) =====
+
+[[registers]]
+address = 502
+type = "u32"
+name = "Import Active Energy T1-Phase3 (Tariff 1)"
+
+[[registers]]
+address = 504
+type = "u32"
+name = "Export Active Energy T1-Phase3 (Tariff 1)"
+
+[[registers]]
+address = 506
+type = "u32"
+name = "Import Reactive Energy T1-Phase3 (Tariff 1)"
+
+[[registers]]
+address = 508
+type = "u32"
+name = "Export Reactive Energy T1-Phase3 (Tariff 1)"
+
+# ===== Tariff 2 Phase 1 Energy Values (R/W) =====
+
+[[registers]]
+address = 510
+type = "u32"
+name = "Import Active Energy T2-Phase1 (Tariff 2)"
+
+[[registers]]
+address = 512
+type = "u32"
+name = "Export Active Energy T2-Phase1 (Tariff 2)"
+
+[[registers]]
+address = 514
+type = "u32"
+name = "Import Reactive Energy T2-Phase1 (Tariff 2)"
+
+[[registers]]
+address = 516
+type = "u32"
+name = "Export Reactive Energy T2-Phase1 (Tariff 2)"
+
+# ===== Tariff 2 Phase 2 Energy Values (R/W) =====
+
+[[registers]]
+address = 518
+type = "u32"
+name = "Import Active Energy T2-Phase2 (Tariff 2)"
+
+[[registers]]
+address = 520
+type = "u32"
+name = "Export Active Energy T2-Phase2 (Tariff 2)"
+
+[[registers]]
+address = 522
+type = "u32"
+name = "Import Reactive Energy T2-Phase2 (Tariff 2)"
+
+[[registers]]
+address = 524
+type = "u32"
+name = "Export Reactive Energy T2-Phase2 (Tariff 2)"
+
+# ===== Tariff 2 Phase 3 Energy Values (R/W) =====
+
+[[registers]]
+address = 526
+type = "u32"
+name = "Import Active Energy T2-Phase3 (Tariff 2)"
+
+[[registers]]
+address = 528
+type = "u32"
+name = "Export Active Energy T2-Phase3 (Tariff 2)"
+
+[[registers]]
+address = 530
+type = "u32"
+name = "Import Reactive Energy T2-Phase3 (Tariff 2)"
+
+[[registers]]
+address = 532
+type = "u32"
+name = "Export Reactive Energy T2-Phase3 (Tariff 2)"
+
+# ===== Device Settings (R/W) =====
+
+[[registers]]
+address = 534
+type = "u32"
+name = "Current Transfer Rate (CTR)"
+
+# IEEE 754 float
+[[registers]]
+address = 536
+type = "f32"
+name = "Voltage Transfer Rate (VTR)"
+
+# 0=Star(Y), 1=Delta
+[[registers]]
+address = 538
+type = "u32"
+name = "Connection Type"
+
+# 0=OFF, 1=LO, 2=HI
+[[registers]]
+address = 540
+type = "u32"
+name = "Relay 1 Function"
+
+[[registers]]
+address = 542
+type = "u32"
+name = "Relay 2 Function"
+
+[[registers]]
+address = 544
+type = "u32"
+name = "Demand Time"
+
+# 0=OFF, 1=ON
+[[registers]]
+address = 546
+type = "u32"
+name = "Password Enable"
+
+[[registers]]
+address = 548
+type = "u32"
+name = "Password Activation Time"
+
+[[registers]]
+address = 550
+type = "u32"
+name = "Password Value"
+
+# 0=1200,1=2400,2=4800,3=9600,4=19200,5=38400,6=57600 baud
+[[registers]]
+address = 552
+type = "u32"
+name = "Baud Rate"
+
+[[registers]]
+address = 554
+type = "u32"
+name = "Slave ID"
+
+# 0=nOn(none),1=Eun(even),2=Odd
+[[registers]]
+address = 556
+type = "u32"
+name = "Parity Control"
+
+# 0=OFF,1=tr2,2=Cnt,3=run
+[[registers]]
+address = 558
+type = "u32"
+name = "Digital Input 1 Type"
+
+[[registers]]
+address = 560
+type = "u32"
+name = "Digital Input 1 Delay Time"
+
+# 0=rIS,1=FAL,2=bot
+[[registers]]
+address = 562
+type = "u32"
+name = "Digital Input 1 Edge"
+
+[[registers]]
+address = 564
+type = "u32"
+name = "Digital Input 2 Type"
+
+[[registers]]
+address = 566
+type = "u32"
+name = "Digital Input 2 Delay Time"
+
+[[registers]]
+address = 568
+type = "u32"
+name = "Digital Input 2 Edge"
+
+# 0=OFF,1=IA1,2=EA1,3=Ir1,4=Er1,5=IA2,6=EA2,7=Ir2,8=Er2,9=dI1,10=dI2
+[[registers]]
+address = 570
+type = "u32"
+name = "Pulse Output 1 Parameter"
+
+[[registers]]
+address = 572
+type = "u32"
+name = "Pulse Output 1 Duration"
+
+[[registers]]
+address = 574
+type = "u32"
+name = "Pulse Output 1 Rate"
+
+[[registers]]
+address = 576
+type = "u32"
+name = "Pulse Output 2 Parameter"
+
+[[registers]]
+address = 578
+type = "u32"
+name = "Pulse Output 2 Duration"
+
+[[registers]]
+address = 580
+type = "u32"
+name = "Pulse Output 2 Rate"
+
+# ===== Alarm Settings (R/W) =====
+
+[[registers]]
+address = 592
+type = "f32"
+name = "Voltage (L-N) Alarm High Limit"
+
+[[registers]]
+address = 594
+type = "f32"
+name = "Voltage (L-N) Alarm Low Limit"
+
+[[registers]]
+address = 596
+type = "f32"
+name = "Voltage (L-N) Alarm Hysteresis"
+
+[[registers]]
+address = 598
+type = "u32"
+name = "Voltage (L-N) Alarm Delay Time"
+
+[[registers]]
+address = 600
+type = "f32"
+name = "Voltage (L-L) Alarm High Limit"
+
+[[registers]]
+address = 602
+type = "f32"
+name = "Voltage (L-L) Alarm Low Limit"
+
+[[registers]]
+address = 604
+type = "f32"
+name = "Voltage (L-L) Alarm Hysteresis"
+
+[[registers]]
+address = 606
+type = "u32"
+name = "Voltage (L-L) Alarm Delay Time"
+
+[[registers]]
+address = 608
+type = "f32"
+name = "Current Alarm High Limit"
+
+[[registers]]
+address = 610
+type = "f32"
+name = "Current Alarm Low Limit"
+
+[[registers]]
+address = 612
+type = "f32"
+name = "Current Alarm Hysteresis"
+
+[[registers]]
+address = 614
+type = "u32"
+name = "Current Alarm Delay Time"
+
+[[registers]]
+address = 616
+type = "f32"
+name = "Neutral Current Alarm High Limit"
+
+[[registers]]
+address = 618
+type = "f32"
+name = "Neutral Current Alarm Low Limit"
+
+[[registers]]
+address = 620
+type = "f32"
+name = "Neutral Current Alarm Hysteresis"
+
+[[registers]]
+address = 622
+type = "u32"
+name = "Neutral Current Alarm Delay Time"
+
+[[registers]]
+address = 624
+type = "f32"
+name = "Cosφ Alarm High Limit"
+
+[[registers]]
+address = 626
+type = "f32"
+name = "Cosφ Alarm Low Limit"
+
+[[registers]]
+address = 628
+type = "f32"
+name = "Cosφ Alarm Hysteresis"
+
+[[registers]]
+address = 630
+type = "u32"
+name = "Cosφ Alarm Delay Time"
+
+[[registers]]
+address = 632
+type = "f32"
+name = "Power Factor Alarm High Limit"
+
+[[registers]]
+address = 634
+type = "f32"
+name = "Power Factor Alarm Low Limit"
+
+[[registers]]
+address = 636
+type = "f32"
+name = "Power Factor Alarm Hysteresis"
+
+[[registers]]
+address = 638
+type = "u32"
+name = "Power Factor Alarm Delay Time"
+
+[[registers]]
+address = 640
+type = "f32"
+name = "Frequency Alarm High Limit"
+
+[[registers]]
+address = 642
+type = "f32"
+name = "Frequency Alarm Low Limit"
+
+[[registers]]
+address = 644
+type = "f32"
+name = "Frequency Alarm Hysteresis"
+
+[[registers]]
+address = 646
+type = "u32"
+name = "Frequency Alarm Delay Time"
+
+# ===== Device Model / Firmware (RO) =====
+
+[[registers]]
+address = 648
+type = "f32"
+name = "Device Firmware Version"
+
+[[registers]]
+address = 650
+type = "u32"
+name = "Device Model"
+
+# ===== Password / Settings Protection (R/W) =====
+# Reads 0 = password protection disabled; write password here to enable writes
+
+[[registers]]
+address = 652
+type = "u32"
+name = "Setting Protection"
+
+# ===== Reset Commands (WO) — write 1 to trigger =====
+
+[[registers]]
+address = 1000
+type = "u32"
+name = "Reset Energy Values"
+
+[[registers]]
+address = 1002
+type = "u32"
+name = "Reset Counter Values"
+
+[[registers]]
+address = 1004
+type = "u32"
+name = "Reset Max. Values"
+
+[[registers]]
+address = 1006
+type = "u32"
+name = "Reset Min. Values"
+
+[[registers]]
+address = 1008
+type = "u32"
+name = "Reset Demand Values"
+
+[[registers]]
+address = 1010
+type = "u32"
+name = "Reset Settings"
+
+[[registers]]
+address = 1012
+type = "u32"
+name = "Reset Alarm Limits"
+
+[[registers]]
+address = 1014
+type = "u32"
+name = "Reset the Device to Factory Settings"
+
+# ===== Save Changes (WO) — write 1 to save and restart =====
+
+[[registers]]
+address = 2000
+type = "u32"
+name = "Save Changes"
+
+# ===== Manual Output Relay Control (WO) =====
+# Enable: write 1111 to enable, 0 to disable. Relay: write 1 to activate, 0 to de-activate.
+
+[[registers]]
+address = 4000
+type = "u32"
+name = "Enable Relay Control"
+
+[[registers]]
+address = 4002
+type = "u32"
+name = "Relay 1 Control"
+
+[[registers]]
+address = 4004
+type = "u32"
+name = "Relay 2 Control"
+
+# ===== Enable Counter Change (WO) =====
+# Write 2222 to enable energy counter assignment; write 0 to disable.
+
+[[registers]]
+address = 5000
+type = "u32"
+name = "Enable Counter Change"

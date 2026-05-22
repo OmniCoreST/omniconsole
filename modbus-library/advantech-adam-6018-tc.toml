@@ -1,0 +1,281 @@
+# Advantech ADAM-6018 / ADAM-6018+ — 8-Channel Thermocouple Input Module (Ethernet/Modbus TCP)
+#
+# Source: advantech-adam-6000-modbus.pdf (Appendix B.2)
+# - 8-channel thermocouple input; type selectable per channel.
+# - ADAM-6018 also has 2 digital outputs (DO ch 0-1 at FC01 addr 16-17).
+# - ADAM-6018+ has no digital outputs.
+# - Modbus TCP (Ethernet), unit identifier = 1.
+# - FC01 addr 16-17 (00017-00018): DO value ch 0-1 (R/W) — ADAM-6018 only.
+# - FC02 addr 120-127: Open-circuit/burnout flag ch 0-7 (R).
+# - FC02 addr 130-138: High alarm flag ch 0-7, avg (R).
+# - FC02 addr 140-148: Low alarm flag ch 0-7, avg (R).
+# - FC03 addr 0-7: AI raw ch 0-7 (u16, 0-65535=full scale) (R).
+# - FC03 addr 8: AI average raw (u16) (R).
+# - FC03 addr 10-17: Historical max AI ch 0-7 (u16) (R).
+# - FC03 addr 18: Historical max average (u16) (R).
+# - FC03 addr 20-27: Historical min AI ch 0-7 (u16) (R).
+# - FC03 addr 28: Historical min average (u16) (R).
+# - FC03 addr 30,32..44: AI float ch 0-7 (f32 IEEE754, 2 regs each, direct °C) (R).
+# - FC03 addr 46: AI float average (f32) (R).
+# - FC03 addr 200-207: Type code ch 0-7 (R/W; TC type selectable per channel).
+# - FC03 addr 210-211: Module Name 1-2 (R).
+# - FC03 addr 220: AI channel enable (R/W).
+# - FC03 addr 304: GCL internal flag value (R/W).
+
+vendor = "Advantech"
+model = "ADAM-6018"
+description = "8-channel thermocouple input over Modbus TCP. FC03 addr 0-7: u16 raw (0-65535=full scale); addr 30,32,...44 pairs: f32 IEEE754 direct °C. Historical max/min at addr 10-28. ADAM-6018 adds 2 DO at FC01 coil addr 16-17."
+
+# ----- AI raw values (FC03, R) -----
+[[registers]]
+address = 0
+type = "u16"
+name = "TC channel 0 raw"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "TC channel 1 raw"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "TC channel 2 raw"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "TC channel 3 raw"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "TC channel 4 raw"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "TC channel 5 raw"
+
+[[registers]]
+address = 6
+type = "u16"
+name = "TC channel 6 raw"
+
+[[registers]]
+address = 7
+type = "u16"
+name = "TC channel 7 raw"
+
+[[registers]]
+address = 8
+type = "u16"
+name = "TC average raw"
+
+# ----- Historical max (FC03, R) -----
+[[registers]]
+address = 10
+type = "u16"
+name = "TC channel 0 historical max"
+
+[[registers]]
+address = 11
+type = "u16"
+name = "TC channel 1 historical max"
+
+[[registers]]
+address = 12
+type = "u16"
+name = "TC channel 2 historical max"
+
+[[registers]]
+address = 13
+type = "u16"
+name = "TC channel 3 historical max"
+
+[[registers]]
+address = 14
+type = "u16"
+name = "TC channel 4 historical max"
+
+[[registers]]
+address = 15
+type = "u16"
+name = "TC channel 5 historical max"
+
+[[registers]]
+address = 16
+type = "u16"
+name = "TC channel 6 historical max"
+
+[[registers]]
+address = 17
+type = "u16"
+name = "TC channel 7 historical max"
+
+[[registers]]
+address = 18
+type = "u16"
+name = "TC average historical max"
+
+# ----- Historical min (FC03, R) -----
+[[registers]]
+address = 20
+type = "u16"
+name = "TC channel 0 historical min"
+
+[[registers]]
+address = 21
+type = "u16"
+name = "TC channel 1 historical min"
+
+[[registers]]
+address = 22
+type = "u16"
+name = "TC channel 2 historical min"
+
+[[registers]]
+address = 23
+type = "u16"
+name = "TC channel 3 historical min"
+
+[[registers]]
+address = 24
+type = "u16"
+name = "TC channel 4 historical min"
+
+[[registers]]
+address = 25
+type = "u16"
+name = "TC channel 5 historical min"
+
+[[registers]]
+address = 26
+type = "u16"
+name = "TC channel 6 historical min"
+
+[[registers]]
+address = 27
+type = "u16"
+name = "TC channel 7 historical min"
+
+[[registers]]
+address = 28
+type = "u16"
+name = "TC average historical min"
+
+# ----- AI float values (FC03, f32 IEEE754, R) -----
+[[registers]]
+address = 30
+type = "f32"
+name = "TC channel 0"
+unit = "°C"
+
+[[registers]]
+address = 32
+type = "f32"
+name = "TC channel 1"
+unit = "°C"
+
+[[registers]]
+address = 34
+type = "f32"
+name = "TC channel 2"
+unit = "°C"
+
+[[registers]]
+address = 36
+type = "f32"
+name = "TC channel 3"
+unit = "°C"
+
+[[registers]]
+address = 38
+type = "f32"
+name = "TC channel 4"
+unit = "°C"
+
+[[registers]]
+address = 40
+type = "f32"
+name = "TC channel 5"
+unit = "°C"
+
+[[registers]]
+address = 42
+type = "f32"
+name = "TC channel 6"
+unit = "°C"
+
+[[registers]]
+address = 44
+type = "f32"
+name = "TC channel 7"
+unit = "°C"
+
+[[registers]]
+address = 46
+type = "f32"
+name = "TC average"
+unit = "°C"
+
+# ----- Configuration (FC03, R/W) -----
+[[registers]]
+address = 200
+type = "u16"
+name = "Type code channel 0"
+
+[[registers]]
+address = 201
+type = "u16"
+name = "Type code channel 1"
+
+[[registers]]
+address = 202
+type = "u16"
+name = "Type code channel 2"
+
+[[registers]]
+address = 203
+type = "u16"
+name = "Type code channel 3"
+
+[[registers]]
+address = 204
+type = "u16"
+name = "Type code channel 4"
+
+[[registers]]
+address = 205
+type = "u16"
+name = "Type code channel 5"
+
+[[registers]]
+address = 206
+type = "u16"
+name = "Type code channel 6"
+
+[[registers]]
+address = 207
+type = "u16"
+name = "Type code channel 7"
+
+[[registers]]
+address = 210
+type = "u16"
+name = "Module name 1"
+
+[[registers]]
+address = 211
+type = "u16"
+name = "Module name 2"
+
+[[registers]]
+address = 220
+type = "u16"
+name = "AI channel enable"
+
+[[registers]]
+address = 304
+type = "u16"
+name = "GCL internal flag value"

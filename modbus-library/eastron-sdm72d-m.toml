@@ -1,0 +1,78 @@
+# Eastron SDM72D-M — Modbus register map for Omni Console
+#
+# Source: eastron-sdm72d-m-user-manual.pdf (V1.5)
+# - 3-phase 4-wire DIN-rail energy meter, simplified register set (totals only).
+# - Input registers (FC04), IEEE-754 float, big-endian (MSW first).
+# - All addresses are 0-based protocol addresses (register_number − 30001).
+# - Note 1: Total kWh = Import + Export.
+# - Factory defaults: slave=1, baud=9600, 8N1.
+
+vendor = "Eastron"
+model = "SDM72D-M"
+description = "3-phase 4-wire DIN-rail energy meter — total active power, import/export kWh, resettable energy, import/export active power (IEEE-754 float, input registers, totals only)."
+
+# ----- Active power -----
+[[registers]]
+address = 52
+type = "f32"
+area = "input"
+name = "Total active power"
+unit = "W"
+
+[[registers]]
+address = 1280
+type = "f32"
+area = "input"
+name = "Total import active power"
+unit = "W"
+
+[[registers]]
+address = 1282
+type = "f32"
+area = "input"
+name = "Total export active power"
+unit = "W"
+
+# ----- Energy — import / export -----
+[[registers]]
+address = 72
+type = "f32"
+area = "input"
+name = "Total import kWh"
+unit = "kWh"
+
+[[registers]]
+address = 74
+type = "f32"
+area = "input"
+name = "Total export kWh"
+unit = "kWh"
+
+[[registers]]
+address = 342
+type = "f32"
+area = "input"
+name = "Total kWh (import + export)"
+unit = "kWh"
+
+# ----- Resettable energy -----
+[[registers]]
+address = 384
+type = "f32"
+area = "input"
+name = "Resettable total active energy"
+unit = "kWh"
+
+[[registers]]
+address = 388
+type = "f32"
+area = "input"
+name = "Resettable import active energy"
+unit = "kWh"
+
+[[registers]]
+address = 390
+type = "f32"
+area = "input"
+name = "Resettable export active energy"
+unit = "kWh"

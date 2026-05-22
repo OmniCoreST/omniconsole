@@ -1,0 +1,50 @@
+# Advantech ADAM-4055 — 16-Channel Isolated Digital I/O with LED Module
+#
+# Source: advantech-adam-4000-modbus.pdf (Appendix G, Module 11)
+# - 8 DI + 8 DO isolated digital I/O with LED status indicators.
+# - Modbus RTU, FC01/FC02 for I/O state (coil registers — NOT FC03).
+# - FC01/FC02 00001-00008 (coil addr 0-7): DI Input Signal ch0-7 (R).
+# - FC01 00017-00024 (coil addr 16-23): DO Output Value ch0-7 (R/W).
+# - FC03 40211 (addr 210): Module Name 1 (R).
+# - FC03 40212 (addr 211): Module Name 2 (R).
+# - FC03 40213 (addr 212): Firmware Version 1 (R).
+# - FC03 40214 (addr 213): Firmware Version 2 (R).
+# - FC03 40215 (addr 214): Comm Safety Enable (R).
+# - FC03 40216 (addr 215): Comm Safety Flag (R).
+# - Factory defaults: slave=1, 9600 baud, 8N1.
+# - NOTE: I/O state uses FC01/FC02 coils, not FC03.
+
+vendor = "Advantech"
+model = "ADAM-4055"
+description = "8 DI + 8 DO isolated digital I/O module with LED indicators. DI at FC01/02 coil addr 0-7, DO at FC01 coil addr 16-23. FC03 module ID/comm-safety at addr 210-215."
+
+# ----- Module identification / comm safety (FC03, R) -----
+[[registers]]
+address = 210
+type = "u16"
+name = "Module name 1"
+
+[[registers]]
+address = 211
+type = "u16"
+name = "Module name 2"
+
+[[registers]]
+address = 212
+type = "u16"
+name = "Firmware version 1"
+
+[[registers]]
+address = 213
+type = "u16"
+name = "Firmware version 2"
+
+[[registers]]
+address = 214
+type = "u16"
+name = "Comm safety enable"
+
+[[registers]]
+address = 215
+type = "u16"
+name = "Comm safety flag"

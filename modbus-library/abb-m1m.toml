@@ -1,0 +1,429 @@
+# ABB M1M — Modbus register map for Omni Console
+#
+# Source: abb-m1m-modbus-manual.pdf
+# - Applies to M1M 15, M1M 20, M1M 20 Pro, M1M 30, M1M 30 Pro.
+# - 3-phase energy and power quality meter, panel-mount, RS485 Modbus RTU.
+# - Holding registers FC03 (all measurement/energy registers are read-only).
+# - "Start Reg (Hex)" is the raw protocol address — NOT 40000-based, NOT decremented by 1.
+# - All multi-register values: Big-Endian (MSW first); no word_order needed.
+# - Size 1 register = 16-bit (u16/s16), Size 2 = 32-bit (u32/s32), Size 4 = 64-bit (u64/s64).
+# - Factory defaults: slave=1, configurable baud, 8N1.
+# - Note: "Current N" and THD registers only available on M1M 20/30 variants.
+# - Note: Unbalance registers only available on M1M 30 and M1M 20 I/O Pro.
+
+vendor = "ABB"
+model = "M1M"
+description = "3-phase energy and power quality meter — system total + per-phase V/I/P/Q/S/PF/angle, frequency, CosPhi, 64-bit energy, THD (M1M 20/30), unbalance (M1M 30) (FC03, Big-Endian, 0x5Bxx instantaneous, 0x50xx energy)."
+
+# ----- Energy accumulators — 64-bit, res 0.01 -----
+# 0x5000 = 20480
+[[registers]]
+address = 20480
+type = "u64"
+name = "Active energy import"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 20484
+type = "u64"
+name = "Active energy export"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 20492
+type = "u64"
+name = "Reactive energy import"
+unit = "kvarh"
+scale = 0.01
+
+[[registers]]
+address = 20496
+type = "u64"
+name = "Reactive energy export"
+unit = "kvarh"
+scale = 0.01
+
+[[registers]]
+address = 20504
+type = "u64"
+name = "Apparent energy import"
+unit = "kVAh"
+scale = 0.01
+
+# ----- Real-time instantaneous values — 0x5B00 = 23296 -----
+
+# System and phase voltages (u32, res 0.1 V)
+[[registers]]
+address = 23296
+type = "u32"
+name = "System voltage"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 23298
+type = "u32"
+name = "Voltage L1-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 23300
+type = "u32"
+name = "Voltage L2-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 23302
+type = "u32"
+name = "Voltage L3-N"
+unit = "V"
+scale = 0.1
+
+# Line-to-line voltages (u32, res 0.1 V)
+[[registers]]
+address = 23304
+type = "u32"
+name = "Voltage L1-L2"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 23306
+type = "u32"
+name = "Voltage L3-L2"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 23308
+type = "u32"
+name = "Voltage L1-L3"
+unit = "V"
+scale = 0.1
+
+# System and phase currents (u32, res 0.01 A)
+[[registers]]
+address = 23310
+type = "u32"
+name = "System current"
+unit = "A"
+scale = 0.01
+
+[[registers]]
+address = 23312
+type = "u32"
+name = "Current L1"
+unit = "A"
+scale = 0.01
+
+[[registers]]
+address = 23314
+type = "u32"
+name = "Current L2"
+unit = "A"
+scale = 0.01
+
+[[registers]]
+address = 23316
+type = "u32"
+name = "Current L3"
+unit = "A"
+scale = 0.01
+
+# Neutral current — M1M 20/30 only (u32, res 0.01 A)
+[[registers]]
+address = 23318
+type = "u32"
+name = "Neutral current"
+unit = "A"
+scale = 0.01
+
+# Active power (s32, res 0.01 W)
+[[registers]]
+address = 23322
+type = "s32"
+name = "Total active power"
+unit = "W"
+scale = 0.01
+
+[[registers]]
+address = 23324
+type = "s32"
+name = "Active power L1"
+unit = "W"
+scale = 0.01
+
+[[registers]]
+address = 23326
+type = "s32"
+name = "Active power L2"
+unit = "W"
+scale = 0.01
+
+[[registers]]
+address = 23328
+type = "s32"
+name = "Active power L3"
+unit = "W"
+scale = 0.01
+
+# Reactive power (s32, res 0.01 var)
+[[registers]]
+address = 23330
+type = "s32"
+name = "Total reactive power"
+unit = "var"
+scale = 0.01
+
+[[registers]]
+address = 23332
+type = "s32"
+name = "Reactive power L1"
+unit = "var"
+scale = 0.01
+
+[[registers]]
+address = 23334
+type = "s32"
+name = "Reactive power L2"
+unit = "var"
+scale = 0.01
+
+[[registers]]
+address = 23336
+type = "s32"
+name = "Reactive power L3"
+unit = "var"
+scale = 0.01
+
+# Apparent power (s32, res 0.01 VA)
+[[registers]]
+address = 23338
+type = "s32"
+name = "Total apparent power"
+unit = "VA"
+scale = 0.01
+
+[[registers]]
+address = 23340
+type = "s32"
+name = "Apparent power L1"
+unit = "VA"
+scale = 0.01
+
+[[registers]]
+address = 23342
+type = "s32"
+name = "Apparent power L2"
+unit = "VA"
+scale = 0.01
+
+[[registers]]
+address = 23344
+type = "s32"
+name = "Apparent power L3"
+unit = "VA"
+scale = 0.01
+
+# Frequency (u16, res 0.01 Hz)
+[[registers]]
+address = 23346
+type = "u16"
+name = "Frequency"
+unit = "Hz"
+scale = 0.01
+
+# Phase angle — power (s16, res 0.1°)
+[[registers]]
+address = 23347
+type = "s16"
+name = "Phase angle power total"
+unit = "°"
+scale = 0.1
+
+[[registers]]
+address = 23348
+type = "s16"
+name = "Phase angle power L1"
+unit = "°"
+scale = 0.1
+
+[[registers]]
+address = 23349
+type = "s16"
+name = "Phase angle power L2"
+unit = "°"
+scale = 0.1
+
+[[registers]]
+address = 23350
+type = "s16"
+name = "Phase angle power L3"
+unit = "°"
+scale = 0.1
+
+# Phase angle — voltage (s16, res 0.1°)
+[[registers]]
+address = 23351
+type = "s16"
+name = "Phase angle voltage L1"
+unit = "°"
+scale = 0.1
+
+[[registers]]
+address = 23352
+type = "s16"
+name = "Phase angle voltage L2"
+unit = "°"
+scale = 0.1
+
+[[registers]]
+address = 23353
+type = "s16"
+name = "Phase angle voltage L3"
+unit = "°"
+scale = 0.1
+
+# Phase angle — current (s16, res 0.1°; 0x5B3D–5B3F = 23357–23359)
+[[registers]]
+address = 23357
+type = "s16"
+name = "Phase angle current L1"
+unit = "°"
+scale = 0.1
+
+[[registers]]
+address = 23358
+type = "s16"
+name = "Phase angle current L2"
+unit = "°"
+scale = 0.1
+
+[[registers]]
+address = 23359
+type = "s16"
+name = "Phase angle current L3"
+unit = "°"
+scale = 0.1
+
+# Power factor (s16, res 0.001)
+[[registers]]
+address = 23360
+type = "s16"
+name = "Total power factor"
+scale = 0.001
+
+[[registers]]
+address = 23361
+type = "s16"
+name = "Power factor L1"
+scale = 0.001
+
+[[registers]]
+address = 23362
+type = "s16"
+name = "Power factor L2"
+scale = 0.001
+
+[[registers]]
+address = 23363
+type = "s16"
+name = "Power factor L3"
+scale = 0.001
+
+# CosPhi (s16, res 0.001; 0x5B48–5B4B = 23368–23371)
+[[registers]]
+address = 23368
+type = "s16"
+name = "CosPhi total"
+scale = 0.001
+
+[[registers]]
+address = 23369
+type = "s16"
+name = "CosPhi L1"
+scale = 0.001
+
+[[registers]]
+address = 23370
+type = "s16"
+name = "CosPhi L2"
+scale = 0.001
+
+[[registers]]
+address = 23371
+type = "s16"
+name = "CosPhi L3"
+scale = 0.001
+
+# ----- THD — M1M 20/30 only (u16, res 0.1 %) -----
+# 0x5D00 = 23808; 0x5D80 = 23936; 0x5E00 = 24064
+[[registers]]
+address = 23808
+type = "u16"
+name = "Voltage THD L1"
+unit = "%"
+scale = 0.1
+
+[[registers]]
+address = 23936
+type = "u16"
+name = "Voltage THD L2"
+unit = "%"
+scale = 0.1
+
+[[registers]]
+address = 24064
+type = "u16"
+name = "Voltage THD L3"
+unit = "%"
+scale = 0.1
+
+# 0x6000 = 24576; 0x6080 = 24704; 0x6100 = 24832
+[[registers]]
+address = 24576
+type = "u16"
+name = "Current THD L1"
+unit = "%"
+scale = 0.1
+
+[[registers]]
+address = 24704
+type = "u16"
+name = "Current THD L2"
+unit = "%"
+scale = 0.1
+
+[[registers]]
+address = 24832
+type = "u16"
+name = "Current THD L3"
+unit = "%"
+scale = 0.1
+
+# ----- Unbalance — M1M 30 and M1M 20 I/O Pro only (u32, res 0.1 %) -----
+# 0x6200 = 25088
+[[registers]]
+address = 25088
+type = "u32"
+name = "Voltage unbalance (phase)"
+unit = "%"
+scale = 0.1
+
+[[registers]]
+address = 25090
+type = "u32"
+name = "Voltage unbalance (line)"
+unit = "%"
+scale = 0.1
+
+[[registers]]
+address = 25092
+type = "u32"
+name = "Current unbalance"
+unit = "%"
+scale = 0.1

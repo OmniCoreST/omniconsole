@@ -1,0 +1,415 @@
+# Accuenergy AcuVim II — Modbus register map for Omni Console
+#
+# Source: accuenergy-acuvim-ii-modbus.pdf (41-page dedicated Modbus map)
+# - 3-phase advanced power quality meter with optional I/O modules (AcuVim IIR/IIE/IIW).
+# - FC03 (Read Holding Registers) for all registers listed here.
+# - All addresses are raw protocol addresses (0x4000 = 16384 decimal).
+# - Real-time: Float (IEEE 754, 2 registers, Big-Endian MSW first); power in kW/kvar/kVA.
+# - Energy: Dword (u32, 2 registers, Big-Endian); Primary Mode: real = Rx/10 → scale=0.1 kWh.
+# - THD: Word (u16, 1 register); real = Rx/100 → scale=0.01 %.
+# - Phase angles: Word (u16, 1 register); real = Rx/10 → scale=0.1 °; range 0–360°.
+# - Factory defaults: slave=1, baud=9600, 8N1.
+
+vendor = "Accuenergy"
+model = "AcuVim II"
+description = "3-phase power quality meter — V/I/P/Q/S/PF/unbalance (float, kW), demands, energy (Dword Rx/10 kWh), THD/phase angles (Word ×100/×10) (FC03, Big-Endian, 0x4000 float bank)."
+
+# ----- Frequency -----
+# 0x4000 = 16384
+[[registers]]
+address = 16384
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# ----- Phase-to-neutral voltages -----
+# 0x4002 = 16386
+[[registers]]
+address = 16386
+type = "f32"
+name = "Voltage L1-N"
+unit = "V"
+
+[[registers]]
+address = 16388
+type = "f32"
+name = "Voltage L2-N"
+unit = "V"
+
+[[registers]]
+address = 16390
+type = "f32"
+name = "Voltage L3-N"
+unit = "V"
+
+[[registers]]
+address = 16392
+type = "f32"
+name = "Average phase voltage"
+unit = "V"
+
+# ----- Line voltages -----
+# 0x400A = 16394
+[[registers]]
+address = 16394
+type = "f32"
+name = "Voltage L1-L2"
+unit = "V"
+
+[[registers]]
+address = 16396
+type = "f32"
+name = "Voltage L2-L3"
+unit = "V"
+
+[[registers]]
+address = 16398
+type = "f32"
+name = "Voltage L3-L1"
+unit = "V"
+
+# ----- Currents -----
+# 0x4012 = 16402
+[[registers]]
+address = 16402
+type = "f32"
+name = "Current L1"
+unit = "A"
+
+[[registers]]
+address = 16404
+type = "f32"
+name = "Current L2"
+unit = "A"
+
+[[registers]]
+address = 16406
+type = "f32"
+name = "Current L3"
+unit = "A"
+
+[[registers]]
+address = 16408
+type = "f32"
+name = "Average current"
+unit = "A"
+
+[[registers]]
+address = 16410
+type = "f32"
+name = "Neutral current"
+unit = "A"
+
+# ----- Active power (kW) -----
+# 0x401C = 16412
+[[registers]]
+address = 16412
+type = "f32"
+name = "Active power L1"
+unit = "kW"
+
+[[registers]]
+address = 16414
+type = "f32"
+name = "Active power L2"
+unit = "kW"
+
+[[registers]]
+address = 16416
+type = "f32"
+name = "Active power L3"
+unit = "kW"
+
+[[registers]]
+address = 16418
+type = "f32"
+name = "Total active power"
+unit = "kW"
+
+# ----- Reactive power (kvar) -----
+# 0x4024 = 16420
+[[registers]]
+address = 16420
+type = "f32"
+name = "Reactive power L1"
+unit = "kvar"
+
+[[registers]]
+address = 16422
+type = "f32"
+name = "Reactive power L2"
+unit = "kvar"
+
+[[registers]]
+address = 16424
+type = "f32"
+name = "Reactive power L3"
+unit = "kvar"
+
+[[registers]]
+address = 16426
+type = "f32"
+name = "Total reactive power"
+unit = "kvar"
+
+# ----- Apparent power (kVA) -----
+# 0x402C = 16428
+[[registers]]
+address = 16428
+type = "f32"
+name = "Apparent power L1"
+unit = "kVA"
+
+[[registers]]
+address = 16430
+type = "f32"
+name = "Apparent power L2"
+unit = "kVA"
+
+[[registers]]
+address = 16432
+type = "f32"
+name = "Apparent power L3"
+unit = "kVA"
+
+[[registers]]
+address = 16434
+type = "f32"
+name = "Total apparent power"
+unit = "kVA"
+
+# ----- Power factor -----
+# 0x4034 = 16436
+[[registers]]
+address = 16436
+type = "f32"
+name = "Power factor L1"
+
+[[registers]]
+address = 16438
+type = "f32"
+name = "Power factor L2"
+
+[[registers]]
+address = 16440
+type = "f32"
+name = "Power factor L3"
+
+[[registers]]
+address = 16442
+type = "f32"
+name = "Total power factor"
+
+# ----- Voltage and current unbalance -----
+# 0x403C = 16444
+[[registers]]
+address = 16444
+type = "f32"
+name = "Voltage unbalance"
+unit = "%"
+
+[[registers]]
+address = 16446
+type = "f32"
+name = "Current unbalance"
+unit = "%"
+
+# ----- Power demands -----
+# 0x4042 = 16450
+[[registers]]
+address = 16450
+type = "f32"
+name = "Active power demand"
+unit = "kW"
+
+[[registers]]
+address = 16452
+type = "f32"
+name = "Reactive power demand"
+unit = "kvar"
+
+[[registers]]
+address = 16454
+type = "f32"
+name = "Apparent power demand"
+unit = "kVA"
+
+# ----- Energy accumulators (Dword, Primary Mode: real = Rx/10) -----
+# 0x4048 = 16456
+[[registers]]
+address = 16456
+type = "u32"
+name = "Active energy import"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 16458
+type = "u32"
+name = "Active energy export"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 16460
+type = "u32"
+name = "Reactive energy import"
+unit = "kvarh"
+scale = 0.1
+
+[[registers]]
+address = 16462
+type = "u32"
+name = "Reactive energy export"
+unit = "kvarh"
+scale = 0.1
+
+[[registers]]
+address = 16464
+type = "u32"
+name = "Active energy sum"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 16466
+type = "u32"
+name = "Active energy net"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 16468
+type = "u32"
+name = "Reactive energy sum"
+unit = "kvarh"
+scale = 0.1
+
+[[registers]]
+address = 16470
+type = "u32"
+name = "Reactive energy net"
+unit = "kvarh"
+scale = 0.1
+
+[[registers]]
+address = 16472
+type = "u32"
+name = "Apparent energy"
+unit = "kVAh"
+scale = 0.1
+
+# ----- THD (Word, ×100 — real = Rx/100) -----
+# 0x405A = 16474
+[[registers]]
+address = 16474
+type = "u16"
+name = "Voltage THD L1"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 16475
+type = "u16"
+name = "Voltage THD L2"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 16476
+type = "u16"
+name = "Voltage THD L3"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 16477
+type = "u16"
+name = "Voltage THD average"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 16478
+type = "u16"
+name = "Current THD L1"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 16479
+type = "u16"
+name = "Current THD L2"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 16480
+type = "u16"
+name = "Current THD L3"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 16481
+type = "u16"
+name = "Current THD average"
+unit = "%"
+scale = 0.01
+
+# ----- Phase angles (Word, ×10 — real = Rx/10, range 0–360°) -----
+# 0x42A0 = 17056
+[[registers]]
+address = 17056
+type = "u16"
+name = "Phase angle V2 to V1"
+unit = "°"
+scale = 0.1
+
+[[registers]]
+address = 17057
+type = "u16"
+name = "Phase angle V3 to V1"
+unit = "°"
+scale = 0.1
+
+[[registers]]
+address = 17058
+type = "u16"
+name = "Phase angle I1 to V1"
+unit = "°"
+scale = 0.1
+
+[[registers]]
+address = 17059
+type = "u16"
+name = "Phase angle I2 to V1"
+unit = "°"
+scale = 0.1
+
+[[registers]]
+address = 17060
+type = "u16"
+name = "Phase angle I3 to V1"
+unit = "°"
+scale = 0.1
+
+# ----- Current demands -----
+# 0x4600 = 17920
+[[registers]]
+address = 17920
+type = "f32"
+name = "Current demand L1"
+unit = "A"
+
+[[registers]]
+address = 17922
+type = "f32"
+name = "Current demand L2"
+unit = "A"
+
+[[registers]]
+address = 17924
+type = "f32"
+name = "Current demand L3"
+unit = "A"

@@ -1,0 +1,65 @@
+# JXCT JXBS-3001-NPK-RS 7-in-1 Soil Sensor — Modbus register map for Omni Console
+#
+# Source: jxct-jxbs-3001-soil-7in1-npk-rs485-modbus.pdf
+# - 7-in-1 soil sensor: moisture, temperature, conductivity, pH, N, P, K. RS485 Modbus RTU.
+# - Holding registers (FC03).
+# - Protocol addresses are the hex register addresses shown in the register table (0-based).
+# - Factory defaults: slave=1, baud=9600, 8N1.
+
+vendor = "JXCT"
+model = "JXBS-3001-NPK-RS"
+description = "7-in-1 soil sensor — moisture, temperature, conductivity, pH, nitrogen, phosphorus, potassium (holding registers, integer types)."
+
+# ----- Soil measurements -----
+# Register 0x0006 (PLC 40007)
+[[registers]]
+address = 6
+type = "u16"
+name = "Soil pH"
+unit = "pH"
+scale = 0.01
+
+# Register 0x0012 (PLC 40019)
+[[registers]]
+address = 18
+type = "u16"
+name = "Soil moisture"
+unit = "%RH"
+scale = 0.1
+
+# Register 0x0013 (PLC 40020)
+[[registers]]
+address = 19
+type = "s16"
+name = "Soil temperature"
+unit = "°C"
+scale = 0.1
+
+# Register 0x0015 (PLC 40022)
+[[registers]]
+address = 21
+type = "u16"
+name = "Soil electrical conductivity"
+unit = "µs/cm"
+
+# ----- NPK nutrients -----
+# Register 0x001E (PLC 40031)
+[[registers]]
+address = 30
+type = "u16"
+name = "Soil nitrogen"
+unit = "mg/kg"
+
+# Register 0x001F (PLC 40032)
+[[registers]]
+address = 31
+type = "u16"
+name = "Soil phosphorus"
+unit = "mg/kg"
+
+# Register 0x0020 (PLC 40033)
+[[registers]]
+address = 32
+type = "u16"
+name = "Soil potassium"
+unit = "mg/kg"

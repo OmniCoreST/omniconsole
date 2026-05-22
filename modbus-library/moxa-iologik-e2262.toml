@@ -1,0 +1,653 @@
+# Moxa ioLogik E2262 Ethernet Remote I/O — 8-channel TC + 4-channel DO + 8-channel Virtual TC
+#
+# Source: ioLogik E2200 Series User Manual Edition 7.0, September 2018 (Appendix I)
+# Protocol: Modbus/TCP port 502
+#
+# TC ch0-7 are physical; Virtual TC ch8-15 are computed (AVG/DIV of physical channels)
+# FC03 (4xxxx R/W): DO + TC configuration registers (primary space below)
+# FC04 (3xxxx R): TC_value u32 hi+lo ch0-15 (0x0000-0x001F, unit 0.1°C/°F or 0.0001mV),
+#   TC_minValue u32 hi+lo ch0-15 (0x0020-0x003F), TC_maxValue u32 hi+lo ch0-15 (0x0040-0x005F)
+# FC01 (0xxxx R/W): DO bit ctrl ch0-3, TC reset-min/max
+
+vendor = "Moxa"
+model = "ioLogik E2262"
+description = "8-TC + 4-DO + 8-virtual-TC Modbus/TCP Ethernet remote I/O (port 502). FC03: DO_pulseOutputCount u32 hi+lo ch0-3 (0-7), DO_pulseLowWidth u32 hi+lo ch0-3 (8-15), DO_pulseHighWidth u32 hi+lo ch0-3 (16-23), DO_mode ch0-3 (24-27, 0=DO 1=Pulse), TC_engineeringUnit ch0-7 (28-35, 0=Celsius 1=Fahrenheit 2=millivolt), VirtualTC_engineeringUnit ch8-15 (36-43, same), TC_sensorType ch0-7 (44-51, 0=J 1=K 2=T 3=E 4=R 5=S 6=B 7=N 8=78.126mV 9=39.062mV 10=19.532mV), VirtualTC_sensorType ch8-15 (52-59, 20=AVG 21=DIV), TC_resetMinValue ch0-15 (60-75, W=1 to reset), TC_resetMaxValue ch0-15 (76-91, W=1 to reset), DO_value ch0-3 (92-95, 0=OFF 1=ON), DO_powerOnStatus ch0-3 (96-99), DO_safeStatus ch0-3 (100-103), DO_pulseOutputStatus ch0-3 (104-107), DO_powerOnPulseStatus ch0-3 (108-111), DO_safeModePulseStatus ch0-3 (112-115), TC_enable ch0-7 (116-123, 0=Disable 1=Enable), IntReg00-23 working (0x0150-0x0167=336-359). FC04: TC_value u32 hi+lo ch0-15 (0-31, unit 0.1), TC_minValue (32-63), TC_maxValue (64-95)."
+
+# ===== FC03 Holding Registers =====
+
+# DO pulse output count ch0-3 (u32, hi+lo consecutive pairs, 0x0000-0x0007)
+[[registers]]
+address = 0
+type = "u16"
+name = "DO_pulseOutputCount ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "DO_pulseOutputCount ch0 lo-word"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "DO_pulseOutputCount ch1 hi-word"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "DO_pulseOutputCount ch1 lo-word"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "DO_pulseOutputCount ch2 hi-word"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "DO_pulseOutputCount ch2 lo-word"
+
+[[registers]]
+address = 6
+type = "u16"
+name = "DO_pulseOutputCount ch3 hi-word"
+
+[[registers]]
+address = 7
+type = "u16"
+name = "DO_pulseOutputCount ch3 lo-word"
+
+# DO pulse low signal width ch0-3 (u32, hi+lo, 0x0008-0x000F)
+[[registers]]
+address = 8
+type = "u16"
+name = "DO_pulseLowWidth ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 9
+type = "u16"
+name = "DO_pulseLowWidth ch0 lo-word"
+
+[[registers]]
+address = 10
+type = "u16"
+name = "DO_pulseLowWidth ch1 hi-word"
+
+[[registers]]
+address = 11
+type = "u16"
+name = "DO_pulseLowWidth ch1 lo-word"
+
+[[registers]]
+address = 12
+type = "u16"
+name = "DO_pulseLowWidth ch2 hi-word"
+
+[[registers]]
+address = 13
+type = "u16"
+name = "DO_pulseLowWidth ch2 lo-word"
+
+[[registers]]
+address = 14
+type = "u16"
+name = "DO_pulseLowWidth ch3 hi-word"
+
+[[registers]]
+address = 15
+type = "u16"
+name = "DO_pulseLowWidth ch3 lo-word"
+
+# DO pulse high signal width ch0-3 (u32, hi+lo, 0x0010-0x0017)
+[[registers]]
+address = 16
+type = "u16"
+name = "DO_pulseHighWidth ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 17
+type = "u16"
+name = "DO_pulseHighWidth ch0 lo-word"
+
+[[registers]]
+address = 18
+type = "u16"
+name = "DO_pulseHighWidth ch1 hi-word"
+
+[[registers]]
+address = 19
+type = "u16"
+name = "DO_pulseHighWidth ch1 lo-word"
+
+[[registers]]
+address = 20
+type = "u16"
+name = "DO_pulseHighWidth ch2 hi-word"
+
+[[registers]]
+address = 21
+type = "u16"
+name = "DO_pulseHighWidth ch2 lo-word"
+
+[[registers]]
+address = 22
+type = "u16"
+name = "DO_pulseHighWidth ch3 hi-word"
+
+[[registers]]
+address = 23
+type = "u16"
+name = "DO_pulseHighWidth ch3 lo-word"
+
+# DO mode ch0-3 (0x0018-0x001B)
+[[registers]]
+address = 24
+type = "u16"
+name = "DO_mode ch0 (0=DO, 1=Pulse; R/W)"
+
+[[registers]]
+address = 25
+type = "u16"
+name = "DO_mode ch1"
+
+[[registers]]
+address = 26
+type = "u16"
+name = "DO_mode ch2"
+
+[[registers]]
+address = 27
+type = "u16"
+name = "DO_mode ch3"
+
+# TC engineering unit ch0-7 (0x001C-0x0023)
+[[registers]]
+address = 28
+type = "u16"
+name = "TC_engineeringUnit ch0 (0=Celsius, 1=Fahrenheit, 2=millivolt; R/W)"
+
+[[registers]]
+address = 29
+type = "u16"
+name = "TC_engineeringUnit ch1"
+
+[[registers]]
+address = 30
+type = "u16"
+name = "TC_engineeringUnit ch2"
+
+[[registers]]
+address = 31
+type = "u16"
+name = "TC_engineeringUnit ch3"
+
+[[registers]]
+address = 32
+type = "u16"
+name = "TC_engineeringUnit ch4"
+
+[[registers]]
+address = 33
+type = "u16"
+name = "TC_engineeringUnit ch5"
+
+[[registers]]
+address = 34
+type = "u16"
+name = "TC_engineeringUnit ch6"
+
+[[registers]]
+address = 35
+type = "u16"
+name = "TC_engineeringUnit ch7"
+
+# Virtual TC engineering unit ch8-15 (0x0024-0x002B)
+[[registers]]
+address = 36
+type = "u16"
+name = "VirtualTC_engineeringUnit ch8 (0=Celsius, 1=Fahrenheit, 2=millivolt; R/W)"
+
+[[registers]]
+address = 37
+type = "u16"
+name = "VirtualTC_engineeringUnit ch9"
+
+[[registers]]
+address = 38
+type = "u16"
+name = "VirtualTC_engineeringUnit ch10"
+
+[[registers]]
+address = 39
+type = "u16"
+name = "VirtualTC_engineeringUnit ch11"
+
+[[registers]]
+address = 40
+type = "u16"
+name = "VirtualTC_engineeringUnit ch12"
+
+[[registers]]
+address = 41
+type = "u16"
+name = "VirtualTC_engineeringUnit ch13"
+
+[[registers]]
+address = 42
+type = "u16"
+name = "VirtualTC_engineeringUnit ch14"
+
+[[registers]]
+address = 43
+type = "u16"
+name = "VirtualTC_engineeringUnit ch15"
+
+# TC sensor type ch0-7 (0x002C-0x0033)
+[[registers]]
+address = 44
+type = "u16"
+name = "TC_sensorType ch0 (0=J,1=K,2=T,3=E,4=R,5=S,6=B,7=N,8=78.126mV,9=39.062mV,10=19.532mV; R/W)"
+
+[[registers]]
+address = 45
+type = "u16"
+name = "TC_sensorType ch1"
+
+[[registers]]
+address = 46
+type = "u16"
+name = "TC_sensorType ch2"
+
+[[registers]]
+address = 47
+type = "u16"
+name = "TC_sensorType ch3"
+
+[[registers]]
+address = 48
+type = "u16"
+name = "TC_sensorType ch4"
+
+[[registers]]
+address = 49
+type = "u16"
+name = "TC_sensorType ch5"
+
+[[registers]]
+address = 50
+type = "u16"
+name = "TC_sensorType ch6"
+
+[[registers]]
+address = 51
+type = "u16"
+name = "TC_sensorType ch7"
+
+# Virtual TC sensor type ch8-15 (0x0034-0x003B)
+[[registers]]
+address = 52
+type = "u16"
+name = "VirtualTC_sensorType ch8 (20=AVG, 21=DIV; R/W)"
+
+[[registers]]
+address = 53
+type = "u16"
+name = "VirtualTC_sensorType ch9"
+
+[[registers]]
+address = 54
+type = "u16"
+name = "VirtualTC_sensorType ch10"
+
+[[registers]]
+address = 55
+type = "u16"
+name = "VirtualTC_sensorType ch11"
+
+[[registers]]
+address = 56
+type = "u16"
+name = "VirtualTC_sensorType ch12"
+
+[[registers]]
+address = 57
+type = "u16"
+name = "VirtualTC_sensorType ch13"
+
+[[registers]]
+address = 58
+type = "u16"
+name = "VirtualTC_sensorType ch14"
+
+[[registers]]
+address = 59
+type = "u16"
+name = "VirtualTC_sensorType ch15"
+
+# TC reset min value ch0-15 (0x003C-0x004B, write 1 to reset; reads always 0)
+[[registers]]
+address = 60
+type = "u16"
+name = "TC_resetMinValue ch0 (W=1 to reset, R=0)"
+
+[[registers]]
+address = 61
+type = "u16"
+name = "TC_resetMinValue ch1"
+
+[[registers]]
+address = 62
+type = "u16"
+name = "TC_resetMinValue ch2"
+
+[[registers]]
+address = 63
+type = "u16"
+name = "TC_resetMinValue ch3"
+
+[[registers]]
+address = 64
+type = "u16"
+name = "TC_resetMinValue ch4"
+
+[[registers]]
+address = 65
+type = "u16"
+name = "TC_resetMinValue ch5"
+
+[[registers]]
+address = 66
+type = "u16"
+name = "TC_resetMinValue ch6"
+
+[[registers]]
+address = 67
+type = "u16"
+name = "TC_resetMinValue ch7"
+
+[[registers]]
+address = 68
+type = "u16"
+name = "TC_resetMinValue ch8"
+
+[[registers]]
+address = 69
+type = "u16"
+name = "TC_resetMinValue ch9"
+
+[[registers]]
+address = 70
+type = "u16"
+name = "TC_resetMinValue ch10"
+
+[[registers]]
+address = 71
+type = "u16"
+name = "TC_resetMinValue ch11"
+
+[[registers]]
+address = 72
+type = "u16"
+name = "TC_resetMinValue ch12"
+
+[[registers]]
+address = 73
+type = "u16"
+name = "TC_resetMinValue ch13"
+
+[[registers]]
+address = 74
+type = "u16"
+name = "TC_resetMinValue ch14"
+
+[[registers]]
+address = 75
+type = "u16"
+name = "TC_resetMinValue ch15"
+
+# TC reset max value ch0-15 (0x004C-0x005B, write 1 to reset; reads always 0)
+[[registers]]
+address = 76
+type = "u16"
+name = "TC_resetMaxValue ch0 (W=1 to reset, R=0)"
+
+[[registers]]
+address = 77
+type = "u16"
+name = "TC_resetMaxValue ch1"
+
+[[registers]]
+address = 78
+type = "u16"
+name = "TC_resetMaxValue ch2"
+
+[[registers]]
+address = 79
+type = "u16"
+name = "TC_resetMaxValue ch3"
+
+[[registers]]
+address = 80
+type = "u16"
+name = "TC_resetMaxValue ch4"
+
+[[registers]]
+address = 81
+type = "u16"
+name = "TC_resetMaxValue ch5"
+
+[[registers]]
+address = 82
+type = "u16"
+name = "TC_resetMaxValue ch6"
+
+[[registers]]
+address = 83
+type = "u16"
+name = "TC_resetMaxValue ch7"
+
+[[registers]]
+address = 84
+type = "u16"
+name = "TC_resetMaxValue ch8"
+
+[[registers]]
+address = 85
+type = "u16"
+name = "TC_resetMaxValue ch9"
+
+[[registers]]
+address = 86
+type = "u16"
+name = "TC_resetMaxValue ch10"
+
+[[registers]]
+address = 87
+type = "u16"
+name = "TC_resetMaxValue ch11"
+
+[[registers]]
+address = 88
+type = "u16"
+name = "TC_resetMaxValue ch12"
+
+[[registers]]
+address = 89
+type = "u16"
+name = "TC_resetMaxValue ch13"
+
+[[registers]]
+address = 90
+type = "u16"
+name = "TC_resetMaxValue ch14"
+
+[[registers]]
+address = 91
+type = "u16"
+name = "TC_resetMaxValue ch15"
+
+# DO value ch0-3 (0x005C-0x005F)
+[[registers]]
+address = 92
+type = "u16"
+name = "DO_value ch0 (0=OFF, 1=ON; R/W)"
+
+[[registers]]
+address = 93
+type = "u16"
+name = "DO_value ch1"
+
+[[registers]]
+address = 94
+type = "u16"
+name = "DO_value ch2"
+
+[[registers]]
+address = 95
+type = "u16"
+name = "DO_value ch3"
+
+# DO power-on status ch0-3 (0x0060-0x0063)
+[[registers]]
+address = 96
+type = "u16"
+name = "DO_powerOnStatus ch0 (0=OFF, 1=ON; R/W)"
+
+[[registers]]
+address = 97
+type = "u16"
+name = "DO_powerOnStatus ch1"
+
+[[registers]]
+address = 98
+type = "u16"
+name = "DO_powerOnStatus ch2"
+
+[[registers]]
+address = 99
+type = "u16"
+name = "DO_powerOnStatus ch3"
+
+# DO safe status ch0-3 (0x0064-0x0067)
+[[registers]]
+address = 100
+type = "u16"
+name = "DO_safeStatus ch0 (0=OFF, 1=ON; R/W)"
+
+[[registers]]
+address = 101
+type = "u16"
+name = "DO_safeStatus ch1"
+
+[[registers]]
+address = 102
+type = "u16"
+name = "DO_safeStatus ch2"
+
+[[registers]]
+address = 103
+type = "u16"
+name = "DO_safeStatus ch3"
+
+# DO pulse output status ch0-3 (0x0068-0x006B)
+[[registers]]
+address = 104
+type = "u16"
+name = "DO_pulseOutputStatus ch0 (R/W)"
+
+[[registers]]
+address = 105
+type = "u16"
+name = "DO_pulseOutputStatus ch1"
+
+[[registers]]
+address = 106
+type = "u16"
+name = "DO_pulseOutputStatus ch2"
+
+[[registers]]
+address = 107
+type = "u16"
+name = "DO_pulseOutputStatus ch3"
+
+# DO power-on pulse status ch0-3 (0x006C-0x006F)
+[[registers]]
+address = 108
+type = "u16"
+name = "DO_powerOnPulseStatus ch0 (R/W)"
+
+[[registers]]
+address = 109
+type = "u16"
+name = "DO_powerOnPulseStatus ch1"
+
+[[registers]]
+address = 110
+type = "u16"
+name = "DO_powerOnPulseStatus ch2"
+
+[[registers]]
+address = 111
+type = "u16"
+name = "DO_powerOnPulseStatus ch3"
+
+# DO safe mode pulse status ch0-3 (0x0070-0x0073)
+[[registers]]
+address = 112
+type = "u16"
+name = "DO_safeModePulseStatus ch0 (R/W)"
+
+[[registers]]
+address = 113
+type = "u16"
+name = "DO_safeModePulseStatus ch1"
+
+[[registers]]
+address = 114
+type = "u16"
+name = "DO_safeModePulseStatus ch2"
+
+[[registers]]
+address = 115
+type = "u16"
+name = "DO_safeModePulseStatus ch3"
+
+# TC enable ch0-7 (0x0074-0x007B)
+[[registers]]
+address = 116
+type = "u16"
+name = "TC_enable ch0 (0=Disable, 1=Enable; R/W)"
+
+[[registers]]
+address = 117
+type = "u16"
+name = "TC_enable ch1"
+
+[[registers]]
+address = 118
+type = "u16"
+name = "TC_enable ch2"
+
+[[registers]]
+address = 119
+type = "u16"
+name = "TC_enable ch3"
+
+[[registers]]
+address = 120
+type = "u16"
+name = "TC_enable ch4"
+
+[[registers]]
+address = 121
+type = "u16"
+name = "TC_enable ch5"
+
+[[registers]]
+address = 122
+type = "u16"
+name = "TC_enable ch6"
+
+[[registers]]
+address = 123
+type = "u16"
+name = "TC_enable ch7"

@@ -1,0 +1,254 @@
+# Carlo Gavazzi EM21 — Modbus register map for Omni Console
+#
+# Source: carlo-gavazzi-em21-modbus.pdf
+# - 3-phase 4-wire DIN-rail energy meter, RS485.
+# - Holding registers (FC03), INT32 little-endian (LSW first), INT16 for PF/Hz.
+# - All addresses are 0-based protocol addresses.
+# - Scales: V×0.1, A×0.01, W/VA/VAr×0.1, PF×0.001, Hz×0.1, kWh/kVArh×0.1.
+# - Factory defaults: slave=1, baud=9600, 8N2.
+
+vendor = "Carlo Gavazzi"
+model = "EM21"
+description = "3-phase 4-wire DIN-rail energy meter — per-phase V/I/P/S/Q, PF, Hz, system totals, import energy (INT32 LSW-first, INT16 for PF/Hz, holding registers)."
+
+# ----- Phase-to-neutral voltages -----
+[[registers]]
+address = 0
+type = "s32"
+word_order = "le"
+name = "Voltage L1-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 2
+type = "s32"
+word_order = "le"
+name = "Voltage L2-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4
+type = "s32"
+word_order = "le"
+name = "Voltage L3-N"
+unit = "V"
+scale = 0.1
+
+# ----- Line-to-line voltages -----
+[[registers]]
+address = 6
+type = "s32"
+word_order = "le"
+name = "Voltage L1-L2"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 8
+type = "s32"
+word_order = "le"
+name = "Voltage L2-L3"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 10
+type = "s32"
+word_order = "le"
+name = "Voltage L3-L1"
+unit = "V"
+scale = 0.1
+
+# ----- Currents -----
+[[registers]]
+address = 12
+type = "s32"
+word_order = "le"
+name = "Current L1"
+unit = "A"
+scale = 0.01
+
+[[registers]]
+address = 14
+type = "s32"
+word_order = "le"
+name = "Current L2"
+unit = "A"
+scale = 0.01
+
+[[registers]]
+address = 16
+type = "s32"
+word_order = "le"
+name = "Current L3"
+unit = "A"
+scale = 0.01
+
+# ----- Active power per phase -----
+[[registers]]
+address = 18
+type = "s32"
+word_order = "le"
+name = "Active power L1"
+unit = "W"
+scale = 0.1
+
+[[registers]]
+address = 20
+type = "s32"
+word_order = "le"
+name = "Active power L2"
+unit = "W"
+scale = 0.1
+
+[[registers]]
+address = 22
+type = "s32"
+word_order = "le"
+name = "Active power L3"
+unit = "W"
+scale = 0.1
+
+# ----- Apparent power per phase -----
+[[registers]]
+address = 24
+type = "s32"
+word_order = "le"
+name = "Apparent power L1"
+unit = "VA"
+scale = 0.1
+
+[[registers]]
+address = 26
+type = "s32"
+word_order = "le"
+name = "Apparent power L2"
+unit = "VA"
+scale = 0.1
+
+[[registers]]
+address = 28
+type = "s32"
+word_order = "le"
+name = "Apparent power L3"
+unit = "VA"
+scale = 0.1
+
+# ----- Reactive power per phase -----
+[[registers]]
+address = 30
+type = "s32"
+word_order = "le"
+name = "Reactive power L1"
+unit = "VAr"
+scale = 0.1
+
+[[registers]]
+address = 32
+type = "s32"
+word_order = "le"
+name = "Reactive power L2"
+unit = "VAr"
+scale = 0.1
+
+[[registers]]
+address = 34
+type = "s32"
+word_order = "le"
+name = "Reactive power L3"
+unit = "VAr"
+scale = 0.1
+
+# ----- Averages -----
+[[registers]]
+address = 36
+type = "s32"
+word_order = "le"
+name = "Average voltage L-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 38
+type = "s32"
+word_order = "le"
+name = "Average voltage L-L"
+unit = "V"
+scale = 0.1
+
+# ----- Total system -----
+[[registers]]
+address = 40
+type = "s32"
+word_order = "le"
+name = "Total active power"
+unit = "W"
+scale = 0.1
+
+[[registers]]
+address = 42
+type = "s32"
+word_order = "le"
+name = "Total apparent power"
+unit = "VA"
+scale = 0.1
+
+[[registers]]
+address = 44
+type = "s32"
+word_order = "le"
+name = "Total reactive power"
+unit = "VAr"
+scale = 0.1
+
+# ----- Power factor (INT16, single register each) -----
+[[registers]]
+address = 46
+type = "s16"
+name = "Power factor L1"
+scale = 0.001
+
+[[registers]]
+address = 47
+type = "s16"
+name = "Power factor L2"
+scale = 0.001
+
+[[registers]]
+address = 48
+type = "s16"
+name = "Power factor L3"
+scale = 0.001
+
+[[registers]]
+address = 49
+type = "s16"
+name = "Total power factor"
+scale = 0.001
+
+# ----- Frequency (INT16) -----
+[[registers]]
+address = 52
+type = "s16"
+name = "Frequency"
+unit = "Hz"
+scale = 0.1
+
+# ----- Energy (import) -----
+[[registers]]
+address = 53
+type = "s32"
+word_order = "le"
+name = "Total import kWh"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 55
+type = "s32"
+word_order = "le"
+name = "Total import kVArh"
+unit = "kVArh"
+scale = 0.1

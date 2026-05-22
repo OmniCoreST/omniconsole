@@ -1,0 +1,275 @@
+# Eastron SDM230 (SDM230-2T) — Modbus register map for Omni Console
+#
+# Source: eastron-sdm230-modbus-protocol.pdf (V1.1)
+# - Single-phase smart meter (2-wire RS485).
+# - All measured values are IEEE-754 FLOAT (f32), MSW first (big-endian) — word_order omitted.
+# - All measurements use INPUT registers (FC04). Addresses are 0-based protocol addresses
+#   (manual shows 30001-based: subtract 30001).
+# - Energy units: kWh / kVArh (already in engineering units, no scale).
+# - Factory defaults: slave=1, baud=9600 (code 2), 8N1.
+
+vendor = "Eastron"
+model = "SDM230"
+description = "Single-phase DIN-rail smart meter — V/I/P/Q/S, PF, phase angle, frequency, import/export energy with tariff bands (IEEE-754 float, input registers)."
+
+# ----- Voltage -----
+[[registers]]
+address = 0
+area = "input"
+type = "f32"
+name = "Voltage"
+unit = "V"
+
+# ----- Current -----
+[[registers]]
+address = 6
+area = "input"
+type = "f32"
+name = "Current"
+unit = "A"
+
+# ----- Active power -----
+[[registers]]
+address = 12
+area = "input"
+type = "f32"
+name = "Active power"
+unit = "W"
+
+# ----- Apparent power -----
+[[registers]]
+address = 18
+area = "input"
+type = "f32"
+name = "Apparent power"
+unit = "VA"
+
+# ----- Reactive power -----
+[[registers]]
+address = 24
+area = "input"
+type = "f32"
+name = "Reactive power"
+unit = "var"
+
+# ----- Power factor -----
+[[registers]]
+address = 30
+area = "input"
+type = "f32"
+name = "Power factor"
+
+# ----- Phase angle -----
+[[registers]]
+address = 36
+area = "input"
+type = "f32"
+name = "Phase angle"
+unit = "deg"
+
+# ----- Frequency -----
+[[registers]]
+address = 70
+area = "input"
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# ----- Energy -----
+[[registers]]
+address = 72
+area = "input"
+type = "f32"
+name = "Import active energy"
+unit = "kWh"
+
+[[registers]]
+address = 74
+area = "input"
+type = "f32"
+name = "Export active energy"
+unit = "kWh"
+
+[[registers]]
+address = 76
+area = "input"
+type = "f32"
+name = "Import reactive energy"
+unit = "kvarh"
+
+[[registers]]
+address = 78
+area = "input"
+type = "f32"
+name = "Export reactive energy"
+unit = "kvarh"
+
+[[registers]]
+address = 342
+area = "input"
+type = "f32"
+name = "Total active energy"
+unit = "kWh"
+
+[[registers]]
+address = 344
+area = "input"
+type = "f32"
+name = "Total reactive energy"
+unit = "kvarh"
+
+[[registers]]
+address = 384
+area = "input"
+type = "f32"
+name = "Resettable total active energy"
+unit = "kWh"
+
+[[registers]]
+address = 386
+area = "input"
+type = "f32"
+name = "Resettable total reactive energy"
+unit = "kvarh"
+
+# ----- Power demand -----
+[[registers]]
+address = 84
+area = "input"
+type = "f32"
+name = "Total system power demand"
+unit = "W"
+
+[[registers]]
+address = 86
+area = "input"
+type = "f32"
+name = "Maximum total system power demand"
+unit = "W"
+
+[[registers]]
+address = 88
+area = "input"
+type = "f32"
+name = "Import system power demand"
+unit = "W"
+
+[[registers]]
+address = 90
+area = "input"
+type = "f32"
+name = "Maximum import system power demand"
+unit = "W"
+
+[[registers]]
+address = 92
+area = "input"
+type = "f32"
+name = "Export system power demand"
+unit = "W"
+
+[[registers]]
+address = 94
+area = "input"
+type = "f32"
+name = "Maximum export system power demand"
+unit = "W"
+
+[[registers]]
+address = 258
+area = "input"
+type = "f32"
+name = "Current demand"
+unit = "A"
+
+[[registers]]
+address = 264
+area = "input"
+type = "f32"
+name = "Maximum current demand"
+unit = "A"
+
+# ----- Tariff energy (Rate 1 / Rate 2) -----
+[[registers]]
+address = 3876
+area = "input"
+type = "f32"
+name = "Total active energy Rate 1"
+unit = "kWh"
+
+[[registers]]
+address = 3878
+area = "input"
+type = "f32"
+name = "Total active energy Rate 2"
+unit = "kWh"
+
+[[registers]]
+address = 3884
+area = "input"
+type = "f32"
+name = "Import active energy Rate 1"
+unit = "kWh"
+
+[[registers]]
+address = 3886
+area = "input"
+type = "f32"
+name = "Import active energy Rate 2"
+unit = "kWh"
+
+[[registers]]
+address = 3892
+area = "input"
+type = "f32"
+name = "Export active energy Rate 1"
+unit = "kWh"
+
+[[registers]]
+address = 3894
+area = "input"
+type = "f32"
+name = "Export active energy Rate 2"
+unit = "kWh"
+
+[[registers]]
+address = 3900
+area = "input"
+type = "f32"
+name = "Total reactive energy Rate 1"
+unit = "kvarh"
+
+[[registers]]
+address = 3902
+area = "input"
+type = "f32"
+name = "Total reactive energy Rate 2"
+unit = "kvarh"
+
+[[registers]]
+address = 3908
+area = "input"
+type = "f32"
+name = "Import reactive energy Rate 1"
+unit = "kvarh"
+
+[[registers]]
+address = 3910
+area = "input"
+type = "f32"
+name = "Import reactive energy Rate 2"
+unit = "kvarh"
+
+[[registers]]
+address = 3916
+area = "input"
+type = "f32"
+name = "Export reactive energy Rate 1"
+unit = "kvarh"
+
+[[registers]]
+address = 3918
+area = "input"
+type = "f32"
+name = "Export reactive energy Rate 2"
+unit = "kvarh"

@@ -1,0 +1,148 @@
+# Carlo Gavazzi EM24-IS — Modbus register map for Omni Console
+#
+# Source: carlo-gavazzi-em24-is-modbus.pdf
+# - 3-phase 4-wire DIN-rail energy analyzer (isolated input), RS485.
+# - Holding registers (FC03) — FC03 and FC04 are interchangeable on this device.
+# - INT32 little-endian (LSW first), INT16 for PF and Hz.
+# - All addresses are 0-based protocol addresses (Modicon address − 300001).
+# - No per-phase power registers; only voltages, currents, PF, Hz, energy.
+# - Scales: V×0.1, A×0.001, PF×0.001, Hz×0.1, kWh×0.1.
+# - Factory defaults: slave=1, baud=4800 or 9600, 8N1.
+
+vendor = "Carlo Gavazzi"
+model = "EM24-IS"
+description = "3-phase 4-wire isolated-input DIN-rail energy analyzer — per-phase V/I, avg V, total PF, Hz, import energy (INT32 LSW-first, INT16 for PF/Hz, holding registers)."
+
+# ----- Phase-to-neutral voltages -----
+[[registers]]
+address = 0
+type = "s32"
+word_order = "le"
+name = "Voltage L1-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 2
+type = "s32"
+word_order = "le"
+name = "Voltage L2-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4
+type = "s32"
+word_order = "le"
+name = "Voltage L3-N"
+unit = "V"
+scale = 0.1
+
+# ----- Line-to-line voltages -----
+[[registers]]
+address = 6
+type = "s32"
+word_order = "le"
+name = "Voltage L1-L2"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 8
+type = "s32"
+word_order = "le"
+name = "Voltage L2-L3"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 10
+type = "s32"
+word_order = "le"
+name = "Voltage L3-L1"
+unit = "V"
+scale = 0.1
+
+# ----- Currents -----
+[[registers]]
+address = 12
+type = "s32"
+word_order = "le"
+name = "Current L1"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 14
+type = "s32"
+word_order = "le"
+name = "Current L2"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 16
+type = "s32"
+word_order = "le"
+name = "Current L3"
+unit = "A"
+scale = 0.001
+
+# ----- Average voltages -----
+[[registers]]
+address = 38
+type = "s32"
+word_order = "le"
+name = "Average voltage L-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 40
+type = "s32"
+word_order = "le"
+name = "Average voltage L-L"
+unit = "V"
+scale = 0.1
+
+# ----- Power factor (INT16, single register each) -----
+[[registers]]
+address = 50
+type = "s16"
+name = "Power factor L1"
+scale = 0.001
+
+[[registers]]
+address = 51
+type = "s16"
+name = "Power factor L2"
+scale = 0.001
+
+[[registers]]
+address = 52
+type = "s16"
+name = "Power factor L3"
+scale = 0.001
+
+[[registers]]
+address = 53
+type = "s16"
+name = "Total power factor"
+scale = 0.001
+
+# ----- Frequency (INT16) -----
+[[registers]]
+address = 55
+type = "s16"
+name = "Frequency"
+unit = "Hz"
+scale = 0.1
+
+# ----- Energy (import) -----
+[[registers]]
+address = 62
+type = "s32"
+word_order = "le"
+name = "Total import kWh"
+unit = "kWh"
+scale = 0.1

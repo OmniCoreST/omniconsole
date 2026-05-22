@@ -1,0 +1,161 @@
+# Moxa ioLogik E1242 Remote Ethernet I/O — 4 AIs + 4 DIs + 4 DIOs
+#
+# Source: ioLogik E1200 Series User Manual V16.2, August 2025 (Appendix A)
+# Protocol: Modbus/TCP (port 502); Modbus/TCP ID default = 1
+# NOTE: AI_scaledValue incorporates word swapping; DI_counterValue incorporates byte swapping.
+#
+# AI channels (ch0-3):
+#   FC04 addr 512-515: AI_rawValue (word, R)
+#   FC04 addr 520-527 (2 words/ch): AI_scaledValue hi/lo (u32, R) [word swapped]
+#   FC04 addr 528-531: AI_rawValueMin (word, R)
+#   FC04 addr 532-535: AI_rawValueMax (word, R)
+#   FC04 addr 536-543 (2 words/ch): AI_scaledValueMin hi/lo (u32, R)
+#   FC04 addr 546-553 (2 words/ch): AI_scaledValueMax hi/lo (u32, R)
+#   FC04 addr 576-579: AI_status (word, R; 0=normal,1=burnout,2=over range,3=under range)
+#   FC01 addr 4145-4148: AI_resetMinValue ch0-3 (R/W)
+#   FC01 addr 4153-4156: AI_resetMaxValue ch0-3 (R/W)
+# DI channels (ch0-7, 4 dedicated DI + 4 DIO-as-DI):
+#   FC02 addr 0-7: DI_status (R)
+#   FC02 addr 1000-1007: DI_counterOverflowFlag (R)
+#   FC01 addr 256-263: DI_counterStatus (R/W)
+#   FC01 addr 272-279: DI_counterReset (R/W)
+#   FC01 addr 288-295: DI_counterOverflowFlagClear (R/W)
+#   FC04 addr 16-31 (2 words/ch, len 16): DI_counterValue u32 [byte swapped] (R)
+#   FC04 addr 48: DI-all_statusFromDI-00 (word, R)
+# DO/DIO channels (ch0-3, 4 DIO-as-DO):
+#   FC01 addr 0-3: DO_status (R/W)
+#   FC01 addr 16-19: DO_pulseStatus (R/W)
+#   FC02 addr 4096-4099: DO_p2pStatus (R)
+#   FC01 addr 4128-4131: DO_p2pSafeModeFlagClear (R/W)
+# FC01 addr 4144: watchdogAlarmFlag (R/W)
+
+vendor = "Moxa"
+model = "ioLogik E1242"
+description = "4-AI + 4-DI + 4-DIO remote Ethernet I/O, Modbus/TCP. AI FC04: AI_rawValue (512-515), AI_scaledValue u32 word-swapped (520-527), AI_rawValueMin (528-531), AI_rawValueMax (532-535), AI_scaledValueMin (536-543), AI_scaledValueMax (546-553), AI_status (576-579). AI FC03: AI_mode ch0-3 (544-547), AI_burnoutValue u32 ch0-3 (560-567). DI FC02: DI_status (0-7), DI_counterOverflowFlag (1000-1007). DI FC04: DI_counterValue byte-swapped u32 (16-31). DO FC01: DO_status (0-3), DO_pulseStatus (16-19). DO FC03: DO_all_status (32), DO_pulseCount ch0-3 (36-39), DO_pulseOnWidth unit 1ms (52-55), DO_pulseOffWidth unit 1ms (68-71)."
+
+# ===== FC03 Holding Registers =====
+
+[[registers]]
+address = 32
+type = "u16"
+name = "DO_all_statusFromDO-00 (packed DO ch0-3 bits as word; 0=OFF 1=ON; R/W)"
+
+[[registers]]
+address = 36
+type = "u16"
+name = "DO_pulseCount ch0"
+
+[[registers]]
+address = 37
+type = "u16"
+name = "DO_pulseCount ch1"
+
+[[registers]]
+address = 38
+type = "u16"
+name = "DO_pulseCount ch2"
+
+[[registers]]
+address = 39
+type = "u16"
+name = "DO_pulseCount ch3"
+
+[[registers]]
+address = 52
+type = "u16"
+name = "DO_pulseOnWidth ch0 (unit: 1ms)"
+
+[[registers]]
+address = 53
+type = "u16"
+name = "DO_pulseOnWidth ch1 (unit: 1ms)"
+
+[[registers]]
+address = 54
+type = "u16"
+name = "DO_pulseOnWidth ch2 (unit: 1ms)"
+
+[[registers]]
+address = 55
+type = "u16"
+name = "DO_pulseOnWidth ch3 (unit: 1ms)"
+
+[[registers]]
+address = 68
+type = "u16"
+name = "DO_pulseOffWidth ch0 (unit: 1ms)"
+
+[[registers]]
+address = 69
+type = "u16"
+name = "DO_pulseOffWidth ch1 (unit: 1ms)"
+
+[[registers]]
+address = 70
+type = "u16"
+name = "DO_pulseOffWidth ch2 (unit: 1ms)"
+
+[[registers]]
+address = 71
+type = "u16"
+name = "DO_pulseOffWidth ch3 (unit: 1ms)"
+
+[[registers]]
+address = 544
+type = "u16"
+name = "AI_mode ch0 (0=0-10V 1=4-20mA 2=0-20mA 4=4-20mA burnout)"
+
+[[registers]]
+address = 545
+type = "u16"
+name = "AI_mode ch1"
+
+[[registers]]
+address = 546
+type = "u16"
+name = "AI_mode ch2"
+
+[[registers]]
+address = 547
+type = "u16"
+name = "AI_mode ch3"
+
+[[registers]]
+address = 560
+type = "u16"
+name = "AI_burnoutValue ch0 hi-word (u32)"
+
+[[registers]]
+address = 561
+type = "u16"
+name = "AI_burnoutValue ch0 lo-word"
+
+[[registers]]
+address = 562
+type = "u16"
+name = "AI_burnoutValue ch1 hi-word"
+
+[[registers]]
+address = 563
+type = "u16"
+name = "AI_burnoutValue ch1 lo-word"
+
+[[registers]]
+address = 564
+type = "u16"
+name = "AI_burnoutValue ch2 hi-word"
+
+[[registers]]
+address = 565
+type = "u16"
+name = "AI_burnoutValue ch2 lo-word"
+
+[[registers]]
+address = 566
+type = "u16"
+name = "AI_burnoutValue ch3 hi-word"
+
+[[registers]]
+address = 567
+type = "u16"
+name = "AI_burnoutValue ch3 lo-word"

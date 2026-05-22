@@ -1,0 +1,408 @@
+# Accuenergy AcuRev 1310 — Modbus register map for Omni Console
+#
+# Source: accuenergy-acurev-1310-modbus-manual.pdf (Version 1.2.10, Revised April 2026)
+# - Applies to AcuRev 1312, 1313, 1314 (DIN-rail 3-phase power meter).
+# - FC03 (Read Holding Registers) for all measurement registers.
+# - All addresses are raw protocol addresses (0x2000 = 8192 decimal).
+# - Real-time: Float (IEEE 754, 2 registers, Big-Endian MSW first); values in SI units.
+# - Energy (real-time bank): Dword (u32, 2 registers, Big-Endian); real = Rx/100 → scale=0.01 kWh.
+# - Energy (TOU bank at 0x900H): Dword (u32, 2 registers); real = Rx/100 → scale=0.01 kWh.
+# - Demands: Float, separate bank at 0x1208H (4616 decimal).
+# - Factory defaults: slave=1, baud=19200, 8N1/E1/O1.
+
+vendor = "Accuenergy"
+model = "AcuRev 1310"
+description = "3-phase DIN-rail power meter — V/I/P/Q/S/PF/phase angles (float SI), power/current demands, energy (Dword Rx/100 kWh) in real-time 0x2046 and TOU 0x900 banks (FC03, Big-Endian)."
+
+# ----- Real-time instantaneous values -----
+# 0x2000 = 8192
+
+# Currents (float, A)
+[[registers]]
+address = 8192
+type = "f32"
+name = "Total current"
+unit = "A"
+
+[[registers]]
+address = 8194
+type = "f32"
+name = "Current L1"
+unit = "A"
+
+[[registers]]
+address = 8196
+type = "f32"
+name = "Current L2"
+unit = "A"
+
+[[registers]]
+address = 8198
+type = "f32"
+name = "Current L3"
+unit = "A"
+
+# Phase-to-neutral voltages (float, V)
+[[registers]]
+address = 8200
+type = "f32"
+name = "Average phase voltage"
+unit = "V"
+
+[[registers]]
+address = 8202
+type = "f32"
+name = "Voltage L1-N"
+unit = "V"
+
+[[registers]]
+address = 8204
+type = "f32"
+name = "Voltage L2-N"
+unit = "V"
+
+[[registers]]
+address = 8206
+type = "f32"
+name = "Voltage L3-N"
+unit = "V"
+
+# Line voltages (float, V)
+[[registers]]
+address = 8208
+type = "f32"
+name = "Average line voltage"
+unit = "V"
+
+[[registers]]
+address = 8210
+type = "f32"
+name = "Voltage L1-L2"
+unit = "V"
+
+[[registers]]
+address = 8212
+type = "f32"
+name = "Voltage L2-L3"
+unit = "V"
+
+[[registers]]
+address = 8214
+type = "f32"
+name = "Voltage L3-L1"
+unit = "V"
+
+# Frequency
+[[registers]]
+address = 8216
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# Active power (float, W)
+[[registers]]
+address = 8218
+type = "f32"
+name = "Total active power"
+unit = "W"
+
+[[registers]]
+address = 8220
+type = "f32"
+name = "Active power L1"
+unit = "W"
+
+[[registers]]
+address = 8222
+type = "f32"
+name = "Active power L2"
+unit = "W"
+
+[[registers]]
+address = 8224
+type = "f32"
+name = "Active power L3"
+unit = "W"
+
+# Apparent power (float, VA)
+[[registers]]
+address = 8226
+type = "f32"
+name = "Total apparent power"
+unit = "VA"
+
+[[registers]]
+address = 8228
+type = "f32"
+name = "Apparent power L1"
+unit = "VA"
+
+[[registers]]
+address = 8230
+type = "f32"
+name = "Apparent power L2"
+unit = "VA"
+
+[[registers]]
+address = 8232
+type = "f32"
+name = "Apparent power L3"
+unit = "VA"
+
+# Reactive power (float, var)
+[[registers]]
+address = 8234
+type = "f32"
+name = "Total reactive power"
+unit = "var"
+
+[[registers]]
+address = 8236
+type = "f32"
+name = "Reactive power L1"
+unit = "var"
+
+[[registers]]
+address = 8238
+type = "f32"
+name = "Reactive power L2"
+unit = "var"
+
+[[registers]]
+address = 8240
+type = "f32"
+name = "Reactive power L3"
+unit = "var"
+
+# Power factor
+[[registers]]
+address = 8242
+type = "f32"
+name = "Total power factor"
+
+[[registers]]
+address = 8244
+type = "f32"
+name = "Power factor L1"
+
+[[registers]]
+address = 8246
+type = "f32"
+name = "Power factor L2"
+
+[[registers]]
+address = 8248
+type = "f32"
+name = "Power factor L3"
+
+# Phase angles (float, degrees)
+[[registers]]
+address = 8250
+type = "f32"
+name = "Phase angle V1 reference"
+unit = "°"
+
+[[registers]]
+address = 8252
+type = "f32"
+name = "Phase angle V2 to V1"
+unit = "°"
+
+[[registers]]
+address = 8254
+type = "f32"
+name = "Phase angle V3 to V1"
+unit = "°"
+
+[[registers]]
+address = 8256
+type = "f32"
+name = "Phase angle I1 to V1"
+unit = "°"
+
+[[registers]]
+address = 8258
+type = "f32"
+name = "Phase angle I2 to V1"
+unit = "°"
+
+[[registers]]
+address = 8260
+type = "f32"
+name = "Phase angle I3 to V1"
+unit = "°"
+
+# ----- Demand registers -----
+# 0x1208 = 4616
+[[registers]]
+address = 4616
+type = "f32"
+name = "Active power demand"
+unit = "W"
+
+[[registers]]
+address = 4618
+type = "f32"
+name = "Reactive power demand"
+unit = "var"
+
+[[registers]]
+address = 4620
+type = "f32"
+name = "Apparent power demand"
+unit = "VA"
+
+[[registers]]
+address = 4622
+type = "f32"
+name = "Current demand L1"
+unit = "A"
+
+[[registers]]
+address = 4624
+type = "f32"
+name = "Current demand L2"
+unit = "A"
+
+[[registers]]
+address = 4626
+type = "f32"
+name = "Current demand L3"
+unit = "A"
+
+# ----- Energy — real-time bank (Dword, real = Rx/100) -----
+# 0x2046 = 8262
+[[registers]]
+address = 8262
+type = "u32"
+name = "Active energy export"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 8264
+type = "u32"
+name = "Active energy export L1"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 8266
+type = "u32"
+name = "Active energy export L2"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 8268
+type = "u32"
+name = "Active energy export L3"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 8270
+type = "u32"
+name = "Active energy import"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 8272
+type = "u32"
+name = "Active energy import L1"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 8274
+type = "u32"
+name = "Active energy import L2"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 8276
+type = "u32"
+name = "Active energy import L3"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 8278
+type = "u32"
+name = "Apparent energy export"
+unit = "kVAh"
+scale = 0.01
+
+[[registers]]
+address = 8286
+type = "u32"
+name = "Apparent energy import"
+unit = "kVAh"
+scale = 0.01
+
+# ----- Energy — TOU bank (Dword, real = Rx/100) -----
+# 0x0900 = 2304
+[[registers]]
+address = 2304
+type = "u32"
+name = "Total active energy"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 2314
+type = "u32"
+name = "Net active energy"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 2324
+type = "u32"
+name = "Import active energy"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 2334
+type = "u32"
+name = "Export active energy"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 2344
+type = "u32"
+name = "Total reactive energy"
+unit = "kvarh"
+scale = 0.01
+
+[[registers]]
+address = 2354
+type = "u32"
+name = "Net reactive energy"
+unit = "kvarh"
+scale = 0.01
+
+[[registers]]
+address = 2364
+type = "u32"
+name = "Import reactive energy"
+unit = "kvarh"
+scale = 0.01
+
+[[registers]]
+address = 2374
+type = "u32"
+name = "Export reactive energy"
+unit = "kvarh"
+scale = 0.01
+
+[[registers]]
+address = 2384
+type = "u32"
+name = "Apparent energy"
+unit = "kVAh"
+scale = 0.01

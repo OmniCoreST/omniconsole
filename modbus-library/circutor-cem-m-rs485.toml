@@ -1,0 +1,331 @@
+# Circutor CEM M-RS485 — Optical-to-RS485 Modbus Bridge for CEM Energy Meters
+#
+# Source: circutor-cem-m-rs485-communications-manual.pdf (section 4.4, pp. 12-18)
+# Device: DIN-rail module that couples to the optical service port of CEM C10/C20/C30 meters,
+#         exposing their measurement data via RS-485 Modbus RTU.
+# Protocol: Modbus RTU, FC03/04 read, FC10 write, 8N1 default
+# Baud: 9600/19200/38400 bps (configurable at 0x03E9 = 1001)
+# Register availability varies by coupled meter (C10 / C20 / C30); see Table 11 in source.
+# All 32-bit values occupy 2 consecutive registers; addresses shown in decimal (source is hex).
+# Scaling: voltage ×10 (1 decimal), current ×100 (2 decimals), cos φ ×100 (2 decimals).
+
+vendor = "Circutor"
+model = "CEM M-RS485"
+description = "Optical-to-RS485 Modbus bridge for CEM C10/C20/C30 energy meters. Exposes CEM meter via FC03/04 (read) and FC10 (write). Energy u32 Wh/varh at addr 0-58; instantaneous s32 at 1842-1884 (V×10, A×100, cos φ×100, W/var/VA). Config at 1000-1002. Same register map as CEM-C31."
+
+# ----- Total energy (FC03/04, R, u32, Wh or varh) -----
+[[registers]]
+address = 0
+type = "u32"
+name = "Imported active energy"
+
+[[registers]]
+address = 2
+type = "u32"
+name = "Exported active energy"
+
+[[registers]]
+address = 4
+type = "u32"
+name = "Q1 reactive energy"
+
+[[registers]]
+address = 6
+type = "u32"
+name = "Q2 reactive energy"
+
+[[registers]]
+address = 8
+type = "u32"
+name = "Q3 reactive energy"
+
+[[registers]]
+address = 10
+type = "u32"
+name = "Q4 reactive energy"
+
+# ----- Partial energy (FC03/04, R, u32, Wh or varh) -----
+[[registers]]
+address = 48
+type = "u32"
+name = "Partial imported active energy"
+
+[[registers]]
+address = 50
+type = "u32"
+name = "Partial exported active energy"
+
+[[registers]]
+address = 52
+type = "u32"
+name = "Q1 partial reactive energy"
+
+[[registers]]
+address = 54
+type = "u32"
+name = "Q2 partial reactive energy"
+
+[[registers]]
+address = 56
+type = "u32"
+name = "Q3 partial reactive energy"
+
+[[registers]]
+address = 58
+type = "u32"
+name = "Q4 partial reactive energy"
+
+# ----- Firmware version — energy meter (FC03/04, R, u16) -----
+[[registers]]
+address = 80
+type = "u16"
+name = "Meter higher firmware version"
+
+[[registers]]
+address = 81
+type = "u16"
+name = "Meter lower firmware version"
+
+[[registers]]
+address = 82
+type = "u16"
+name = "Meter revised firmware version"
+
+# ----- Impulse output config (FC03/04, R/W, u16) -----
+[[registers]]
+address = 128
+type = "u16"
+name = "Impulse output type"
+
+[[registers]]
+address = 129
+type = "u16"
+name = "Impulse output weight"
+
+# ----- Cost / KgCO2 config (FC03/04, R/W, u32) -----
+[[registers]]
+address = 176
+type = "u32"
+name = "Cost per kWh"
+
+[[registers]]
+address = 178
+type = "u32"
+name = "KgCO2 per kWh"
+
+# ----- Operating time / cost (FC03/04, R, u32) -----
+[[registers]]
+address = 192
+type = "u32"
+name = "Cost of partial consumption"
+
+[[registers]]
+address = 194
+type = "u32"
+name = "KgCO2 atmospheric emissions of partial consumption"
+
+[[registers]]
+address = 196
+type = "u32"
+name = "Partial operating time in seconds"
+
+[[registers]]
+address = 198
+type = "u32"
+name = "Total operating time in seconds"
+
+# ----- Modbus configuration (FC03/04, R/W) -----
+[[registers]]
+address = 1000
+type = "u16"
+name = "Modbus address"
+
+[[registers]]
+address = 1001
+type = "u16"
+name = "Baud rate"
+
+[[registers]]
+address = 1002
+type = "u16"
+name = "Communications configuration"
+
+# ----- Transformation ratios (FC03/04, R, u32) — C30 model only -----
+[[registers]]
+address = 1100
+type = "u32"
+name = "Voltage primary ratio"
+
+[[registers]]
+address = 1102
+type = "u32"
+name = "Voltage secondary ratio"
+
+[[registers]]
+address = 1104
+type = "u32"
+name = "Current primary ratio"
+
+[[registers]]
+address = 1106
+type = "u32"
+name = "Current secondary ratio"
+
+# ----- Firmware version — communications module (FC03/04, R, u16) -----
+[[registers]]
+address = 1400
+type = "u16"
+name = "Module higher firmware version"
+
+[[registers]]
+address = 1401
+type = "u16"
+name = "Module lower firmware version"
+
+[[registers]]
+address = 1402
+type = "u16"
+name = "Module revised firmware version"
+
+# ----- Instantaneous values (FC03/04, R, s32) -----
+[[registers]]
+address = 1842
+type = "s32"
+name = "Phase 1 voltage"
+
+[[registers]]
+address = 1844
+type = "s32"
+name = "Phase 2 voltage"
+
+[[registers]]
+address = 1846
+type = "s32"
+name = "Phase 3 voltage"
+
+[[registers]]
+address = 1848
+type = "s32"
+name = "Phase 1 current"
+
+[[registers]]
+address = 1850
+type = "s32"
+name = "Phase 2 current"
+
+[[registers]]
+address = 1852
+type = "s32"
+name = "Phase 3 current"
+
+[[registers]]
+address = 1854
+type = "s32"
+name = "Phase 1 power factor"
+
+[[registers]]
+address = 1856
+type = "s32"
+name = "Phase 2 power factor"
+
+[[registers]]
+address = 1858
+type = "s32"
+name = "Phase 3 power factor"
+
+[[registers]]
+address = 1862
+type = "s32"
+name = "Phase 1 active power"
+
+[[registers]]
+address = 1864
+type = "s32"
+name = "Phase 2 active power"
+
+[[registers]]
+address = 1866
+type = "s32"
+name = "Phase 3 active power"
+
+[[registers]]
+address = 1868
+type = "s32"
+name = "Total active power"
+
+[[registers]]
+address = 1870
+type = "s32"
+name = "Phase 1 reactive power"
+
+[[registers]]
+address = 1872
+type = "s32"
+name = "Phase 2 reactive power"
+
+[[registers]]
+address = 1874
+type = "s32"
+name = "Phase 3 reactive power"
+
+[[registers]]
+address = 1876
+type = "s32"
+name = "Total reactive power"
+
+[[registers]]
+address = 1878
+type = "s32"
+name = "Phase 1 apparent power"
+
+[[registers]]
+address = 1880
+type = "s32"
+name = "Phase 2 apparent power"
+
+[[registers]]
+address = 1882
+type = "s32"
+name = "Phase 3 apparent power"
+
+[[registers]]
+address = 1884
+type = "s32"
+name = "Total apparent power"
+
+# ----- Serial number (FC03/04, R, u32) -----
+[[registers]]
+address = 10000
+type = "u32"
+name = "Serial number"
+
+# ----- Energy meter model (FC03/04, R, 6×u16 = 12 bytes ASCII) -----
+[[registers]]
+address = 61456
+type = "u16"
+name = "Energy meter model byte 1-2"
+
+[[registers]]
+address = 61457
+type = "u16"
+name = "Energy meter model byte 3-4"
+
+[[registers]]
+address = 61458
+type = "u16"
+name = "Energy meter model byte 5-6"
+
+[[registers]]
+address = 61459
+type = "u16"
+name = "Energy meter model byte 7-8"
+
+[[registers]]
+address = 61460
+type = "u16"
+name = "Energy meter model byte 9-10"
+
+[[registers]]
+address = 61461
+type = "u16"
+name = "Energy meter model byte 11-12"

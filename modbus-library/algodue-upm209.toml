@@ -1,0 +1,443 @@
+# Algodue UPM209 — Modbus register map for Omni Console
+#
+# Source: algodue-upm209-users-manual.pdf (Modbus Communication Protocol chapter)
+# - Single/3-phase power quality meter, panel mount.
+# - FC03 or FC04 (Read Holding/Input Registers).
+# - IEEE float bank at 0x1000H (4096 decimal): f32 IEEE 754, SI units directly.
+# - Integer bank at 0x0000H uses milli-units (not used in this TOML).
+# - Demand values at 0x110EH (4366 decimal): f32, SI units.
+# - Energy counters at 0x1400H (5120 decimal): f32, kWh.
+# - Factory defaults: slave=1, 9600 baud, 8N1.
+
+vendor = "Algodue"
+model = "UPM209"
+description = "Single/3-phase power quality meter — V/I/P/Q/S/PF/DPF/THD/frequency/energy/demands (f32 IEEE, FC03/04, 0x1000 float bank, SI units). Demands at 0x110E, energy (kWh) at 0x1400."
+
+# ----- Real-time float bank (0x1000H = 4096) -----
+
+# Phase-to-neutral voltages (f32, V)
+[[registers]]
+address = 4096
+type = "f32"
+name = "Voltage L1-N"
+unit = "V"
+
+[[registers]]
+address = 4098
+type = "f32"
+name = "Voltage L2-N"
+unit = "V"
+
+[[registers]]
+address = 4100
+type = "f32"
+name = "Voltage L3-N"
+unit = "V"
+
+# Line voltages (f32, V)
+[[registers]]
+address = 4102
+type = "f32"
+name = "Voltage L1-L2"
+unit = "V"
+
+[[registers]]
+address = 4104
+type = "f32"
+name = "Voltage L2-L3"
+unit = "V"
+
+[[registers]]
+address = 4106
+type = "f32"
+name = "Voltage L3-L1"
+unit = "V"
+
+# System voltage (f32, V)
+[[registers]]
+address = 4108
+type = "f32"
+name = "System voltage"
+unit = "V"
+
+# Currents (f32, A) — signed
+[[registers]]
+address = 4110
+type = "f32"
+name = "Current L1"
+unit = "A"
+
+[[registers]]
+address = 4112
+type = "f32"
+name = "Current L2"
+unit = "A"
+
+[[registers]]
+address = 4114
+type = "f32"
+name = "Current L3"
+unit = "A"
+
+[[registers]]
+address = 4116
+type = "f32"
+name = "Neutral current"
+unit = "A"
+
+[[registers]]
+address = 4118
+type = "f32"
+name = "System current"
+unit = "A"
+
+# Active power (f32, W) — signed
+[[registers]]
+address = 4120
+type = "f32"
+name = "Active power L1"
+unit = "W"
+
+[[registers]]
+address = 4122
+type = "f32"
+name = "Active power L2"
+unit = "W"
+
+[[registers]]
+address = 4124
+type = "f32"
+name = "Active power L3"
+unit = "W"
+
+[[registers]]
+address = 4126
+type = "f32"
+name = "System active power"
+unit = "W"
+
+# Apparent power (f32, VA)
+[[registers]]
+address = 4128
+type = "f32"
+name = "Apparent power L1"
+unit = "VA"
+
+[[registers]]
+address = 4130
+type = "f32"
+name = "Apparent power L2"
+unit = "VA"
+
+[[registers]]
+address = 4132
+type = "f32"
+name = "Apparent power L3"
+unit = "VA"
+
+[[registers]]
+address = 4134
+type = "f32"
+name = "System apparent power"
+unit = "VA"
+
+# Reactive power (f32, var) — signed
+[[registers]]
+address = 4136
+type = "f32"
+name = "Reactive power L1"
+unit = "var"
+
+[[registers]]
+address = 4138
+type = "f32"
+name = "Reactive power L2"
+unit = "var"
+
+[[registers]]
+address = 4140
+type = "f32"
+name = "Reactive power L3"
+unit = "var"
+
+[[registers]]
+address = 4142
+type = "f32"
+name = "System reactive power"
+unit = "var"
+
+# Power factor (f32, dimensionless, signed)
+[[registers]]
+address = 4144
+type = "f32"
+name = "Power factor L1"
+
+[[registers]]
+address = 4146
+type = "f32"
+name = "Power factor L2"
+
+[[registers]]
+address = 4148
+type = "f32"
+name = "Power factor L3"
+
+[[registers]]
+address = 4150
+type = "f32"
+name = "System power factor"
+
+# Displacement power factor (DPF / COSφ)
+[[registers]]
+address = 4152
+type = "f32"
+name = "DPF L1"
+
+[[registers]]
+address = 4154
+type = "f32"
+name = "DPF L2"
+
+[[registers]]
+address = 4156
+type = "f32"
+name = "DPF L3"
+
+# tan(φ)
+[[registers]]
+address = 4158
+type = "f32"
+name = "tan(φ) L1"
+
+[[registers]]
+address = 4160
+type = "f32"
+name = "tan(φ) L2"
+
+[[registers]]
+address = 4162
+type = "f32"
+name = "tan(φ) L3"
+
+[[registers]]
+address = 4164
+type = "f32"
+name = "System tan(φ)"
+
+# Voltage THD (f32, %)
+[[registers]]
+address = 4166
+type = "f32"
+name = "Voltage THD L1-N"
+unit = "%"
+
+[[registers]]
+address = 4168
+type = "f32"
+name = "Voltage THD L2-N"
+unit = "%"
+
+[[registers]]
+address = 4170
+type = "f32"
+name = "Voltage THD L3-N"
+unit = "%"
+
+[[registers]]
+address = 4172
+type = "f32"
+name = "Voltage THD L1-L2"
+unit = "%"
+
+[[registers]]
+address = 4174
+type = "f32"
+name = "Voltage THD L2-L3"
+unit = "%"
+
+[[registers]]
+address = 4176
+type = "f32"
+name = "Voltage THD L3-L1"
+unit = "%"
+
+# Current THD (f32, %)
+[[registers]]
+address = 4178
+type = "f32"
+name = "Current THD L1"
+unit = "%"
+
+[[registers]]
+address = 4180
+type = "f32"
+name = "Current THD L2"
+unit = "%"
+
+[[registers]]
+address = 4182
+type = "f32"
+name = "Current THD L3"
+unit = "%"
+
+[[registers]]
+address = 4184
+type = "f32"
+name = "Current THD neutral"
+unit = "%"
+
+# Frequency (f32, Hz)
+[[registers]]
+address = 4186
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# Phase sequence
+[[registers]]
+address = 4188
+type = "f32"
+name = "Phase sequence"
+
+# Hour counters (f32, h)
+[[registers]]
+address = 4190
+type = "f32"
+name = "Installation hour counter"
+unit = "h"
+
+[[registers]]
+address = 4192
+type = "f32"
+name = "Measurement hour counter"
+unit = "h"
+
+# ----- Demand values (0x110EH = 4366) -----
+
+[[registers]]
+address = 4366
+type = "f32"
+name = "Current demand L1"
+unit = "A"
+
+[[registers]]
+address = 4368
+type = "f32"
+name = "Current demand L2"
+unit = "A"
+
+[[registers]]
+address = 4370
+type = "f32"
+name = "Current demand L3"
+unit = "A"
+
+[[registers]]
+address = 4372
+type = "f32"
+name = "Neutral current demand"
+unit = "A"
+
+[[registers]]
+address = 4374
+type = "f32"
+name = "System current demand"
+unit = "A"
+
+[[registers]]
+address = 4376
+type = "f32"
+name = "Active power import demand L1"
+unit = "W"
+
+[[registers]]
+address = 4378
+type = "f32"
+name = "Active power export demand L1"
+unit = "W"
+
+[[registers]]
+address = 4380
+type = "f32"
+name = "Active power import demand L2"
+unit = "W"
+
+[[registers]]
+address = 4382
+type = "f32"
+name = "Active power export demand L2"
+unit = "W"
+
+[[registers]]
+address = 4384
+type = "f32"
+name = "Active power import demand L3"
+unit = "W"
+
+[[registers]]
+address = 4386
+type = "f32"
+name = "Active power export demand L3"
+unit = "W"
+
+[[registers]]
+address = 4388
+type = "f32"
+name = "System active power import demand"
+unit = "W"
+
+[[registers]]
+address = 4390
+type = "f32"
+name = "System active power export demand"
+unit = "W"
+
+# ----- Energy counters (0x1400H = 5120) -----
+
+[[registers]]
+address = 5120
+type = "f32"
+name = "Active energy import L1"
+unit = "kWh"
+
+[[registers]]
+address = 5122
+type = "f32"
+name = "Active energy export L1"
+unit = "kWh"
+
+[[registers]]
+address = 5124
+type = "f32"
+name = "Active energy import L2"
+unit = "kWh"
+
+[[registers]]
+address = 5126
+type = "f32"
+name = "Active energy export L2"
+unit = "kWh"
+
+[[registers]]
+address = 5128
+type = "f32"
+name = "Active energy import L3"
+unit = "kWh"
+
+[[registers]]
+address = 5130
+type = "f32"
+name = "Active energy export L3"
+unit = "kWh"
+
+[[registers]]
+address = 5132
+type = "f32"
+name = "System active energy import"
+unit = "kWh"
+
+[[registers]]
+address = 5134
+type = "f32"
+name = "System active energy export"
+unit = "kWh"

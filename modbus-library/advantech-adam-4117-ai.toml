@@ -1,0 +1,130 @@
+# Advantech ADAM-4117 — 8-Channel Analog Input Module
+#
+# Source: advantech-adam-4100-modbus.pdf (Appendix B, B.1)
+# - 8-channel isolated analog input; configurable range per channel via type code.
+# - Modbus RTU enabled when FF parameter bit 2 = 1; default is ADAM ASCII protocol.
+# - FC02 addr 200-207 (00201-00208): Burn-out flag ch 0-7 (R).
+# - FC03 addr 0-7: Current Value ch 0-7 (R); s16 ×0.1 engineering units (range-dependent).
+# - FC03 addr 200-207: Type Code ch 0-7 (R/W).
+# - FC03 addr 210-213: Module name 1-2, firmware version 1-2 (R).
+# - FC03 addr 220: Channel Enable bitmask (R/W, 0x00=none, 0xff=all).
+# - Factory defaults: address=0, 9600 baud, 8N1.
+
+vendor = "Advantech"
+model = "ADAM-4117"
+description = "8-channel isolated analog input. Configurable range per channel via type code (±10V, 0-10V, 4-20mA, etc). FC03 addr 0-7: s16 ×0.1 engineering units. Burn-out via FC02 addr 200-207. Modbus enabled when FF parameter bit2=1."
+
+# ----- Analog inputs (FC03, R) -----
+[[registers]]
+address = 0
+type = "s16"
+name = "AI channel 0"
+scale = 0.1
+
+[[registers]]
+address = 1
+type = "s16"
+name = "AI channel 1"
+scale = 0.1
+
+[[registers]]
+address = 2
+type = "s16"
+name = "AI channel 2"
+scale = 0.1
+
+[[registers]]
+address = 3
+type = "s16"
+name = "AI channel 3"
+scale = 0.1
+
+[[registers]]
+address = 4
+type = "s16"
+name = "AI channel 4"
+scale = 0.1
+
+[[registers]]
+address = 5
+type = "s16"
+name = "AI channel 5"
+scale = 0.1
+
+[[registers]]
+address = 6
+type = "s16"
+name = "AI channel 6"
+scale = 0.1
+
+[[registers]]
+address = 7
+type = "s16"
+name = "AI channel 7"
+scale = 0.1
+
+# ----- Configuration (FC03, R/W) -----
+[[registers]]
+address = 200
+type = "u16"
+name = "Type code channel 0"
+
+[[registers]]
+address = 201
+type = "u16"
+name = "Type code channel 1"
+
+[[registers]]
+address = 202
+type = "u16"
+name = "Type code channel 2"
+
+[[registers]]
+address = 203
+type = "u16"
+name = "Type code channel 3"
+
+[[registers]]
+address = 204
+type = "u16"
+name = "Type code channel 4"
+
+[[registers]]
+address = 205
+type = "u16"
+name = "Type code channel 5"
+
+[[registers]]
+address = 206
+type = "u16"
+name = "Type code channel 6"
+
+[[registers]]
+address = 207
+type = "u16"
+name = "Type code channel 7"
+
+[[registers]]
+address = 210
+type = "u16"
+name = "Module name 1"
+
+[[registers]]
+address = 211
+type = "u16"
+name = "Module name 2"
+
+[[registers]]
+address = 212
+type = "u16"
+name = "Firmware version 1"
+
+[[registers]]
+address = 213
+type = "u16"
+name = "Firmware version 2"
+
+[[registers]]
+address = 220
+type = "u16"
+name = "Channel enable"

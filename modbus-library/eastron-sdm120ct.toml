@@ -1,0 +1,167 @@
+# Eastron SDM120CT — Modbus register map for Omni Console
+#
+# Source: eastron-sdm120ct-modbus-protocol.pdf (SDM120CTM Modbus Protocol V1.3)
+# Single-phase CT-connected smart meter (external CT input, 5A secondary).
+# All measured values are IEEE-754 FLOAT (f32), MSW first (big-endian) — word_order omitted.
+# Measurements use INPUT registers (FC04). Addresses are 0-based protocol addresses.
+# Factory defaults: slave=1, baud=2400, 8N1.
+# CT-specific holding registers: CT1 (40051, primary current 5-9999A, default 5A),
+# CT2 (40053, secondary ratio: 1A or 5A, default 5A).
+# Register map identical to SDM120 except for CT configuration holding registers.
+
+vendor = "Eastron"
+model = "SDM120CT"
+description = "Single-phase CT-connected smart meter — V/I/P/Q/S, PF, frequency, import/export energy. CT input (5A secondary). Register map identical to SDM120."
+
+# ----- Voltage -----
+[[registers]]
+address = 0
+area = "input"
+type = "f32"
+name = "Voltage"
+unit = "V"
+
+# ----- Current -----
+[[registers]]
+address = 6
+area = "input"
+type = "f32"
+name = "Current"
+unit = "A"
+
+# ----- Power -----
+[[registers]]
+address = 12
+area = "input"
+type = "f32"
+name = "Active power"
+unit = "W"
+
+[[registers]]
+address = 18
+area = "input"
+type = "f32"
+name = "Apparent power"
+unit = "VA"
+
+[[registers]]
+address = 24
+area = "input"
+type = "f32"
+name = "Reactive power"
+unit = "var"
+
+[[registers]]
+address = 30
+area = "input"
+type = "f32"
+name = "Power factor"
+
+# ----- Frequency -----
+[[registers]]
+address = 70
+area = "input"
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# ----- Energy -----
+[[registers]]
+address = 72
+area = "input"
+type = "f32"
+name = "Import active energy"
+unit = "kWh"
+
+[[registers]]
+address = 74
+area = "input"
+type = "f32"
+name = "Export active energy"
+unit = "kWh"
+
+[[registers]]
+address = 76
+area = "input"
+type = "f32"
+name = "Import reactive energy"
+unit = "kvarh"
+
+[[registers]]
+address = 78
+area = "input"
+type = "f32"
+name = "Export reactive energy"
+unit = "kvarh"
+
+# ----- Demand -----
+[[registers]]
+address = 84
+area = "input"
+type = "f32"
+name = "Total system power demand"
+unit = "W"
+
+[[registers]]
+address = 86
+area = "input"
+type = "f32"
+name = "Maximum total system power demand"
+unit = "W"
+
+[[registers]]
+address = 88
+area = "input"
+type = "f32"
+name = "Import system power demand"
+unit = "W"
+
+[[registers]]
+address = 90
+area = "input"
+type = "f32"
+name = "Maximum import system power demand"
+unit = "W"
+
+[[registers]]
+address = 92
+area = "input"
+type = "f32"
+name = "Export system power demand"
+unit = "W"
+
+[[registers]]
+address = 94
+area = "input"
+type = "f32"
+name = "Maximum export system power demand"
+unit = "W"
+
+[[registers]]
+address = 258
+area = "input"
+type = "f32"
+name = "Current demand"
+unit = "A"
+
+[[registers]]
+address = 264
+area = "input"
+type = "f32"
+name = "Maximum current demand"
+unit = "A"
+
+# ----- Energy totals -----
+[[registers]]
+address = 342
+area = "input"
+type = "f32"
+name = "Total active energy"
+unit = "kWh"
+
+[[registers]]
+address = 344
+area = "input"
+type = "f32"
+name = "Total reactive energy"
+unit = "kvarh"

@@ -1,0 +1,224 @@
+# Korenix JetI/O 6510 Industrial Intelligent Ethernet I/O Server
+#
+# Source: JetI/O 6510 User's Manual V0.1 (Jan. 2008)
+# Protocol: Modbus/TCP (Ethernet port 502); FC03 read holding, FC04 read input, FC06 write single
+# Module: 8-channel analog input, 16-bit, configurable range per-module (not per-channel):
+#   08H=±10V, 09H=±5V, 0AH=±1V, 0BH=±500mV, 0CH=±150mV, 0DH=±20mA
+#
+# IMPORTANT: Measured analog values live in the FC04 Input Register space (Modicon 30001-30008),
+#   addresses 0-7. Holding registers (FC03, Modicon 40001-40041) are configuration only.
+#   Input register values are signed 16-bit; units depend on selected range
+#   (e.g. ±10V range: -10000 ~ +10000 = mV; ±20mA range: -20000 ~ +20000 = µA).
+
+vendor = "Korenix"
+model = "JetI/O 6510"
+description = "8-CH analog input Ethernet I/O server, Modbus/TCP. Range set globally at holding reg 10 (08=±10V,09=±5V,0A=±1V,0B=±500mV,0C=±150mV,0D=±20mA). Measured values in FC04 input registers addr 0-7 (s16, mV or µA). Holding regs: watchdog (0-2), firmware/name (3-4), calibration (6-12), per-channel low/high alarm thresholds ch0-7 (13-28), channel mask (29), alarm enable (30), SNMP trap config (31-40)."
+
+# ===== Common Holding Registers (FC03) =====
+
+[[registers]]
+address = 0
+type = "u16"
+name = "Watchdog enable (0x0000=disable 0xFF00=enable)"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "Watchdog cycle count (0.1s per count, range 1-255)"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "Host-watchdog status (R: 0x0000=OK 0xFF00=fail; W: 0xFF00=reset)"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "Firmware version"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "Module name (reads 0xF12A = 6510 hex)"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "Reset status (0x0000 after read; 0x0001 after reset)"
+
+[[registers]]
+address = 6
+type = "u16"
+name = "AD offset calibration coefficients (bits 16-23)"
+
+[[registers]]
+address = 7
+type = "u16"
+name = "AD offset calibration coefficients (bits 0-15)"
+
+[[registers]]
+address = 8
+type = "u16"
+name = "AD span calibration coefficients (bits 16-23)"
+
+[[registers]]
+address = 9
+type = "u16"
+name = "AD span calibration coefficients (bits 0-15)"
+
+[[registers]]
+address = 10
+type = "u16"
+name = "Input range code (08=±10V 09=±5V 0A=±1V 0B=±500mV 0C=±150mV 0D=±20mA)"
+
+[[registers]]
+address = 11
+type = "u16"
+name = "Offset calibration trigger (write 0xFF00)"
+
+[[registers]]
+address = 12
+type = "u16"
+name = "Span calibration trigger (write 0xFF00)"
+
+# ===== Special Holding Registers — Per-channel Alarm Thresholds (FC03) =====
+
+[[registers]]
+address = 13
+type = "s16"
+name = "Channel 0 low alarm threshold"
+
+[[registers]]
+address = 14
+type = "s16"
+name = "Channel 0 high alarm threshold"
+
+[[registers]]
+address = 15
+type = "s16"
+name = "Channel 1 low alarm threshold"
+
+[[registers]]
+address = 16
+type = "s16"
+name = "Channel 1 high alarm threshold"
+
+[[registers]]
+address = 17
+type = "s16"
+name = "Channel 2 low alarm threshold"
+
+[[registers]]
+address = 18
+type = "s16"
+name = "Channel 2 high alarm threshold"
+
+[[registers]]
+address = 19
+type = "s16"
+name = "Channel 3 low alarm threshold"
+
+[[registers]]
+address = 20
+type = "s16"
+name = "Channel 3 high alarm threshold"
+
+[[registers]]
+address = 21
+type = "s16"
+name = "Channel 4 low alarm threshold"
+
+[[registers]]
+address = 22
+type = "s16"
+name = "Channel 4 high alarm threshold"
+
+[[registers]]
+address = 23
+type = "s16"
+name = "Channel 5 low alarm threshold"
+
+[[registers]]
+address = 24
+type = "s16"
+name = "Channel 5 high alarm threshold"
+
+[[registers]]
+address = 25
+type = "s16"
+name = "Channel 6 low alarm threshold"
+
+[[registers]]
+address = 26
+type = "s16"
+name = "Channel 6 high alarm threshold"
+
+[[registers]]
+address = 27
+type = "s16"
+name = "Channel 7 low alarm threshold"
+
+[[registers]]
+address = 28
+type = "s16"
+name = "Channel 7 high alarm threshold"
+
+[[registers]]
+address = 29
+type = "u16"
+name = "AD channel mask (bitmask byte BB; bit N=1 enable ch N)"
+
+[[registers]]
+address = 30
+type = "u16"
+name = "Alarm enable per channel (bitmask; bit N=1 enable alarm ch N)"
+
+[[registers]]
+address = 31
+type = "u16"
+name = "SNMP trap number (0=close 1-4=trap IP slot)"
+
+[[registers]]
+address = 32
+type = "u16"
+name = "SNMP trap IP1 low word (X.X.AA.BB)"
+
+[[registers]]
+address = 33
+type = "u16"
+name = "SNMP trap IP1 high word (AA.BB.X.X)"
+
+[[registers]]
+address = 34
+type = "u16"
+name = "SNMP trap IP2 low word"
+
+[[registers]]
+address = 35
+type = "u16"
+name = "SNMP trap IP2 high word"
+
+[[registers]]
+address = 36
+type = "u16"
+name = "SNMP trap IP3 high word"
+
+[[registers]]
+address = 37
+type = "u16"
+name = "SNMP trap IP3 low word"
+
+[[registers]]
+address = 38
+type = "u16"
+name = "SNMP trap IP4 high word"
+
+[[registers]]
+address = 39
+type = "u16"
+name = "SNMP trap IP4 low word"
+
+[[registers]]
+address = 40
+type = "u16"
+name = "SNMP trap repeat enable (write 0xFF00)"

@@ -1,0 +1,788 @@
+# ENTES MPR-53S Network Analyser (Modbus RTU RS-485)
+#
+# Source: entes-mpr-53s-register-table-tr.pdf (A4308/Rev.2)
+# Protocol: Modbus RTU; FC03 read, FC06 write single register
+# All addresses are 0-based decimal. All registers are 16-bit (1 word each).
+#
+# Multipliers:
+#   Voltage:        raw × 0.1  = V   (incorporates VT ratio)
+#   Current:        raw × 0.001 = A  (incorporates CT ratio)
+#   Active/reactive power: raw × 0.1 = W/VAr (signed for per-phase)
+#   Apparent power: raw × 0.1  = VA
+#   Power factor:   raw × 0.001 = dimensionless (−1.000..1.000, signed)
+#   Frequency:      raw × 0.01 = Hz
+#   Angle:          raw × 1    = degree
+#   THD:            raw × 0.1  = %
+#   Energy:         64-bit counter; low u32 at base addr, high u32 at base+2; × 1 Wh/VAh
+#
+# Pulse output parameter codes 0-5: 0=Active, 1=Active Import, 2=Active Export,
+#   3=Reactive, 4=Reactive Import, 5=Reactive Export
+# Pulse ratio codes 0-5: 0=1W/pulse, 1=10W/pulse, 2=1kW/pulse,
+#   3=10kW/pulse, 4=100kW/pulse, 5=1MW/pulse
+# Energy counter selection 0-3: 0=Always, 1=DI1 active, 2=DI2 active,
+#   3=Inverse of EC1
+# Baud rate codes 1-5: 1=38400, 2=19200, 3=9600, 4=4800, 5=2400 bps
+# Parity codes 0-2: 0=None, 1=Odd, 2=Even
+# Calculation method 0-5: see datasheet
+
+vendor = "ENTES"
+model = "MPR-53S"
+description = "3-phase network analyser, Modbus RTU, 16-bit registers. Phase-neutral voltages at addr 0-4 (V×0.1); phase currents at 6-12 (A×0.001); phase-phase voltages at 14-18; per-phase active/reactive/apparent power at 20-36 (W/VAr/VA×0.1); per-phase cos-phi at 38-42 (×0.001); total import/export active, inductive/capacitive reactive, apparent at 44-52; avg cos-phi at 54-56; frequency at 58 (Hz×0.01); voltage/current angles at 60-70 (deg); THD at 72-82 (×0.1%); digital input at 84; dual-tariff 64-bit energy counters at 86-116; min at 118-162; max at 164-208; current demand at 210-214; per-phase and total max demand at 216-254. Settings at 0x8000: VT/CT ratio, calc method, demand time, pulse, energy counter, comms."
+
+# ----- Phase-neutral voltages (FC03, R, u16, ×0.1 V) -----
+[[registers]]
+address = 0
+type = "u16"
+name = "L1 phase voltage"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "L2 phase voltage"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "L3 phase voltage"
+
+# ----- Phase currents (FC03, R, u16, ×0.001 A) -----
+[[registers]]
+address = 6
+type = "u16"
+name = "L1 phase current"
+
+[[registers]]
+address = 8
+type = "u16"
+name = "L2 phase current"
+
+[[registers]]
+address = 10
+type = "u16"
+name = "L3 phase current"
+
+[[registers]]
+address = 12
+type = "u16"
+name = "Neutral current"
+
+# ----- Phase-phase voltages (FC03, R, u16, ×0.1 V) -----
+[[registers]]
+address = 14
+type = "u16"
+name = "L1-L2 phase-phase voltage"
+
+[[registers]]
+address = 16
+type = "u16"
+name = "L2-L3 phase-phase voltage"
+
+[[registers]]
+address = 18
+type = "u16"
+name = "L3-L1 phase-phase voltage"
+
+# ----- Per-phase active power (FC03, R, s16, ×0.1 W) -----
+[[registers]]
+address = 20
+type = "s16"
+name = "L1 phase active power"
+
+[[registers]]
+address = 22
+type = "s16"
+name = "L2 phase active power"
+
+[[registers]]
+address = 24
+type = "s16"
+name = "L3 phase active power"
+
+# ----- Per-phase reactive power (FC03, R, s16, ×0.1 VAr) -----
+[[registers]]
+address = 26
+type = "s16"
+name = "L1 phase reactive power"
+
+[[registers]]
+address = 28
+type = "s16"
+name = "L2 phase reactive power"
+
+[[registers]]
+address = 30
+type = "s16"
+name = "L3 phase reactive power"
+
+# ----- Per-phase apparent power (FC03, R, u16, ×0.1 VA) -----
+[[registers]]
+address = 32
+type = "u16"
+name = "L1 phase apparent power"
+
+[[registers]]
+address = 34
+type = "u16"
+name = "L2 phase apparent power"
+
+[[registers]]
+address = 36
+type = "u16"
+name = "L3 phase apparent power"
+
+# ----- Per-phase power factor (FC03, R, s16, ×0.001) -----
+[[registers]]
+address = 38
+type = "s16"
+name = "L1 phase cos-phi"
+
+[[registers]]
+address = 40
+type = "s16"
+name = "L2 phase cos-phi"
+
+[[registers]]
+address = 42
+type = "s16"
+name = "L3 phase cos-phi"
+
+# ----- Total power (FC03, R) -----
+[[registers]]
+address = 44
+type = "s16"
+name = "Total import active power"
+
+[[registers]]
+address = 46
+type = "s16"
+name = "Total export active power"
+
+[[registers]]
+address = 48
+type = "s16"
+name = "Total inductive reactive power"
+
+[[registers]]
+address = 50
+type = "s16"
+name = "Total capacitive reactive power"
+
+[[registers]]
+address = 52
+type = "u16"
+name = "Total apparent power"
+
+# ----- Average power factor (FC03, R, s16, ×0.001) -----
+[[registers]]
+address = 54
+type = "s16"
+name = "Average inductive cos-phi"
+
+[[registers]]
+address = 56
+type = "s16"
+name = "Average capacitive cos-phi"
+
+# ----- Frequency (FC03, R, u16, ×0.01 Hz) -----
+[[registers]]
+address = 58
+type = "u16"
+name = "Frequency"
+
+# ----- Voltage angles (FC03, R, u16, ×1 degree) -----
+[[registers]]
+address = 60
+type = "u16"
+name = "L1 phase voltage angle"
+
+[[registers]]
+address = 62
+type = "u16"
+name = "L2 phase voltage angle"
+
+[[registers]]
+address = 64
+type = "u16"
+name = "L3 phase voltage angle"
+
+# ----- Current angles (FC03, R, u16, ×1 degree) -----
+[[registers]]
+address = 66
+type = "u16"
+name = "L1 phase current angle"
+
+[[registers]]
+address = 68
+type = "u16"
+name = "L2 phase current angle"
+
+[[registers]]
+address = 70
+type = "u16"
+name = "L3 phase current angle"
+
+# ----- Voltage THD (FC03, R, u16, ×0.1 %) -----
+[[registers]]
+address = 72
+type = "u16"
+name = "L1 phase voltage THD"
+
+[[registers]]
+address = 74
+type = "u16"
+name = "L2 phase voltage THD"
+
+[[registers]]
+address = 76
+type = "u16"
+name = "L3 phase voltage THD"
+
+# ----- Current THD (FC03, R, u16, ×0.1 %) -----
+[[registers]]
+address = 78
+type = "u16"
+name = "L1 phase current THD"
+
+[[registers]]
+address = 80
+type = "u16"
+name = "L2 phase current THD"
+
+[[registers]]
+address = 82
+type = "u16"
+name = "L3 phase current THD"
+
+# ----- Digital input (FC03, R/W, u16) -----
+[[registers]]
+address = 84
+type = "u16"
+name = "Digital input status"
+
+# ----- Energy counters tariff 1 (FC03/06, R/W; 64-bit each: low u32 at N, high u32 at N+2) -----
+[[registers]]
+address = 86
+type = "u32"
+name = "Import active energy 1 (low)"
+
+[[registers]]
+address = 88
+type = "u32"
+name = "Import active energy 1 (high)"
+
+[[registers]]
+address = 90
+type = "u32"
+name = "Export active energy 1 (low)"
+
+[[registers]]
+address = 92
+type = "u32"
+name = "Export active energy 1 (high)"
+
+[[registers]]
+address = 94
+type = "u32"
+name = "Inductive reactive energy 1 (low)"
+
+[[registers]]
+address = 96
+type = "u32"
+name = "Inductive reactive energy 1 (high)"
+
+[[registers]]
+address = 98
+type = "u32"
+name = "Capacitive reactive energy 1 (low)"
+
+[[registers]]
+address = 100
+type = "u32"
+name = "Capacitive reactive energy 1 (high)"
+
+# ----- Energy counters tariff 2 (FC03/06, R/W; 64-bit each) -----
+[[registers]]
+address = 102
+type = "u32"
+name = "Import active energy 2 (low)"
+
+[[registers]]
+address = 104
+type = "u32"
+name = "Import active energy 2 (high)"
+
+[[registers]]
+address = 106
+type = "u32"
+name = "Export active energy 2 (low)"
+
+[[registers]]
+address = 108
+type = "u32"
+name = "Export active energy 2 (high)"
+
+[[registers]]
+address = 110
+type = "u32"
+name = "Inductive reactive energy 2 (low)"
+
+[[registers]]
+address = 112
+type = "u32"
+name = "Inductive reactive energy 2 (high)"
+
+[[registers]]
+address = 114
+type = "u32"
+name = "Capacitive reactive energy 2 (low)"
+
+[[registers]]
+address = 116
+type = "u32"
+name = "Capacitive reactive energy 2 (high)"
+
+# ----- Min phase-neutral voltages (FC03/06, R/W, u16, ×0.1 V) -----
+[[registers]]
+address = 118
+type = "u16"
+name = "L1 phase min voltage"
+
+[[registers]]
+address = 120
+type = "u16"
+name = "L2 phase min voltage"
+
+[[registers]]
+address = 122
+type = "u16"
+name = "L3 phase min voltage"
+
+# ----- Min phase-phase voltages (FC03/06, R/W, u16, ×0.1 V) -----
+[[registers]]
+address = 124
+type = "u16"
+name = "L1-L2 phase-phase min voltage"
+
+[[registers]]
+address = 126
+type = "u16"
+name = "L2-L3 phase-phase min voltage"
+
+[[registers]]
+address = 128
+type = "u16"
+name = "L3-L1 phase-phase min voltage"
+
+# ----- Min currents (FC03/06, R/W, u16, ×0.001 A) -----
+[[registers]]
+address = 130
+type = "u16"
+name = "L1 phase min current"
+
+[[registers]]
+address = 132
+type = "u16"
+name = "L2 phase min current"
+
+[[registers]]
+address = 134
+type = "u16"
+name = "L3 phase min current"
+
+# ----- Min active power (FC03/06, R/W, s16, ×0.1 W) -----
+[[registers]]
+address = 136
+type = "s16"
+name = "L1 phase min active power"
+
+[[registers]]
+address = 138
+type = "s16"
+name = "L2 phase min active power"
+
+[[registers]]
+address = 140
+type = "s16"
+name = "L3 phase min active power"
+
+# ----- Min reactive power (FC03/06, R/W, s16, ×0.1 VAr) -----
+[[registers]]
+address = 142
+type = "s16"
+name = "L1 phase min reactive power"
+
+[[registers]]
+address = 144
+type = "s16"
+name = "L2 phase min reactive power"
+
+[[registers]]
+address = 146
+type = "s16"
+name = "L3 phase min reactive power"
+
+# ----- Min apparent power (FC03/06, R/W, u16, ×0.1 VA) -----
+[[registers]]
+address = 148
+type = "u16"
+name = "L1 phase min apparent power"
+
+[[registers]]
+address = 150
+type = "u16"
+name = "L2 phase min apparent power"
+
+[[registers]]
+address = 152
+type = "u16"
+name = "L3 phase min apparent power"
+
+# ----- Total min power (FC03/06, R/W) -----
+[[registers]]
+address = 154
+type = "s16"
+name = "Total min import active power"
+
+[[registers]]
+address = 156
+type = "s16"
+name = "Total min export active power"
+
+[[registers]]
+address = 158
+type = "s16"
+name = "Total min inductive reactive power"
+
+[[registers]]
+address = 160
+type = "s16"
+name = "Total min capacitive reactive power"
+
+[[registers]]
+address = 162
+type = "u16"
+name = "Total min apparent power"
+
+# ----- Max phase-neutral voltages (FC03/06, R/W, u16, ×0.1 V) -----
+[[registers]]
+address = 164
+type = "u16"
+name = "L1 phase max voltage"
+
+[[registers]]
+address = 166
+type = "u16"
+name = "L2 phase max voltage"
+
+[[registers]]
+address = 168
+type = "u16"
+name = "L3 phase max voltage"
+
+# ----- Max phase-phase voltages (FC03/06, R/W, u16, ×0.1 V) -----
+[[registers]]
+address = 170
+type = "u16"
+name = "L1-L2 phase-phase max voltage"
+
+[[registers]]
+address = 172
+type = "u16"
+name = "L2-L3 phase-phase max voltage"
+
+[[registers]]
+address = 174
+type = "u16"
+name = "L3-L1 phase-phase max voltage"
+
+# ----- Max currents (FC03/06, R/W, u16, ×0.001 A) -----
+[[registers]]
+address = 176
+type = "u16"
+name = "L1 phase max current"
+
+[[registers]]
+address = 178
+type = "u16"
+name = "L2 phase max current"
+
+[[registers]]
+address = 180
+type = "u16"
+name = "L3 phase max current"
+
+# ----- Max active power (FC03/06, R/W, s16, ×0.1 W) -----
+[[registers]]
+address = 182
+type = "s16"
+name = "L1 phase max active power"
+
+[[registers]]
+address = 184
+type = "s16"
+name = "L2 phase max active power"
+
+[[registers]]
+address = 186
+type = "s16"
+name = "L3 phase max active power"
+
+# ----- Max reactive power (FC03/06, R/W, s16, ×0.1 VAr) -----
+[[registers]]
+address = 188
+type = "s16"
+name = "L1 phase max reactive power"
+
+[[registers]]
+address = 190
+type = "s16"
+name = "L2 phase max reactive power"
+
+[[registers]]
+address = 192
+type = "s16"
+name = "L3 phase max reactive power"
+
+# ----- Max apparent power (FC03/06, R/W, u16, ×0.1 VA) -----
+[[registers]]
+address = 194
+type = "u16"
+name = "L1 phase max apparent power"
+
+[[registers]]
+address = 196
+type = "u16"
+name = "L2 phase max apparent power"
+
+[[registers]]
+address = 198
+type = "u16"
+name = "L3 phase max apparent power"
+
+# ----- Total max power (FC03/06, R/W) -----
+[[registers]]
+address = 200
+type = "s16"
+name = "Total max import active power"
+
+[[registers]]
+address = 202
+type = "s16"
+name = "Total max export active power"
+
+[[registers]]
+address = 204
+type = "s16"
+name = "Total max inductive reactive power"
+
+[[registers]]
+address = 206
+type = "s16"
+name = "Total max capacitive reactive power"
+
+[[registers]]
+address = 208
+type = "u16"
+name = "Total max apparent power"
+
+# ----- Max current demand (FC03/06, R/W, u16, ×0.001 A) -----
+[[registers]]
+address = 210
+type = "u16"
+name = "L1 phase max current demand"
+
+[[registers]]
+address = 212
+type = "u16"
+name = "L2 phase max current demand"
+
+[[registers]]
+address = 214
+type = "u16"
+name = "L3 phase max current demand"
+
+# ----- Per-phase max demand active power (FC03/06, R/W, s16, ×0.1 W) -----
+[[registers]]
+address = 216
+type = "s16"
+name = "L1 import max demand active power"
+
+[[registers]]
+address = 218
+type = "s16"
+name = "L1 export max demand active power"
+
+[[registers]]
+address = 220
+type = "s16"
+name = "L2 import max demand active power"
+
+[[registers]]
+address = 222
+type = "s16"
+name = "L2 export max demand active power"
+
+[[registers]]
+address = 224
+type = "s16"
+name = "L3 import max demand active power"
+
+[[registers]]
+address = 226
+type = "s16"
+name = "L3 export max demand active power"
+
+# ----- Per-phase max demand reactive power (FC03/06, R/W, s16, ×0.1 VAr) -----
+[[registers]]
+address = 228
+type = "s16"
+name = "L1 import max demand reactive power"
+
+[[registers]]
+address = 230
+type = "s16"
+name = "L1 export max demand reactive power"
+
+[[registers]]
+address = 232
+type = "s16"
+name = "L2 import max demand reactive power"
+
+[[registers]]
+address = 234
+type = "s16"
+name = "L2 export max demand reactive power"
+
+[[registers]]
+address = 236
+type = "s16"
+name = "L3 import max demand reactive power"
+
+[[registers]]
+address = 238
+type = "s16"
+name = "L3 export max demand reactive power"
+
+# ----- Per-phase max demand apparent power (FC03/06, R/W, u16, ×0.1 VA) -----
+[[registers]]
+address = 240
+type = "u16"
+name = "L1 phase max demand apparent power"
+
+[[registers]]
+address = 242
+type = "u16"
+name = "L2 phase max demand apparent power"
+
+[[registers]]
+address = 244
+type = "u16"
+name = "L3 phase max demand apparent power"
+
+# ----- Total max demand (FC03/06, R/W) -----
+[[registers]]
+address = 246
+type = "s16"
+name = "Total import max demand active power"
+
+[[registers]]
+address = 248
+type = "s16"
+name = "Total export max demand active power"
+
+[[registers]]
+address = 250
+type = "s16"
+name = "Total import max demand reactive power"
+
+[[registers]]
+address = 252
+type = "s16"
+name = "Total export max demand reactive power"
+
+[[registers]]
+address = 254
+type = "u16"
+name = "Total max demand apparent power"
+
+# ----- Settings (FC03/06, R/W, s16) -----
+# 0-4000 (e.g. 1000 = ratio 100.0 : ×0.1)
+[[registers]]
+address = 32768
+type = "s16"
+name = "Voltage transformer ratio"
+
+# 0-2000 (e.g. 100 = ratio 100)
+[[registers]]
+address = 32769
+type = "s16"
+name = "Current transformer ratio"
+
+# 0-5; see datasheet for reactive energy calculation method codes
+[[registers]]
+address = 32770
+type = "s16"
+name = "Calculation method"
+
+# 1-60 minutes
+[[registers]]
+address = 32771
+type = "s16"
+name = "Demand time"
+
+# 0=1W, 1=10W, 2=1kW, 3=10kW, 4=100kW, 5=1MW per pulse
+[[registers]]
+address = 32772
+type = "s16"
+name = "Pulse ratio"
+
+# 0=Active, 1=Active Import, 2=Active Export, 3=Reactive, 4=Reactive Import, 5=Reactive Export
+[[registers]]
+address = 32773
+type = "s16"
+name = "Pulse output 1 parameter"
+
+[[registers]]
+address = 32774
+type = "s16"
+name = "Pulse output 2 parameter"
+
+# 0=Always, 1=DI1 active, 2=DI2 active, 3=Inverse EC1
+[[registers]]
+address = 32775
+type = "s16"
+name = "Energy counter 1 selection"
+
+[[registers]]
+address = 32776
+type = "s16"
+name = "Energy counter 2 selection"
+
+# 0-247
+[[registers]]
+address = 32777
+type = "s16"
+name = "Modbus address"
+
+# 1=38400, 2=19200, 3=9600, 4=4800, 5=2400 bps
+[[registers]]
+address = 32778
+type = "s16"
+name = "Baud rate"
+
+# 0=None, 1=Odd, 2=Even
+[[registers]]
+address = 32779
+type = "s16"
+name = "Parity"
+
+# 0=Disable, 1=Enable
+[[registers]]
+address = 32780
+type = "s16"
+name = "Password enable"
+
+[[registers]]
+address = 32781
+type = "s16"
+name = "Password"

@@ -1,0 +1,121 @@
+# Advantech ADAM-4018+ — 8-Channel Thermocouple Temperature Input Module
+#
+# Source: advantech-adam-4000-modbus.pdf (Appendix G, Module 2)
+# - 8-channel thermocouple temperature input, Modbus RTU.
+# - FC02 00201-00208 (addr 200-207): Burn-out Signal ch0-7 (0=Normal, 1=Burn-out).
+# - FC03 40001-40008 (addr 0-7): Current Value ch0-7 (s16, ×0.1°C).
+# - FC03 40201-40208 (addr 200-207): Type Code ch0-7, R/W.
+# - FC03 40211 (addr 210): Module Name; 40221 (addr 220): Channel Enable bitmask.
+# - Factory defaults: slave=1, 9600 baud, 8N1.
+
+vendor = "Advantech"
+model = "ADAM-4018+"
+description = "8-channel thermocouple temperature input module (s16 ×0.1°C, FC03, addr 0-7). Burn-out status via FC02 addr 200-207. Type code configuration at addr 200-207 (FC03, R/W)."
+
+# ----- Measurement (FC03, read-only) -----
+[[registers]]
+address = 0
+type = "s16"
+name = "TC Ch0 temperature"
+unit = "°C"
+scale = 0.1
+
+[[registers]]
+address = 1
+type = "s16"
+name = "TC Ch1 temperature"
+unit = "°C"
+scale = 0.1
+
+[[registers]]
+address = 2
+type = "s16"
+name = "TC Ch2 temperature"
+unit = "°C"
+scale = 0.1
+
+[[registers]]
+address = 3
+type = "s16"
+name = "TC Ch3 temperature"
+unit = "°C"
+scale = 0.1
+
+[[registers]]
+address = 4
+type = "s16"
+name = "TC Ch4 temperature"
+unit = "°C"
+scale = 0.1
+
+[[registers]]
+address = 5
+type = "s16"
+name = "TC Ch5 temperature"
+unit = "°C"
+scale = 0.1
+
+[[registers]]
+address = 6
+type = "s16"
+name = "TC Ch6 temperature"
+unit = "°C"
+scale = 0.1
+
+[[registers]]
+address = 7
+type = "s16"
+name = "TC Ch7 temperature"
+unit = "°C"
+scale = 0.1
+
+# ----- Configuration (FC03, R/W) -----
+[[registers]]
+address = 200
+type = "u16"
+name = "Ch0 type code"
+
+[[registers]]
+address = 201
+type = "u16"
+name = "Ch1 type code"
+
+[[registers]]
+address = 202
+type = "u16"
+name = "Ch2 type code"
+
+[[registers]]
+address = 203
+type = "u16"
+name = "Ch3 type code"
+
+[[registers]]
+address = 204
+type = "u16"
+name = "Ch4 type code"
+
+[[registers]]
+address = 205
+type = "u16"
+name = "Ch5 type code"
+
+[[registers]]
+address = 206
+type = "u16"
+name = "Ch6 type code"
+
+[[registers]]
+address = 207
+type = "u16"
+name = "Ch7 type code"
+
+[[registers]]
+address = 210
+type = "u16"
+name = "Module name"
+
+[[registers]]
+address = 220
+type = "u16"
+name = "Channel enable bitmask"

@@ -1,0 +1,564 @@
+# Moxa ioLogik E2260 Ethernet Remote I/O — 6-channel RTD + 4-channel DO + 6-channel Virtual RTD
+#
+# Source: ioLogik E2200 Series User Manual Edition 7.0, September 2018 (Appendix I)
+# Protocol: Modbus/TCP port 502
+#
+# RTD ch0-5 are physical; Virtual RTD ch6-11 are computed (AVG/DIV of physical channels)
+# FC03 (4xxxx R/W): DO + RTD configuration registers (primary space below)
+# FC04 (3xxxx R): RTD_value ch0-11 (0x0000-0x000B, unit 0.1),
+#   RTD_minValue ch0-11 (0x000C-0x0017), RTD_maxValue ch0-11 (0x0018-0x0023)
+# FC01 (0xxxx R/W): DO bit ctrl ch0-3 (0x0000-0x000F), RTD reset-min (0x0010-0x001B),
+#   RTD reset-max (0x001C-0x0027)
+
+vendor = "Moxa"
+model = "ioLogik E2260"
+description = "6-RTD + 4-DO + 6-virtual-RTD Modbus/TCP Ethernet remote I/O (port 502). FC03: DO_pulseOutputCount u32 hi+lo ch0-3 (0-7), DO_pulseLowWidth u32 hi+lo ch0-3 (8-15), DO_pulseHighWidth u32 hi+lo ch0-3 (16-23), DO_mode ch0-3 (24-27, 0=DO 1=Pulse), RTD_engineeringUnit ch0-5 (28-33, 0=Ohm 1=Celsius 2=Fahrenheit), VirtualRTD_engineeringUnit ch6-11 (34-39, 1=Celsius 2=Fahrenheit), RTD_sensorType ch0-5 (40-45, 0=PT50 1=PT100 2=PT200 3=PT500 4=PT1000 5=JPT100 6=JPT200 7=JPT500 8=JPT1000 9=NI100 10=NI200 11=NI500 12=NI1000 13=NI120 14=310ohm 15=620ohm 16=1250ohm 17=2500ohm), VirtualRTD_sensorType ch6-11 (46-51, 20=AVG 21=DIV), RTD_resetMinValue ch0-11 (52-63, W=1 to reset), RTD_resetMaxValue ch0-11 (64-75, W=1 to reset), DO_value ch0-3 (76-79, 0=OFF 1=ON), DO_powerOnStatus ch0-3 (80-83), DO_safeStatus ch0-3 (84-87), DO_pulseOutputStatus ch0-3 (88-91), DO_powerOnPulseStatus ch0-3 (92-95), DO_safeModePulseStatus ch0-3 (96-99), RTD_enable ch0-5 (100-105, 0=Disable 1=Enable), IntReg00-23 working (0x0150-0x0167=336-359). FC04: RTD_value ch0-11 (0-11, unit 0.1), RTD_minValue (12-23), RTD_maxValue (24-35). FC01: DO bit ctrl ch0-3, RTD reset-min/max."
+
+# ===== FC03 Holding Registers =====
+
+# DO pulse output count ch0-3 (u32, hi+lo consecutive pairs, 0x0000-0x0007)
+[[registers]]
+address = 0
+type = "u16"
+name = "DO_pulseOutputCount ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "DO_pulseOutputCount ch0 lo-word"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "DO_pulseOutputCount ch1 hi-word"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "DO_pulseOutputCount ch1 lo-word"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "DO_pulseOutputCount ch2 hi-word"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "DO_pulseOutputCount ch2 lo-word"
+
+[[registers]]
+address = 6
+type = "u16"
+name = "DO_pulseOutputCount ch3 hi-word"
+
+[[registers]]
+address = 7
+type = "u16"
+name = "DO_pulseOutputCount ch3 lo-word"
+
+# DO pulse low signal width ch0-3 (u32, hi+lo, 0x0008-0x000F)
+[[registers]]
+address = 8
+type = "u16"
+name = "DO_pulseLowWidth ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 9
+type = "u16"
+name = "DO_pulseLowWidth ch0 lo-word"
+
+[[registers]]
+address = 10
+type = "u16"
+name = "DO_pulseLowWidth ch1 hi-word"
+
+[[registers]]
+address = 11
+type = "u16"
+name = "DO_pulseLowWidth ch1 lo-word"
+
+[[registers]]
+address = 12
+type = "u16"
+name = "DO_pulseLowWidth ch2 hi-word"
+
+[[registers]]
+address = 13
+type = "u16"
+name = "DO_pulseLowWidth ch2 lo-word"
+
+[[registers]]
+address = 14
+type = "u16"
+name = "DO_pulseLowWidth ch3 hi-word"
+
+[[registers]]
+address = 15
+type = "u16"
+name = "DO_pulseLowWidth ch3 lo-word"
+
+# DO pulse high signal width ch0-3 (u32, hi+lo, 0x0010-0x0017)
+[[registers]]
+address = 16
+type = "u16"
+name = "DO_pulseHighWidth ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 17
+type = "u16"
+name = "DO_pulseHighWidth ch0 lo-word"
+
+[[registers]]
+address = 18
+type = "u16"
+name = "DO_pulseHighWidth ch1 hi-word"
+
+[[registers]]
+address = 19
+type = "u16"
+name = "DO_pulseHighWidth ch1 lo-word"
+
+[[registers]]
+address = 20
+type = "u16"
+name = "DO_pulseHighWidth ch2 hi-word"
+
+[[registers]]
+address = 21
+type = "u16"
+name = "DO_pulseHighWidth ch2 lo-word"
+
+[[registers]]
+address = 22
+type = "u16"
+name = "DO_pulseHighWidth ch3 hi-word"
+
+[[registers]]
+address = 23
+type = "u16"
+name = "DO_pulseHighWidth ch3 lo-word"
+
+# DO mode ch0-3 (0x0018-0x001B)
+[[registers]]
+address = 24
+type = "u16"
+name = "DO_mode ch0 (0=DO, 1=Pulse; R/W)"
+
+[[registers]]
+address = 25
+type = "u16"
+name = "DO_mode ch1"
+
+[[registers]]
+address = 26
+type = "u16"
+name = "DO_mode ch2"
+
+[[registers]]
+address = 27
+type = "u16"
+name = "DO_mode ch3"
+
+# RTD engineering unit ch0-5 (0x001C-0x0021)
+[[registers]]
+address = 28
+type = "u16"
+name = "RTD_engineeringUnit ch0 (0=Ohm, 1=Celsius, 2=Fahrenheit; R/W)"
+
+[[registers]]
+address = 29
+type = "u16"
+name = "RTD_engineeringUnit ch1"
+
+[[registers]]
+address = 30
+type = "u16"
+name = "RTD_engineeringUnit ch2"
+
+[[registers]]
+address = 31
+type = "u16"
+name = "RTD_engineeringUnit ch3"
+
+[[registers]]
+address = 32
+type = "u16"
+name = "RTD_engineeringUnit ch4"
+
+[[registers]]
+address = 33
+type = "u16"
+name = "RTD_engineeringUnit ch5"
+
+# Virtual RTD engineering unit ch6-11 (0x0022-0x0027)
+[[registers]]
+address = 34
+type = "u16"
+name = "VirtualRTD_engineeringUnit ch6 (1=Celsius, 2=Fahrenheit; R/W)"
+
+[[registers]]
+address = 35
+type = "u16"
+name = "VirtualRTD_engineeringUnit ch7"
+
+[[registers]]
+address = 36
+type = "u16"
+name = "VirtualRTD_engineeringUnit ch8"
+
+[[registers]]
+address = 37
+type = "u16"
+name = "VirtualRTD_engineeringUnit ch9"
+
+[[registers]]
+address = 38
+type = "u16"
+name = "VirtualRTD_engineeringUnit ch10"
+
+[[registers]]
+address = 39
+type = "u16"
+name = "VirtualRTD_engineeringUnit ch11"
+
+# RTD sensor type ch0-5 (0x0028-0x002D)
+[[registers]]
+address = 40
+type = "u16"
+name = "RTD_sensorType ch0 (0=PT50,1=PT100,2=PT200,3=PT500,4=PT1000,5=JPT100,6=JPT200,7=JPT500,8=JPT1000,9=NI100,10=NI200,11=NI500,12=NI1000,13=NI120,14=310ohm,15=620ohm,16=1250ohm,17=2500ohm; R/W)"
+
+[[registers]]
+address = 41
+type = "u16"
+name = "RTD_sensorType ch1"
+
+[[registers]]
+address = 42
+type = "u16"
+name = "RTD_sensorType ch2"
+
+[[registers]]
+address = 43
+type = "u16"
+name = "RTD_sensorType ch3"
+
+[[registers]]
+address = 44
+type = "u16"
+name = "RTD_sensorType ch4"
+
+[[registers]]
+address = 45
+type = "u16"
+name = "RTD_sensorType ch5"
+
+# Virtual RTD sensor type ch6-11 (0x002E-0x0033)
+[[registers]]
+address = 46
+type = "u16"
+name = "VirtualRTD_sensorType ch6 (20=AVG, 21=DIV; R/W)"
+
+[[registers]]
+address = 47
+type = "u16"
+name = "VirtualRTD_sensorType ch7"
+
+[[registers]]
+address = 48
+type = "u16"
+name = "VirtualRTD_sensorType ch8"
+
+[[registers]]
+address = 49
+type = "u16"
+name = "VirtualRTD_sensorType ch9"
+
+[[registers]]
+address = 50
+type = "u16"
+name = "VirtualRTD_sensorType ch10"
+
+[[registers]]
+address = 51
+type = "u16"
+name = "VirtualRTD_sensorType ch11"
+
+# RTD reset min value ch0-11 (0x0034-0x003F, write 1 to reset; reads always 0)
+[[registers]]
+address = 52
+type = "u16"
+name = "RTD_resetMinValue ch0 (W=1 to reset, R=0)"
+
+[[registers]]
+address = 53
+type = "u16"
+name = "RTD_resetMinValue ch1"
+
+[[registers]]
+address = 54
+type = "u16"
+name = "RTD_resetMinValue ch2"
+
+[[registers]]
+address = 55
+type = "u16"
+name = "RTD_resetMinValue ch3"
+
+[[registers]]
+address = 56
+type = "u16"
+name = "RTD_resetMinValue ch4"
+
+[[registers]]
+address = 57
+type = "u16"
+name = "RTD_resetMinValue ch5"
+
+[[registers]]
+address = 58
+type = "u16"
+name = "RTD_resetMinValue ch6"
+
+[[registers]]
+address = 59
+type = "u16"
+name = "RTD_resetMinValue ch7"
+
+[[registers]]
+address = 60
+type = "u16"
+name = "RTD_resetMinValue ch8"
+
+[[registers]]
+address = 61
+type = "u16"
+name = "RTD_resetMinValue ch9"
+
+[[registers]]
+address = 62
+type = "u16"
+name = "RTD_resetMinValue ch10"
+
+[[registers]]
+address = 63
+type = "u16"
+name = "RTD_resetMinValue ch11"
+
+# RTD reset max value ch0-11 (0x0040-0x004B, write 1 to reset; reads always 0)
+[[registers]]
+address = 64
+type = "u16"
+name = "RTD_resetMaxValue ch0 (W=1 to reset, R=0)"
+
+[[registers]]
+address = 65
+type = "u16"
+name = "RTD_resetMaxValue ch1"
+
+[[registers]]
+address = 66
+type = "u16"
+name = "RTD_resetMaxValue ch2"
+
+[[registers]]
+address = 67
+type = "u16"
+name = "RTD_resetMaxValue ch3"
+
+[[registers]]
+address = 68
+type = "u16"
+name = "RTD_resetMaxValue ch4"
+
+[[registers]]
+address = 69
+type = "u16"
+name = "RTD_resetMaxValue ch5"
+
+[[registers]]
+address = 70
+type = "u16"
+name = "RTD_resetMaxValue ch6"
+
+[[registers]]
+address = 71
+type = "u16"
+name = "RTD_resetMaxValue ch7"
+
+[[registers]]
+address = 72
+type = "u16"
+name = "RTD_resetMaxValue ch8"
+
+[[registers]]
+address = 73
+type = "u16"
+name = "RTD_resetMaxValue ch9"
+
+[[registers]]
+address = 74
+type = "u16"
+name = "RTD_resetMaxValue ch10"
+
+[[registers]]
+address = 75
+type = "u16"
+name = "RTD_resetMaxValue ch11"
+
+# DO value ch0-3 (0x004C-0x004F)
+[[registers]]
+address = 76
+type = "u16"
+name = "DO_value ch0 (0=OFF, 1=ON; R/W)"
+
+[[registers]]
+address = 77
+type = "u16"
+name = "DO_value ch1"
+
+[[registers]]
+address = 78
+type = "u16"
+name = "DO_value ch2"
+
+[[registers]]
+address = 79
+type = "u16"
+name = "DO_value ch3"
+
+# DO power-on status ch0-3 (0x0050-0x0053)
+[[registers]]
+address = 80
+type = "u16"
+name = "DO_powerOnStatus ch0 (0=OFF, 1=ON; R/W)"
+
+[[registers]]
+address = 81
+type = "u16"
+name = "DO_powerOnStatus ch1"
+
+[[registers]]
+address = 82
+type = "u16"
+name = "DO_powerOnStatus ch2"
+
+[[registers]]
+address = 83
+type = "u16"
+name = "DO_powerOnStatus ch3"
+
+# DO safe status ch0-3 (0x0054-0x0057)
+[[registers]]
+address = 84
+type = "u16"
+name = "DO_safeStatus ch0 (0=OFF, 1=ON; R/W)"
+
+[[registers]]
+address = 85
+type = "u16"
+name = "DO_safeStatus ch1"
+
+[[registers]]
+address = 86
+type = "u16"
+name = "DO_safeStatus ch2"
+
+[[registers]]
+address = 87
+type = "u16"
+name = "DO_safeStatus ch3"
+
+# DO pulse output status ch0-3 (0x0058-0x005B)
+[[registers]]
+address = 88
+type = "u16"
+name = "DO_pulseOutputStatus ch0 (R/W)"
+
+[[registers]]
+address = 89
+type = "u16"
+name = "DO_pulseOutputStatus ch1"
+
+[[registers]]
+address = 90
+type = "u16"
+name = "DO_pulseOutputStatus ch2"
+
+[[registers]]
+address = 91
+type = "u16"
+name = "DO_pulseOutputStatus ch3"
+
+# DO power-on pulse status ch0-3 (0x005C-0x005F)
+[[registers]]
+address = 92
+type = "u16"
+name = "DO_powerOnPulseStatus ch0 (R/W)"
+
+[[registers]]
+address = 93
+type = "u16"
+name = "DO_powerOnPulseStatus ch1"
+
+[[registers]]
+address = 94
+type = "u16"
+name = "DO_powerOnPulseStatus ch2"
+
+[[registers]]
+address = 95
+type = "u16"
+name = "DO_powerOnPulseStatus ch3"
+
+# DO safe mode pulse status ch0-3 (0x0060-0x0063)
+[[registers]]
+address = 96
+type = "u16"
+name = "DO_safeModePulseStatus ch0 (R/W)"
+
+[[registers]]
+address = 97
+type = "u16"
+name = "DO_safeModePulseStatus ch1"
+
+[[registers]]
+address = 98
+type = "u16"
+name = "DO_safeModePulseStatus ch2"
+
+[[registers]]
+address = 99
+type = "u16"
+name = "DO_safeModePulseStatus ch3"
+
+# RTD enable ch0-5 (0x0064-0x0069)
+[[registers]]
+address = 100
+type = "u16"
+name = "RTD_enable ch0 (0=Disable, 1=Enable; R/W)"
+
+[[registers]]
+address = 101
+type = "u16"
+name = "RTD_enable ch1"
+
+[[registers]]
+address = 102
+type = "u16"
+name = "RTD_enable ch2"
+
+[[registers]]
+address = 103
+type = "u16"
+name = "RTD_enable ch3"
+
+[[registers]]
+address = 104
+type = "u16"
+name = "RTD_enable ch4"
+
+[[registers]]
+address = 105
+type = "u16"
+name = "RTD_enable ch5"

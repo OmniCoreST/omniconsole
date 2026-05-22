@@ -1,0 +1,238 @@
+# Advantech ADAM-6050 — 12DI / 6DO Digital I/O Module with Counter/Pulse (Ethernet/Modbus TCP)
+#
+# Source: advantech-adam-6000-modbus.pdf (Appendix B.2)
+# - 12 digital inputs (DI) + 6 digital outputs (DO); each DI configurable as counter/frequency.
+# - Modbus TCP (Ethernet), unit identifier = 1.
+# - FC02 addr 0-11 (00001-00012): DI value ch 0-11 (R).
+# - FC01 addr 16-21 (00017-00022): DO value ch 0-5 (R/W).
+# - FC01 counter coils per DI ch (4 coils each):
+#     ch 0: addr 32-35 (start/stop, clear, clear-overflow, latch); ... ch 11: addr 76-79.
+# - FC01 addr 300-307 (00301-00308): Clear GCL internal counter ch 0-7 (Write).
+# - FC03 addr 0-23: Counter/Frequency ch 0-11 (u32, 2 regs each; Freq = value/10 Hz) (R).
+# - FC03 addr 24-35: Pulse output low-level width ch 0-5 (u32, unit 0.1ms) (R/W).
+# - FC03 addr 36-47: Pulse output high-level width ch 0-5 (u32) (R/W).
+# - FC03 addr 48-59: Set absolute pulse count ch 0-5 (u32; 0=continuous mode) (R/W).
+# - FC03 addr 60-71: Set incremental pulse count ch 0-5 (u32) (R/W).
+# - FC03 addr 210-211: Module Name 1-2 (R).
+# - FC03 addr 300: DI data word (R); addr 302: DO data word (R/W).
+# - FC03 addr 304: GCL internal flag value (0~15) (R/W).
+# - FC03 addr 306: DO diagnostic status (D version or later) (R).
+# - FC03 addr 310-325: GCL internal counter value ch 0-7 (u32) (R).
+
+vendor = "Advantech"
+model = "ADAM-6050"
+description = "12DI + 6DO digital I/O with counter/frequency and pulse output over Modbus TCP. DI at FC02 coil addr 0-11; DO at FC01 coil addr 16-21. FC03 addr 0-23: counter/freq u32 (12ch). FC03 addr 300: DI word; addr 302: DO word."
+
+# ----- Counter/Frequency values (FC03, R) -----
+[[registers]]
+address = 0
+type = "u32"
+name = "Counter/frequency channel 0"
+
+[[registers]]
+address = 2
+type = "u32"
+name = "Counter/frequency channel 1"
+
+[[registers]]
+address = 4
+type = "u32"
+name = "Counter/frequency channel 2"
+
+[[registers]]
+address = 6
+type = "u32"
+name = "Counter/frequency channel 3"
+
+[[registers]]
+address = 8
+type = "u32"
+name = "Counter/frequency channel 4"
+
+[[registers]]
+address = 10
+type = "u32"
+name = "Counter/frequency channel 5"
+
+[[registers]]
+address = 12
+type = "u32"
+name = "Counter/frequency channel 6"
+
+[[registers]]
+address = 14
+type = "u32"
+name = "Counter/frequency channel 7"
+
+[[registers]]
+address = 16
+type = "u32"
+name = "Counter/frequency channel 8"
+
+[[registers]]
+address = 18
+type = "u32"
+name = "Counter/frequency channel 9"
+
+[[registers]]
+address = 20
+type = "u32"
+name = "Counter/frequency channel 10"
+
+[[registers]]
+address = 22
+type = "u32"
+name = "Counter/frequency channel 11"
+
+# ----- Pulse output timing (FC03, R/W) -----
+[[registers]]
+address = 24
+type = "u32"
+name = "Pulse output low-level width channel 0"
+
+[[registers]]
+address = 26
+type = "u32"
+name = "Pulse output low-level width channel 1"
+
+[[registers]]
+address = 28
+type = "u32"
+name = "Pulse output low-level width channel 2"
+
+[[registers]]
+address = 30
+type = "u32"
+name = "Pulse output low-level width channel 3"
+
+[[registers]]
+address = 32
+type = "u32"
+name = "Pulse output low-level width channel 4"
+
+[[registers]]
+address = 34
+type = "u32"
+name = "Pulse output low-level width channel 5"
+
+[[registers]]
+address = 36
+type = "u32"
+name = "Pulse output high-level width channel 0"
+
+[[registers]]
+address = 38
+type = "u32"
+name = "Pulse output high-level width channel 1"
+
+[[registers]]
+address = 40
+type = "u32"
+name = "Pulse output high-level width channel 2"
+
+[[registers]]
+address = 42
+type = "u32"
+name = "Pulse output high-level width channel 3"
+
+[[registers]]
+address = 44
+type = "u32"
+name = "Pulse output high-level width channel 4"
+
+[[registers]]
+address = 46
+type = "u32"
+name = "Pulse output high-level width channel 5"
+
+[[registers]]
+address = 48
+type = "u32"
+name = "Set absolute pulse count channel 0"
+
+[[registers]]
+address = 50
+type = "u32"
+name = "Set absolute pulse count channel 1"
+
+[[registers]]
+address = 52
+type = "u32"
+name = "Set absolute pulse count channel 2"
+
+[[registers]]
+address = 54
+type = "u32"
+name = "Set absolute pulse count channel 3"
+
+[[registers]]
+address = 56
+type = "u32"
+name = "Set absolute pulse count channel 4"
+
+[[registers]]
+address = 58
+type = "u32"
+name = "Set absolute pulse count channel 5"
+
+[[registers]]
+address = 60
+type = "u32"
+name = "Set incremental pulse count channel 0"
+
+[[registers]]
+address = 62
+type = "u32"
+name = "Set incremental pulse count channel 1"
+
+[[registers]]
+address = 64
+type = "u32"
+name = "Set incremental pulse count channel 2"
+
+[[registers]]
+address = 66
+type = "u32"
+name = "Set incremental pulse count channel 3"
+
+[[registers]]
+address = 68
+type = "u32"
+name = "Set incremental pulse count channel 4"
+
+[[registers]]
+address = 70
+type = "u32"
+name = "Set incremental pulse count channel 5"
+
+# ----- Module identification (FC03, R) -----
+[[registers]]
+address = 210
+type = "u16"
+name = "Module name 1"
+
+[[registers]]
+address = 211
+type = "u16"
+name = "Module name 2"
+
+# ----- I/O data words (FC03) -----
+[[registers]]
+address = 300
+type = "u16"
+name = "DI data word"
+
+[[registers]]
+address = 302
+type = "u16"
+name = "DO data word"
+
+[[registers]]
+address = 304
+type = "u16"
+name = "GCL internal flag value"
+
+[[registers]]
+address = 306
+type = "u16"
+name = "DO diagnostic status"

@@ -1,25 +1,22 @@
 # Janitza UMG 96RM-E — Modbus register map for Omni Console
 #
-# Source: janitza-mal-umg96rme-en.pdf ("Modbus address list", float block).
-# - All measured values are IEEE-754 FLOAT (f32), 2 registers, Big-Endian — the
-#   default — so `word_order` is omitted. (Janitza also exposes the same values
-#   Little-Endian at address + 32768.) Values are already in engineering units
-#   (transformer factors applied internally), so no scale.
-# - Measured values update every 200 ms. Read with FC03 (holding) or FC04 (input).
-# - Factory defaults: device address (slave) = 1, RTU = 38.4 kbps, 8N1.
-# - Addresses are the Modbus protocol addresses, in decimal, as printed in the
-#   manual (float block starts at 19000).
-#
-# Workspace fields below activate in Phase 1 (currently ignored by the build):
-# pinned = [19000, 19012, 19026, 19050, 19060]
-# poll_interval_ms = 1000
-# slave = 1
+# Source: janitza-umg96rm-e-modbus.pdf
+# - 3-phase 4-wire power analyzer, DIN-rail, RS485 Modbus RTU.
+# - Holding registers (FC03), IEEE-754 float, big-endian (MSW first, default).
+# - Addresses are 0-based protocol addresses (direct as sent on bus).
+# - All float registers occupy 2 consecutive Modbus registers (32 bits).
+# - Adding 32768 to any address accesses the same value little-endian.
+# - Two register blocks used: "frequently required" at 19000+ and
+#   measured values float at 800+.
+# - Factory defaults: slave=1, baud=9600, 8N1.
 
 vendor = "Janitza"
 model = "UMG 96RM-E"
-description = "Power analyser — instantaneous V/I/P/Q/S, CosPhi, frequency, THD and energy totals (IEEE-754 float, BE)."
+description = "3-phase 4-wire power analyzer — per-phase V/I/P/Q/S, CosPhi, PF, Hz, per-phase energy (Wh/VAh/varh), THD; IEEE-754 float holding registers."
 
-# ----- Voltages, phase-to-neutral -----
+# ===== Frequently required readings (addresses 19000+) =====
+
+# ----- Phase-to-neutral voltages -----
 [[registers]]
 address = 19000
 type = "f32"
@@ -38,7 +35,7 @@ type = "f32"
 name = "Voltage L3-N"
 unit = "V"
 
-# ----- Voltages, phase-to-phase -----
+# ----- Line-to-line voltages -----
 [[registers]]
 address = 19006
 type = "f32"
@@ -54,7 +51,7 @@ unit = "V"
 [[registers]]
 address = 19010
 type = "f32"
-name = "Voltage L1-L3"
+name = "Voltage L3-L1"
 unit = "V"
 
 # ----- Currents -----
@@ -82,7 +79,7 @@ type = "f32"
 name = "Current N (vector sum)"
 unit = "A"
 
-# ----- Active (real) power -----
+# ----- Active power per phase -----
 [[registers]]
 address = 19020
 type = "f32"
@@ -104,10 +101,10 @@ unit = "W"
 [[registers]]
 address = 19026
 type = "f32"
-name = "Active power Σ"
+name = "Total active power"
 unit = "W"
 
-# ----- Apparent power -----
+# ----- Apparent power per phase -----
 [[registers]]
 address = 19028
 type = "f32"
@@ -129,107 +126,233 @@ unit = "VA"
 [[registers]]
 address = 19034
 type = "f32"
-name = "Apparent power Σ"
+name = "Total apparent power"
 unit = "VA"
 
-# ----- Reactive power (fundamental) -----
+# ----- Fundamental reactive power per phase -----
 [[registers]]
 address = 19036
 type = "f32"
-name = "Reactive power Q1"
+name = "Reactive power L1 (fundamental)"
 unit = "var"
 
 [[registers]]
 address = 19038
 type = "f32"
-name = "Reactive power Q2"
+name = "Reactive power L2 (fundamental)"
 unit = "var"
 
 [[registers]]
 address = 19040
 type = "f32"
-name = "Reactive power Q3"
+name = "Reactive power L3 (fundamental)"
 unit = "var"
 
 [[registers]]
 address = 19042
 type = "f32"
-name = "Reactive power Σ"
+name = "Total reactive power (fundamental)"
 unit = "var"
 
-# ----- CosPhi (fundamental) -----
+# ----- Power factor (fundamental CosPhi) -----
 [[registers]]
 address = 19044
 type = "f32"
-name = "CosPhi L1"
+name = "CosPhi L1 (fundamental)"
 
 [[registers]]
 address = 19046
 type = "f32"
-name = "CosPhi L2"
+name = "CosPhi L2 (fundamental)"
 
 [[registers]]
 address = 19048
 type = "f32"
-name = "CosPhi L3"
+name = "CosPhi L3 (fundamental)"
 
-# ----- Frequency & rotation -----
+# ----- Frequency -----
 [[registers]]
 address = 19050
 type = "f32"
 name = "Frequency"
 unit = "Hz"
 
+# ----- Active energy per phase (total) -----
 [[registers]]
-address = 19052
+address = 19054
 type = "f32"
-name = "Rotation field (1=right / 0=none / -1=left)"
+name = "Active energy L1"
+unit = "Wh"
 
-# ----- Active energy -----
+[[registers]]
+address = 19056
+type = "f32"
+name = "Active energy L2"
+unit = "Wh"
+
+[[registers]]
+address = 19058
+type = "f32"
+name = "Active energy L3"
+unit = "Wh"
+
 [[registers]]
 address = 19060
 type = "f32"
-name = "Active energy L1..L3"
+name = "Total active energy"
+unit = "Wh"
+
+# ----- Active energy — consumed (import) -----
+[[registers]]
+address = 19062
+type = "f32"
+name = "Active energy L1 consumed"
+unit = "Wh"
+
+[[registers]]
+address = 19064
+type = "f32"
+name = "Active energy L2 consumed"
+unit = "Wh"
+
+[[registers]]
+address = 19066
+type = "f32"
+name = "Active energy L3 consumed"
 unit = "Wh"
 
 [[registers]]
 address = 19068
 type = "f32"
-name = "Active energy L1..L3, consumed (import)"
+name = "Total active energy consumed"
+unit = "Wh"
+
+# ----- Active energy — delivered (export) -----
+[[registers]]
+address = 19070
+type = "f32"
+name = "Active energy L1 delivered"
+unit = "Wh"
+
+[[registers]]
+address = 19072
+type = "f32"
+name = "Active energy L2 delivered"
+unit = "Wh"
+
+[[registers]]
+address = 19074
+type = "f32"
+name = "Active energy L3 delivered"
 unit = "Wh"
 
 [[registers]]
 address = 19076
 type = "f32"
-name = "Active energy L1..L3, delivered (export)"
+name = "Total active energy delivered"
 unit = "Wh"
 
-# ----- Apparent / reactive energy -----
+# ----- Apparent energy -----
+[[registers]]
+address = 19078
+type = "f32"
+name = "Apparent energy L1"
+unit = "VAh"
+
+[[registers]]
+address = 19080
+type = "f32"
+name = "Apparent energy L2"
+unit = "VAh"
+
+[[registers]]
+address = 19082
+type = "f32"
+name = "Apparent energy L3"
+unit = "VAh"
+
 [[registers]]
 address = 19084
 type = "f32"
-name = "Apparent energy L1..L3"
+name = "Total apparent energy"
 unit = "VAh"
+
+# ----- Reactive energy (total) -----
+[[registers]]
+address = 19086
+type = "f32"
+name = "Reactive energy L1"
+unit = "varh"
+
+[[registers]]
+address = 19088
+type = "f32"
+name = "Reactive energy L2"
+unit = "varh"
+
+[[registers]]
+address = 19090
+type = "f32"
+name = "Reactive energy L3"
+unit = "varh"
 
 [[registers]]
 address = 19092
 type = "f32"
-name = "Reactive energy L1..L3"
+name = "Total reactive energy"
+unit = "varh"
+
+# ----- Reactive energy — inductive -----
+[[registers]]
+address = 19094
+type = "f32"
+name = "Reactive energy L1 inductive"
+unit = "varh"
+
+[[registers]]
+address = 19096
+type = "f32"
+name = "Reactive energy L2 inductive"
+unit = "varh"
+
+[[registers]]
+address = 19098
+type = "f32"
+name = "Reactive energy L3 inductive"
 unit = "varh"
 
 [[registers]]
 address = 19100
 type = "f32"
-name = "Reactive energy L1..L3, inductive"
+name = "Total reactive energy inductive"
+unit = "varh"
+
+# ----- Reactive energy — capacitive -----
+[[registers]]
+address = 19102
+type = "f32"
+name = "Reactive energy L1 capacitive"
+unit = "varh"
+
+[[registers]]
+address = 19104
+type = "f32"
+name = "Reactive energy L2 capacitive"
+unit = "varh"
+
+[[registers]]
+address = 19106
+type = "f32"
+name = "Reactive energy L3 capacitive"
 unit = "varh"
 
 [[registers]]
 address = 19108
 type = "f32"
-name = "Reactive energy L1..L3, capacitive"
+name = "Total reactive energy capacitive"
 unit = "varh"
 
-# ----- THD, voltage L-N -----
+# ----- THD voltage -----
 [[registers]]
 address = 19110
 type = "f32"
@@ -248,7 +371,7 @@ type = "f32"
 name = "THD voltage L3-N"
 unit = "%"
 
-# ----- THD, current -----
+# ----- THD current -----
 [[registers]]
 address = 19116
 type = "f32"
@@ -266,3 +389,77 @@ address = 19120
 type = "f32"
 name = "THD current L3"
 unit = "%"
+
+# ===== Measured values float block (addresses 800+) =====
+# Unique registers not present in the 19000+ block
+
+# ----- Power factor (non-fundamental, includes all harmonics) -----
+[[registers]]
+address = 828
+type = "f32"
+name = "Power factor L1 (total)"
+
+[[registers]]
+address = 830
+type = "f32"
+name = "Power factor L2 (total)"
+
+[[registers]]
+address = 832
+type = "f32"
+name = "Power factor L3 (total)"
+
+[[registers]]
+address = 834
+type = "f32"
+name = "Total power factor (Psum/Ssum)"
+
+# ----- Fundamental active power -----
+[[registers]]
+address = 892
+type = "f32"
+name = "Fundamental active power L1"
+unit = "W"
+
+[[registers]]
+address = 894
+type = "f32"
+name = "Fundamental active power L2"
+unit = "W"
+
+[[registers]]
+address = 896
+type = "f32"
+name = "Fundamental active power L3"
+unit = "W"
+
+[[registers]]
+address = 898
+type = "f32"
+name = "Total fundamental active power"
+unit = "W"
+
+# ----- Harmonic distortion power -----
+[[registers]]
+address = 900
+type = "f32"
+name = "Harmonic distortion power L1"
+unit = "var"
+
+[[registers]]
+address = 902
+type = "f32"
+name = "Harmonic distortion power L2"
+unit = "var"
+
+[[registers]]
+address = 904
+type = "f32"
+name = "Harmonic distortion power L3"
+unit = "var"
+
+[[registers]]
+address = 906
+type = "f32"
+name = "Total harmonic distortion power"
+unit = "var"

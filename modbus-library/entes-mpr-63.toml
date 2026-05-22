@@ -1,0 +1,784 @@
+# ENTES MPR-63 3-Phase Power Analyzer (Modbus RTU RS-485)
+#
+# Source: entes-mpr-63-series-kullanma-talimati-tr.pdf (Turkish manual, Chapter 3)
+# Protocol: Modbus RTU; FC03 read, FC06 single-register write, FC10 multi-register write
+# Function codes: 03H=read, 06H=write single, 10H=write multiple, 14H=data record read, 2BH=device info
+# Modbus slave address: set via DIP switch on device (1-247)
+# All addresses are 0-based decimal = hex address from manual.
+#
+# Scale factors for 16-bit table (section 3.12):
+#   Voltage LN/LL: raw × VT × 0.1 = V (VT = voltage transformer ratio, read from addr 75)
+#   Current:       raw × CT × 0.001 = A (CT = current transformer ratio, read from addr 74)
+#   Active power:  raw × VT × CT = W (signed)
+#   Reactive power:raw × VT × CT = VAr (signed)
+#   Apparent power:raw × VT × CT = VA (unsigned)
+#   Power factor:  raw × 0.001 (-1.000..1.000)
+#   Frequency:     raw × 0.01 Hz
+#   THD:           raw × 0.1 %
+#   Energy:        kWh = (MSB × 10000) + LSB  (MSB at addr+1, LSB at addr; unit selectable Kilo/Mega)
+#
+# 32-bit measurement table at 0x4000 (addr 16384): same quantities, s32/u32, raw × 0.01
+# Voltage harmonics 2-31: addr 0x0200-0x025F (512-607), u16, × 0.1 %
+# Current harmonics 2-31: addr 0x0300-0x035F (768-863), u16, × 0.1 %
+# Variants: MPR63 (base, 2 relays), MPR63-21/41 (relay variants),
+#           MPR63-10/-20/-40 (adds digital inputs and analog outputs)
+
+vendor = "ENTES"
+model = "MPR-63"
+description = "3-phase power analyzer, Modbus RTU. 16-bit measurement table at addr 0-84 (FC03): LN/LL voltages (×VT×0.1 V), currents (×CT×0.001 A), per-phase+total active/reactive/apparent power, PF+cos-phi (×0.001), frequency (×0.01 Hz), THD per phase (×0.1 %), min/max voltages, demand currents+powers, energy import/export (MSB/LSB word pair). I/O relay status/control at addr 76 (bit0=Relay1, bit1=Relay2; MPR63-10/20/40 also bit2=Input1, bit3=Input2). Settings at 256-364 (FC03/06): CT/VT ratio, connection type, relay 1-2 thresholds, log intervals, demand time, RTC set, serial number. 32-bit table at 0x4000 (addr 16384, ×0.01). Harmonics at 0x0200/0x0300."
+
+# ----- 16-bit Data Table (section 3.12, FC03, R) -----
+
+# Voltages LN (×VT×0.1 V)
+[[registers]]
+address = 0
+type = "u16"
+name = "Voltage L1-N"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "Voltage L2-N"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "Voltage L3-N"
+
+# Currents (×CT×0.001 A)
+[[registers]]
+address = 3
+type = "u16"
+name = "Current L1"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "Current L2"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "Current L3"
+
+[[registers]]
+address = 6
+type = "u16"
+name = "Total current"
+
+# Active power per phase (×VT×CT W, signed)
+[[registers]]
+address = 7
+type = "s16"
+name = "Active power L1"
+
+[[registers]]
+address = 8
+type = "s16"
+name = "Active power L2"
+
+[[registers]]
+address = 9
+type = "s16"
+name = "Active power L3"
+
+# Reactive power per phase (×VT×CT VAr, signed)
+[[registers]]
+address = 10
+type = "s16"
+name = "Reactive power L1"
+
+[[registers]]
+address = 11
+type = "s16"
+name = "Reactive power L2"
+
+[[registers]]
+address = 12
+type = "s16"
+name = "Reactive power L3"
+
+# Apparent power per phase (×VT×CT VA, unsigned)
+[[registers]]
+address = 13
+type = "u16"
+name = "Apparent power L1"
+
+[[registers]]
+address = 14
+type = "u16"
+name = "Apparent power L2"
+
+[[registers]]
+address = 15
+type = "u16"
+name = "Apparent power L3"
+
+# Power factor per phase (×0.001, signed, -1000..1000)
+[[registers]]
+address = 16
+type = "s16"
+name = "Power factor L1"
+
+[[registers]]
+address = 17
+type = "s16"
+name = "Power factor L2"
+
+[[registers]]
+address = 18
+type = "s16"
+name = "Power factor L3"
+
+[[registers]]
+address = 19
+type = "s16"
+name = "Total power factor"
+
+# Cos phi per phase (×0.001, signed)
+[[registers]]
+address = 20
+type = "s16"
+name = "Cos phi L1"
+
+[[registers]]
+address = 21
+type = "s16"
+name = "Cos phi L2"
+
+[[registers]]
+address = 22
+type = "s16"
+name = "Cos phi L3"
+
+# Voltages LL (×VT×0.1 V)
+[[registers]]
+address = 23
+type = "u16"
+name = "Voltage L1-L2"
+
+[[registers]]
+address = 24
+type = "u16"
+name = "Voltage L2-L3"
+
+[[registers]]
+address = 25
+type = "u16"
+name = "Voltage L3-L1"
+
+[[registers]]
+address = 26
+type = "u16"
+name = "Average LN voltage"
+
+[[registers]]
+address = 27
+type = "u16"
+name = "Average LL voltage"
+
+# Frequency (×0.01 Hz)
+[[registers]]
+address = 28
+type = "u16"
+name = "Frequency"
+
+# Total power (×VT×CT, signed/unsigned)
+[[registers]]
+address = 29
+type = "s16"
+name = "Total active power"
+
+[[registers]]
+address = 30
+type = "s16"
+name = "Total reactive power"
+
+[[registers]]
+address = 31
+type = "u16"
+name = "Total apparent power"
+
+# THD voltages (×0.1 %)
+[[registers]]
+address = 32
+type = "u16"
+name = "THD voltage L1"
+
+[[registers]]
+address = 33
+type = "u16"
+name = "THD voltage L2"
+
+[[registers]]
+address = 34
+type = "u16"
+name = "THD voltage L3"
+
+# THD currents (×0.1 %)
+[[registers]]
+address = 35
+type = "u16"
+name = "THD current L1"
+
+[[registers]]
+address = 36
+type = "u16"
+name = "THD current L2"
+
+[[registers]]
+address = 37
+type = "u16"
+name = "THD current L3"
+
+[[registers]]
+address = 38
+type = "u16"
+name = "THD current 3-phase"
+
+# Min/max voltages and demand currents/powers (* = resettable by writing 0)
+[[registers]]
+address = 39
+type = "u16"
+name = "Max voltage L1-N"
+
+[[registers]]
+address = 40
+type = "u16"
+name = "Max voltage L2-N"
+
+[[registers]]
+address = 41
+type = "u16"
+name = "Max voltage L3-N"
+
+[[registers]]
+address = 42
+type = "u16"
+name = "Min voltage L1-N"
+
+[[registers]]
+address = 43
+type = "u16"
+name = "Min voltage L2-N"
+
+[[registers]]
+address = 44
+type = "u16"
+name = "Min voltage L3-N"
+
+[[registers]]
+address = 45
+type = "u16"
+name = "Max demand current L1"
+
+[[registers]]
+address = 46
+type = "u16"
+name = "Max demand current L2"
+
+[[registers]]
+address = 47
+type = "u16"
+name = "Max demand current L3"
+
+[[registers]]
+address = 48
+type = "u16"
+name = "Min demand current L1"
+
+[[registers]]
+address = 49
+type = "u16"
+name = "Min demand current L2"
+
+[[registers]]
+address = 50
+type = "u16"
+name = "Min demand current L3"
+
+[[registers]]
+address = 51
+type = "u16"
+name = "Demand current L1"
+
+[[registers]]
+address = 52
+type = "u16"
+name = "Demand current L2"
+
+[[registers]]
+address = 53
+type = "u16"
+name = "Demand current L3"
+
+[[registers]]
+address = 54
+type = "u16"
+name = "Max total demand current"
+
+[[registers]]
+address = 55
+type = "u16"
+name = "Min total demand current"
+
+[[registers]]
+address = 56
+type = "u16"
+name = "Total demand current"
+
+[[registers]]
+address = 57
+type = "s16"
+name = "Total demand active power"
+
+[[registers]]
+address = 58
+type = "s16"
+name = "Total demand reactive power"
+
+[[registers]]
+address = 59
+type = "u16"
+name = "Total demand apparent power"
+
+# Energy counters (* = resettable by writing 0)
+# Combined 32-bit value: (MSB × 10000) + LSB, unit = kWh or MWh (see addr 364)
+[[registers]]
+address = 60
+type = "u16"
+name = "Import active energy LSB"
+
+[[registers]]
+address = 61
+type = "u16"
+name = "Import active energy MSB"
+
+[[registers]]
+address = 62
+type = "u16"
+name = "Export active energy LSB"
+
+[[registers]]
+address = 63
+type = "u16"
+name = "Export active energy MSB"
+
+[[registers]]
+address = 64
+type = "u16"
+name = "Inductive reactive energy LSB"
+
+[[registers]]
+address = 65
+type = "u16"
+name = "Inductive reactive energy MSB"
+
+[[registers]]
+address = 66
+type = "u16"
+name = "Capacitive reactive energy LSB"
+
+[[registers]]
+address = 67
+type = "u16"
+name = "Capacitive reactive energy MSB"
+
+# Clock (read-only; set via settings at addr 343-349)
+[[registers]]
+address = 68
+type = "u16"
+name = "Clock hour"
+
+[[registers]]
+address = 69
+type = "u16"
+name = "Clock minute"
+
+[[registers]]
+address = 70
+type = "u16"
+name = "Clock second"
+
+[[registers]]
+address = 71
+type = "u16"
+name = "Clock day"
+
+[[registers]]
+address = 72
+type = "u16"
+name = "Clock month"
+
+[[registers]]
+address = 73
+type = "u16"
+name = "Clock year"
+
+# Transformer ratios (read-only display; configurable via settings at addr 256-257)
+[[registers]]
+address = 74
+type = "u16"
+name = "CT ratio display"
+
+[[registers]]
+address = 75
+type = "u16"
+name = "VT ratio display"
+
+# I/O relay status and control (FC03/06)
+# MPR63/63-21/41: bit0=Relay1 state, bit1=Relay2 state
+# MPR63-10/20/40: bit0=Relay1, bit1=Relay2, bit2=Input1, bit3=Input2
+# Write 0x0001=pull Relay1, 0x0002=pull Relay2, 0x0003=both, 0x0000=release all
+[[registers]]
+address = 76
+type = "u16"
+name = "IO relay status and control"
+
+[[registers]]
+address = 77
+type = "s16"
+name = "Total power factor (duplicate)"
+
+[[registers]]
+address = 78
+type = "u16"
+name = "Neutral current"
+
+[[registers]]
+address = 79
+type = "s16"
+name = "Max total demand active power"
+
+[[registers]]
+address = 80
+type = "s16"
+name = "Max total demand reactive power"
+
+[[registers]]
+address = 81
+type = "u16"
+name = "Max total demand apparent power"
+
+[[registers]]
+address = 82
+type = "s16"
+name = "Min total demand active power"
+
+[[registers]]
+address = 83
+type = "s16"
+name = "Min total demand reactive power"
+
+[[registers]]
+address = 84
+type = "u16"
+name = "Min total demand apparent power"
+
+# ----- Settings (section 3.14 MPR63 base, FC03/06, R/W) -----
+# addr 256-364 (0x0100-0x016C)
+
+# 1-5000 (CT primary / secondary ratio)
+[[registers]]
+address = 256
+type = "u16"
+name = "CT ratio setting"
+
+# ×0.1 (e.g. raw 10 = ratio 1.0, raw 1000 = ratio 100.0)
+[[registers]]
+address = 257
+type = "u16"
+name = "VT ratio setting"
+
+# 0=3P4W, 1=3P3W, 2=ARON
+[[registers]]
+address = 258
+type = "u16"
+name = "Connection type"
+
+# Pulse output 3 (active energy): kWh per pulse
+[[registers]]
+address = 260
+type = "u16"
+name = "Pulse output 3 active energy parameter"
+
+# ms
+[[registers]]
+address = 261
+type = "u16"
+name = "Pulse output 3 active energy delay"
+
+# Pulse output 4 (reactive energy): kVArh per pulse
+[[registers]]
+address = 262
+type = "u16"
+name = "Pulse output 4 reactive energy parameter"
+
+[[registers]]
+address = 263
+type = "u16"
+name = "Pulse output 4 reactive energy delay"
+
+# Relay 1 – 3 programmable thresholds
+[[registers]]
+address = 264
+type = "u16"
+name = "Relay 1 parameter 1"
+
+[[registers]]
+address = 265
+type = "u16"
+name = "Relay 1 high threshold 1"
+
+[[registers]]
+address = 266
+type = "u16"
+name = "Relay 1 low threshold 1"
+
+# seconds
+[[registers]]
+address = 267
+type = "u16"
+name = "Relay 1 delay 1"
+
+[[registers]]
+address = 268
+type = "u16"
+name = "Relay 1 hysteresis 1"
+
+[[registers]]
+address = 270
+type = "u16"
+name = "Relay 1 parameter 2"
+
+[[registers]]
+address = 271
+type = "u16"
+name = "Relay 1 high threshold 2"
+
+[[registers]]
+address = 272
+type = "u16"
+name = "Relay 1 low threshold 2"
+
+[[registers]]
+address = 273
+type = "u16"
+name = "Relay 1 delay 2"
+
+[[registers]]
+address = 274
+type = "u16"
+name = "Relay 1 hysteresis 2"
+
+[[registers]]
+address = 276
+type = "u16"
+name = "Relay 1 parameter 3"
+
+[[registers]]
+address = 277
+type = "u16"
+name = "Relay 1 high threshold 3"
+
+[[registers]]
+address = 278
+type = "u16"
+name = "Relay 1 low threshold 3"
+
+[[registers]]
+address = 279
+type = "u16"
+name = "Relay 1 delay 3"
+
+[[registers]]
+address = 280
+type = "u16"
+name = "Relay 1 hysteresis 3"
+
+# 0=Alarm, 1=Digital output
+[[registers]]
+address = 282
+type = "u16"
+name = "Relay 1 function"
+
+# Relay 2 – 3 programmable thresholds
+[[registers]]
+address = 283
+type = "u16"
+name = "Relay 2 parameter 1"
+
+[[registers]]
+address = 284
+type = "u16"
+name = "Relay 2 high threshold 1"
+
+[[registers]]
+address = 285
+type = "u16"
+name = "Relay 2 low threshold 1"
+
+[[registers]]
+address = 286
+type = "u16"
+name = "Relay 2 delay 1"
+
+[[registers]]
+address = 287
+type = "u16"
+name = "Relay 2 hysteresis 1"
+
+[[registers]]
+address = 289
+type = "u16"
+name = "Relay 2 parameter 2"
+
+[[registers]]
+address = 290
+type = "u16"
+name = "Relay 2 high threshold 2"
+
+[[registers]]
+address = 291
+type = "u16"
+name = "Relay 2 low threshold 2"
+
+[[registers]]
+address = 292
+type = "u16"
+name = "Relay 2 delay 2"
+
+[[registers]]
+address = 293
+type = "u16"
+name = "Relay 2 hysteresis 2"
+
+[[registers]]
+address = 295
+type = "u16"
+name = "Relay 2 parameter 3"
+
+[[registers]]
+address = 296
+type = "u16"
+name = "Relay 2 high threshold 3"
+
+[[registers]]
+address = 297
+type = "u16"
+name = "Relay 2 low threshold 3"
+
+[[registers]]
+address = 298
+type = "u16"
+name = "Relay 2 delay 3"
+
+[[registers]]
+address = 299
+type = "u16"
+name = "Relay 2 hysteresis 3"
+
+# 0=Alarm, 1=Digital output
+[[registers]]
+address = 301
+type = "u16"
+name = "Relay 2 function"
+
+# Data logging interval (seconds)
+[[registers]]
+address = 305
+type = "u16"
+name = "Data log interval"
+
+# 0=Disabled, 1=Enabled
+[[registers]]
+address = 306
+type = "u16"
+name = "Emergency log enable"
+
+# Energy logging interval (seconds)
+[[registers]]
+address = 307
+type = "u16"
+name = "Energy log interval"
+
+# Log parameter selections 1-28 at addr 308-335 (0x0134-0x014F)
+[[registers]]
+address = 308
+type = "u16"
+name = "Log parameter 1"
+
+[[registers]]
+address = 309
+type = "u16"
+name = "Log parameter 2"
+
+# Demand time (minutes)
+[[registers]]
+address = 342
+type = "u16"
+name = "Demand time"
+
+# RTC set (write to change clock)
+[[registers]]
+address = 343
+type = "u16"
+name = "Set hour"
+
+[[registers]]
+address = 344
+type = "u16"
+name = "Set minute"
+
+[[registers]]
+address = 345
+type = "u16"
+name = "Set second"
+
+[[registers]]
+address = 347
+type = "u16"
+name = "Set day"
+
+[[registers]]
+address = 348
+type = "u16"
+name = "Set month"
+
+[[registers]]
+address = 349
+type = "u16"
+name = "Set year"
+
+# 0=Total (sum of tariffs), 1=Separate (by tariff)
+[[registers]]
+address = 352
+type = "u16"
+name = "Energy write mode"
+
+# Serial number — 8 ASCII chars packed into 4 registers (Hi byte = char N, Lo byte = char N+1)
+[[registers]]
+address = 353
+type = "u16"
+name = "Serial number chars 1-2"
+
+[[registers]]
+address = 354
+type = "u16"
+name = "Serial number chars 3-4"
+
+[[registers]]
+address = 355
+type = "u16"
+name = "Serial number chars 5-6"
+
+[[registers]]
+address = 356
+type = "u16"
+name = "Serial number chars 7-8"
+
+# 0=Kilo (kWh/kVArh), 1=Mega (MWh/MVArh)
+[[registers]]
+address = 364
+type = "u16"
+name = "Energy counter unit"

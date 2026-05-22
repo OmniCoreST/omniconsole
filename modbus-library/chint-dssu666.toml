@@ -1,0 +1,187 @@
+# Chint DSSU666 — Modbus register map for Omni Console
+#
+# Source: chint-dtsu666-manual.pdf
+# - 3-phase 3-wire DIN-rail energy meter (delta connection, no neutral).
+# - Same register map as DTSU666 except B-phase power/reactive/PF registers
+#   (addresses 8214, 8222, 8238) are not valid in delta configuration.
+# - Holding registers, FC03. Big-endian word order (MSW first).
+# - f32 values carry embedded scale: V×0.1, A×0.001, W/var×0.1, PF×0.001, Hz×0.01.
+# - Energy registers contain direct kWh values (no scale).
+# - Factory defaults: slave=1, baud=9600, 8E1.
+
+vendor = "Chint"
+model = "DSSU666"
+description = "3-phase 3-wire DIN-rail energy meter (delta) — Uab/Ubc/Uca, Ua/Uc, Ia/Ic, active/reactive power for phases A+C and total, PF, frequency, import/export energy."
+
+# ----- Line-to-line voltages -----
+[[registers]]
+address = 8192
+type = "f32"
+name = "Voltage Uab"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 8194
+type = "f32"
+name = "Voltage Ubc"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 8196
+type = "f32"
+name = "Voltage Uca"
+unit = "V"
+scale = 0.1
+
+# ----- Phase voltages (estimated, no neutral reference in 3-wire) -----
+[[registers]]
+address = 8198
+type = "f32"
+name = "Voltage Ua"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 8202
+type = "f32"
+name = "Voltage Uc"
+unit = "V"
+scale = 0.1
+
+# ----- Currents -----
+[[registers]]
+address = 8204
+type = "f32"
+name = "Current Ia"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 8208
+type = "f32"
+name = "Current Ic"
+unit = "A"
+scale = 0.001
+
+# ----- Active power -----
+[[registers]]
+address = 8210
+type = "f32"
+name = "Total active power"
+unit = "W"
+scale = 0.1
+
+[[registers]]
+address = 8212
+type = "f32"
+name = "Active power Pa"
+unit = "W"
+scale = 0.1
+
+[[registers]]
+address = 8216
+type = "f32"
+name = "Active power Pc"
+unit = "W"
+scale = 0.1
+
+# ----- Reactive power -----
+[[registers]]
+address = 8218
+type = "f32"
+name = "Total reactive power"
+unit = "var"
+scale = 0.1
+
+[[registers]]
+address = 8220
+type = "f32"
+name = "Reactive power Qa"
+unit = "var"
+scale = 0.1
+
+[[registers]]
+address = 8224
+type = "f32"
+name = "Reactive power Qc"
+unit = "var"
+scale = 0.1
+
+# ----- Power factor -----
+[[registers]]
+address = 8234
+type = "f32"
+name = "Power factor (total)"
+scale = 0.001
+
+[[registers]]
+address = 8236
+type = "f32"
+name = "Power factor Pa"
+scale = 0.001
+
+[[registers]]
+address = 8240
+type = "f32"
+name = "Power factor Pc"
+scale = 0.001
+
+# ----- Frequency -----
+[[registers]]
+address = 8260
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+scale = 0.01
+
+# ----- Active energy — import -----
+[[registers]]
+address = 4126
+type = "f32"
+name = "Import active energy (total)"
+unit = "kWh"
+
+[[registers]]
+address = 4128
+type = "f32"
+name = "Import active energy L1"
+unit = "kWh"
+
+[[registers]]
+address = 4132
+type = "f32"
+name = "Import active energy L3"
+unit = "kWh"
+
+[[registers]]
+address = 4134
+type = "f32"
+name = "Net import active energy"
+unit = "kWh"
+
+# ----- Active energy — export -----
+[[registers]]
+address = 4136
+type = "f32"
+name = "Export active energy (total)"
+unit = "kWh"
+
+[[registers]]
+address = 4138
+type = "f32"
+name = "Export active energy L1"
+unit = "kWh"
+
+[[registers]]
+address = 4142
+type = "f32"
+name = "Export active energy L3"
+unit = "kWh"
+
+[[registers]]
+address = 4144
+type = "f32"
+name = "Net export active energy"
+unit = "kWh"

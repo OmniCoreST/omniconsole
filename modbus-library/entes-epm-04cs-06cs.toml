@@ -1,0 +1,496 @@
+# ENTES EPM-04CS / EPM-06CS Multimeter (Modbus RTU RS-485)
+#
+# Source: entes-epm-04cs-epm-06cs-register-table.pdf (A4263/Rev.2)
+# Models: EPM-04CS (3-phase multimeter), EPM-06CS (adds cos-phi, angles, harmonics)
+# Protocol: Modbus RTU, FC03 read holding registers, FC06 write single register
+# Baud: 0=9600, 1=4800, 2=2400, 3=19200, 4=4800, 5=38400 bps; default 9600 8N2
+# All addresses are 0-based decimal.
+# Multiplier applies to raw value: e.g. voltage raw 2300 × 0.1 = 230.0 V
+# ★ = EPM-06CS only
+
+vendor = "ENTES"
+model = "EPM-04CS/EPM-06CS"
+description = "3-phase multimeter, Modbus RTU. Phase-neutral voltages at addr 0-4 (V ×0.1); phase currents at 6-12 (A ×0.001); phase-phase voltages at 14-18; cos-phi per phase at 38-42 (★); avg cos-phi at 54-56 (★); frequency at 58 (Hz ×0.01); voltage/current angles at 60-70 (★). Min measurements at 118-136; max at 168-182; max current demand at 204/212/220. Settings: VT/CT ratio at 32766/32769, demand time at 32771, comms at 32777-32784. Alarm functions at 33026+; warning setpoints at 33046+; tripping/releasing times at 33070+."
+
+# ----- Phase-Neutral voltages (FC03, R, u16, ×0.1 V) -----
+[[registers]]
+address = 0
+type = "u16"
+name = "L1 phase voltage"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "L2 phase voltage"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "L3 phase voltage"
+
+# ----- Phase currents (FC03, R, u16, ×0.001 A) -----
+[[registers]]
+address = 6
+type = "u16"
+name = "L1 phase current"
+
+[[registers]]
+address = 8
+type = "u16"
+name = "L2 phase current"
+
+[[registers]]
+address = 10
+type = "u16"
+name = "L3 phase current"
+
+[[registers]]
+address = 12
+type = "u16"
+name = "Neutral current"
+
+# ----- Phase-Phase voltages (FC03, R, u16, ×0.1 V) -----
+[[registers]]
+address = 14
+type = "u16"
+name = "L1-L2 phase-phase voltage"
+
+[[registers]]
+address = 16
+type = "u16"
+name = "L2-L3 phase-phase voltage"
+
+[[registers]]
+address = 18
+type = "u16"
+name = "L3-L1 phase-phase voltage"
+
+# ----- Power factor / cos-phi (FC03, R, s16, ×0.001) — EPM-06CS only ★ -----
+[[registers]]
+address = 38
+type = "s16"
+name = "L1 phase cos-phi"
+
+[[registers]]
+address = 40
+type = "s16"
+name = "L2 phase cos-phi"
+
+[[registers]]
+address = 42
+type = "s16"
+name = "L3 phase cos-phi"
+
+# Average inductive/capacitive total cos-phi (EPM-06CS only)
+[[registers]]
+address = 54
+type = "s16"
+name = "Average inductive total cos-phi"
+
+[[registers]]
+address = 56
+type = "s16"
+name = "Average capacitive total cos-phi"
+
+# ----- Frequency (FC03, R, u16, ×0.01 Hz) -----
+[[registers]]
+address = 58
+type = "u16"
+name = "Frequency"
+
+# ----- Voltage and current angles (FC03, R, u16, ×1°) — EPM-06CS only ★ -----
+[[registers]]
+address = 60
+type = "u16"
+name = "L1 phase voltage angle"
+
+[[registers]]
+address = 62
+type = "u16"
+name = "L2 phase voltage angle"
+
+[[registers]]
+address = 64
+type = "u16"
+name = "L3 phase voltage angle"
+
+[[registers]]
+address = 66
+type = "u16"
+name = "L1 phase current angle"
+
+[[registers]]
+address = 68
+type = "u16"
+name = "L2 phase current angle"
+
+[[registers]]
+address = 70
+type = "u16"
+name = "L3 phase current angle"
+
+# ----- Min measurements (FC03, R/W, u16) -----
+[[registers]]
+address = 118
+type = "u16"
+name = "L1 phase min voltage"
+
+[[registers]]
+address = 120
+type = "u16"
+name = "L2 phase min voltage"
+
+[[registers]]
+address = 122
+type = "u16"
+name = "L3 phase min voltage"
+
+[[registers]]
+address = 124
+type = "u16"
+name = "L1-L2 phase-phase min voltage"
+
+[[registers]]
+address = 126
+type = "u16"
+name = "L2-L3 phase-phase min voltage"
+
+[[registers]]
+address = 128
+type = "u16"
+name = "L3-L1 phase-phase min voltage"
+
+# ×0.001 A
+[[registers]]
+address = 132
+type = "u16"
+name = "L1 phase min current"
+
+[[registers]]
+address = 134
+type = "u16"
+name = "L2 phase min current"
+
+[[registers]]
+address = 136
+type = "u16"
+name = "L3 phase min current"
+
+# ----- Max measurements (FC03, R/W, u16) -----
+# ×0.1 V
+[[registers]]
+address = 168
+type = "u16"
+name = "L1 phase max voltage"
+
+[[registers]]
+address = 170
+type = "u16"
+name = "L2 phase max voltage"
+
+[[registers]]
+address = 172
+type = "u16"
+name = "L3 phase max voltage"
+
+[[registers]]
+address = 174
+type = "u16"
+name = "L1-L2 phase-phase max voltage"
+
+[[registers]]
+address = 176
+type = "u16"
+name = "L2-L3 phase-phase max voltage"
+
+[[registers]]
+address = 178
+type = "u16"
+name = "L3-L1 phase-phase max voltage"
+
+# ×0.001 A
+[[registers]]
+address = 180
+type = "u16"
+name = "L1 phase max current"
+
+[[registers]]
+address = 182
+type = "u16"
+name = "L2 phase max current"
+
+[[registers]]
+address = 184
+type = "u16"
+name = "L3 phase max current"
+
+# ----- Max current demand (FC03, R/W, u16, ×0.001 A) -----
+[[registers]]
+address = 204
+type = "u16"
+name = "L1 phase max current demand"
+
+[[registers]]
+address = 212
+type = "u16"
+name = "L2 phase max current demand"
+
+[[registers]]
+address = 220
+type = "u16"
+name = "L3 phase max current demand"
+
+# ----- Transformer ratios and demand (FC03/06, R/W, s16) -----
+# 0-4000 (e.g. 100 = ratio 100:1)
+[[registers]]
+address = 32766
+type = "s16"
+name = "Voltage transformer ratio"
+
+# 0-2000 (e.g. 100 = ratio 100:5A)
+[[registers]]
+address = 32769
+type = "s16"
+name = "Current transformer ratio"
+
+# 1-80 minutes
+[[registers]]
+address = 32771
+type = "s16"
+name = "Demand time"
+
+# ----- Communication settings (FC03/06, R/W, s16) -----
+[[registers]]
+address = 32777
+type = "s16"
+name = "Modbus address"
+
+# 0=9600, 1=4800, 2=2400, 3=19200, 4=4800, 5=38400 bps
+[[registers]]
+address = 32778
+type = "s16"
+name = "Baud rate"
+
+# 0=None, 1=Odd, 2=Even
+[[registers]]
+address = 32779
+type = "s16"
+name = "Parity"
+
+# 0=Disable, 1=Enable
+[[registers]]
+address = 32780
+type = "s16"
+name = "Password enable"
+
+[[registers]]
+address = 32781
+type = "s16"
+name = "Password"
+
+# 0=Star, 1=Delta
+[[registers]]
+address = 32784
+type = "s16"
+name = "Connection selection"
+
+# ----- Alarm output configuration (FC03/06, R/W, s16) -----
+# 0=Disable, 1=Enable
+[[registers]]
+address = 33026
+type = "s16"
+name = "Output function enable"
+
+[[registers]]
+address = 33027
+type = "s16"
+name = "Latch function enable"
+
+[[registers]]
+address = 33028
+type = "s16"
+name = "Output inverse enable"
+
+[[registers]]
+address = 33029
+type = "s16"
+name = "Phase sequence monitoring enable"
+
+[[registers]]
+address = 33030
+type = "s16"
+name = "Voltage instant trip enable"
+
+[[registers]]
+address = 33032
+type = "s16"
+name = "Auto reset enable"
+
+# 0-999 seconds
+[[registers]]
+address = 33033
+type = "s16"
+name = "Start-up delay time"
+
+# ----- High voltage warning setpoints (FC03/06, R/W, s16, ×0.1 V) -----
+[[registers]]
+address = 33046
+type = "s16"
+name = "L1 high voltage warning"
+
+[[registers]]
+address = 33047
+type = "s16"
+name = "L2 high voltage warning"
+
+[[registers]]
+address = 33048
+type = "s16"
+name = "L3 high voltage warning"
+
+# ----- Low voltage warning setpoints (FC03/06, R/W, s16, ×0.1 V) -----
+[[registers]]
+address = 33049
+type = "s16"
+name = "L1 low voltage warning"
+
+[[registers]]
+address = 33050
+type = "s16"
+name = "L2 low voltage warning"
+
+[[registers]]
+address = 33051
+type = "s16"
+name = "L3 low voltage warning"
+
+# ----- High current warning setpoints (FC03/06, R/W, s16, ×0.001 A) -----
+[[registers]]
+address = 33054
+type = "s16"
+name = "L1 high current warning"
+
+[[registers]]
+address = 33055
+type = "s16"
+name = "L2 high current warning"
+
+[[registers]]
+address = 33056
+type = "s16"
+name = "L3 high current warning"
+
+# ----- Low current warning setpoints (FC03/06, R/W, s16, ×0.001 A) -----
+[[registers]]
+address = 33057
+type = "s16"
+name = "L1 low current warning"
+
+[[registers]]
+address = 33058
+type = "s16"
+name = "L2 low current warning"
+
+[[registers]]
+address = 33059
+type = "s16"
+name = "L3 low current warning"
+
+# ----- Frequency warning setpoints (FC03/06, R/W, s16, ×0.01 Hz) -----
+[[registers]]
+address = 33061
+type = "s16"
+name = "High frequency warning"
+
+[[registers]]
+address = 33062
+type = "s16"
+name = "Low frequency warning"
+
+# ----- Warning hysteresis (FC03/06, R/W, s16) -----
+[[registers]]
+address = 33063
+type = "s16"
+name = "High voltage warning hysteresis"
+
+[[registers]]
+address = 33064
+type = "s16"
+name = "High current warning hysteresis"
+
+[[registers]]
+address = 33065
+type = "s16"
+name = "High frequency warning hysteresis"
+
+[[registers]]
+address = 33066
+type = "s16"
+name = "Low voltage warning hysteresis"
+
+[[registers]]
+address = 33067
+type = "s16"
+name = "Low current warning hysteresis"
+
+[[registers]]
+address = 33068
+type = "s16"
+name = "Low frequency warning hysteresis"
+
+# ----- Tripping times (FC03/06, R/W, s16, ×0.1 s) -----
+[[registers]]
+address = 33070
+type = "s16"
+name = "High voltage tripping time"
+
+[[registers]]
+address = 33071
+type = "s16"
+name = "High current tripping time"
+
+[[registers]]
+address = 33072
+type = "s16"
+name = "High frequency tripping time"
+
+[[registers]]
+address = 33073
+type = "s16"
+name = "Low voltage tripping time"
+
+[[registers]]
+address = 33074
+type = "s16"
+name = "Low current tripping time"
+
+[[registers]]
+address = 33075
+type = "s16"
+name = "Low frequency tripping time"
+
+# ----- Releasing times (FC03/06, R/W, s16, ×0.1 s) -----
+[[registers]]
+address = 33079
+type = "s16"
+name = "High voltage releasing time"
+
+[[registers]]
+address = 33080
+type = "s16"
+name = "Low voltage releasing time"
+
+[[registers]]
+address = 33081
+type = "s16"
+name = "High current releasing time"
+
+[[registers]]
+address = 33082
+type = "s16"
+name = "Low current releasing time"
+
+[[registers]]
+address = 33083
+type = "s16"
+name = "Frequency releasing time"

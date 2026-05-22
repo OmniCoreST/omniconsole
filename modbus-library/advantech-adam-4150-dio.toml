@@ -1,0 +1,105 @@
+# Advantech ADAM-4150 — 7DI / 8DO Digital I/O Module with Counter/Pulse
+#
+# Source: advantech-adam-4100-modbus.pdf (Appendix B, B.3)
+# - 7 digital inputs (DI) and 8 digital outputs (DO); each DI configurable as counter/frequency.
+# - Modbus RTU enabled when FF parameter bit 2 = 1; default is ADAM ASCII protocol.
+# - FC02 addr 0-6 (00001-00007): DI Signal ch 0-6 (R).
+# - FC01 addr 16-23 (00017-00024): DO Signal ch 0-7 (W).
+# - FC01 counter coils (per DI ch, 4 coils each, ch 0 starts at addr 32):
+#     Start/Stop(1/0), Clear counter(1), Clear overflow, Latch status.
+# - FC03 addr 0-13: Counter/frequency ch 0-6 (u32, 32-bit per channel, 2 regs each; Frequency=ADDR/10 Hz) (R).
+# - FC03 addr 14-29: Pulse output L level time ch 0-7 (u32, unit 0.1ms) (R/W).
+# - FC03 addr 30-45: Pulse output H level time ch 0-7 (u32, unit 0.1ms) (R/W).
+# - FC03 addr 46-61: Set absolute pulse count ch 0-7 (u32; 0=continuous mode) (R/W).
+# - FC03 addr 62-77: Set incremental pulse count ch 0-7 (u32) (R/W).
+# - FC03 addr 78-84: Reference ch 0-6 (R/W).
+# - FC03 addr 85-92: DO mode ch 0-7 (R/W).
+# - FC03 addr 93-106: DI filter low width ch 0-6 (R/W).
+# - FC03 addr 107-120: DI filter high width ch 0-6 (R/W).
+# - FC03 addr 121-136: DO low delay width ch 0-7 (R/W).
+# - FC03 addr 137-154: DO high delay width ch 0-7 (R/W).
+# - FC03 addr 210-215: Module ID, version, comm safety (R).
+# - FC03 addr 300: DI data in word (R); addr 302: DO data in word (R/W).
+# - Factory defaults: address=0, 9600 baud, 8N1.
+
+vendor = "Advantech"
+model = "ADAM-4150"
+description = "7DI + 8DO digital I/O with counter/frequency and pulse output. DI at FC02 coil addr 0-6; DO at FC01 coil addr 16-23. FC03 addr 0-13: counter/freq values u32 (7ch). FC03 addr 300: DI word; addr 302: DO word. Modbus enabled when FF parameter bit2=1."
+
+# ----- Counter/Frequency values (FC03, R) -----
+[[registers]]
+address = 0
+type = "u32"
+name = "Counter/frequency channel 0"
+
+[[registers]]
+address = 2
+type = "u32"
+name = "Counter/frequency channel 1"
+
+[[registers]]
+address = 4
+type = "u32"
+name = "Counter/frequency channel 2"
+
+[[registers]]
+address = 6
+type = "u32"
+name = "Counter/frequency channel 3"
+
+[[registers]]
+address = 8
+type = "u32"
+name = "Counter/frequency channel 4"
+
+[[registers]]
+address = 10
+type = "u32"
+name = "Counter/frequency channel 5"
+
+[[registers]]
+address = 12
+type = "u32"
+name = "Counter/frequency channel 6"
+
+# ----- I/O data words (FC03) -----
+[[registers]]
+address = 300
+type = "u16"
+name = "DI data word"
+
+[[registers]]
+address = 302
+type = "u16"
+name = "DO data word"
+
+# ----- Module identification (FC03, R) -----
+[[registers]]
+address = 210
+type = "u16"
+name = "Module name 1"
+
+[[registers]]
+address = 211
+type = "u16"
+name = "Module name 2"
+
+[[registers]]
+address = 212
+type = "u16"
+name = "Firmware version 1"
+
+[[registers]]
+address = 213
+type = "u16"
+name = "Firmware version 2"
+
+[[registers]]
+address = 214
+type = "u16"
+name = "Comm safety enable"
+
+[[registers]]
+address = 215
+type = "u16"
+name = "Comm safety flag"

@@ -1,0 +1,1218 @@
+# Korenix JetI/O 6550 Industrial Intelligent Ethernet I/O Server
+#
+# Source: JetI/O 6550 User's Manual V1.6
+# Protocol: Modbus/TCP (Ethernet port 502)
+# FC03: Read/Write Holding Registers — configuration, control, rule engine, P2P (below)
+# FC04: Read Input Registers — DI counter values ch0-13 (addr 0x0000-0x001D, u32 hi/lo pairs)
+# FC02: Read Discrete Inputs — DI status ch0-13 (addr 0x0000-0x000D, 1-bit per channel)
+# FC01/FC05: Read/Write Coils — DO ch0-7 (addr 0x0000-0x0007, 1-bit per channel)
+#
+# IMPORTANT: Active I/O data is in FC04 (DI counters), FC02 (DI states), FC01 (DO).
+#   FC03 holding registers are configuration only.
+#
+# Rule engine (16 rules, 0-15): each rule has IF condition (up to 4 DI, AND/OR)
+#   THEN action (up to 4 DO). Condition operators: 0=ON,1=OFF,2=Lo→Hi,3=Hi→Lo,
+#   4-8=DI counter comparisons. Action operators: 0=ON,1=OFF,2=counter reset,
+#   3=pulse start,4=pulse stop,5=SNMP Trap.
+# Peer-to-peer (P2P): mirrors remote JetI/O DI to local DO (client) or vice versa (server).
+# Rules 0-7 use EEprom-backed registers (addr 51-130); rules 8-15 use Flash RAM (addr 500+).
+
+vendor = "Korenix"
+model = "JetI/O 6550"
+description = "14-DI + 8-DO digital I/O Ethernet server, Modbus/TCP. FC03 holding regs: watchdog (0-2), firmware/name/reset (3-5), DO coil power-on/safe (6-7), DI counter control (8-14), DO pulse control (15-50), rule engine rules 0-7 (51-130), P2P/SNMP config (89-130 overlap), extended Flash rules 8-15 + P2P IPs (500-578), error codes (595-604). FC04: DI counter values ch0-13 addr 0-29 (u32 hi/lo). FC02: DI status ch0-13 addr 0-13 (1-bit). FC01: DO ch0-7 addr 0-7 R/W (1-bit). 16-rule IF-THEN logic engine; P2P peer-to-peer I/O mirroring."
+
+# ===== Common Holding Registers (FC03) =====
+
+[[registers]]
+address = 0
+type = "u16"
+name = "Watchdog enable (0x0000=disable 0xFF00=enable)"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "Watchdog cycle count (BB×0.1s, range 1-255)"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "Host-watchdog status (R: 0x0000=OK 0xFF00=fail; W: 0xFF00=reset)"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "Firmware version"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "Module name (reads 0x6550)"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "Reset status (0x0000 after read; 0x0001 after reset)"
+
+[[registers]]
+address = 6
+type = "u16"
+name = "DO power-on coil value bitmask (bit N=ch N; EEprom)"
+
+[[registers]]
+address = 7
+type = "u16"
+name = "DO safe coil value bitmask (bit N=ch N; EEprom)"
+
+# ===== DI Counter Control (FC03) =====
+
+[[registers]]
+address = 8
+type = "u16"
+name = "DI counter status bitmask (bit N=ch N; R: 1=counting; W: 1=start 0=stop)"
+
+[[registers]]
+address = 9
+type = "u16"
+name = "DI counter overflow status bitmask (R; bit N=ch N, 1=overflow)"
+
+[[registers]]
+address = 10
+type = "u16"
+name = "DI counter trigger mode bitmask (bit N=ch N; 0=Lo→Hi 1=Hi→Lo; EEprom)"
+
+[[registers]]
+address = 11
+type = "u16"
+name = "DI mode bitmask (bit N=ch N; 0=DI 1=Counter; EEprom)"
+
+[[registers]]
+address = 12
+type = "u16"
+name = "DI counter power-on status bitmask (EEprom)"
+
+[[registers]]
+address = 13
+type = "u16"
+name = "DI counter safe status bitmask (EEprom)"
+
+[[registers]]
+address = 14
+type = "u16"
+name = "DI clear counter (write 1=clear all counters)"
+
+# ===== DO Pulse Control (FC03) =====
+
+[[registers]]
+address = 15
+type = "u16"
+name = "DO pulse operate status bitmask (bit N=ch N; 1=start pulse)"
+
+[[registers]]
+address = 16
+type = "u16"
+name = "DO power-on pulse operate status bitmask (EEprom)"
+
+[[registers]]
+address = 17
+type = "u16"
+name = "DO safe pulse operate status bitmask (EEprom)"
+
+[[registers]]
+address = 18
+type = "u16"
+name = "Ch0 DO pulse output count hi-word (u32; 0=continuous; EEprom)"
+
+[[registers]]
+address = 19
+type = "u16"
+name = "Ch0 DO pulse output count lo-word"
+
+[[registers]]
+address = 20
+type = "u16"
+name = "Ch1 DO pulse output count hi-word"
+
+[[registers]]
+address = 21
+type = "u16"
+name = "Ch1 DO pulse output count lo-word"
+
+[[registers]]
+address = 22
+type = "u16"
+name = "Ch2 DO pulse output count hi-word"
+
+[[registers]]
+address = 23
+type = "u16"
+name = "Ch2 DO pulse output count lo-word"
+
+[[registers]]
+address = 24
+type = "u16"
+name = "Ch3 DO pulse output count hi-word"
+
+[[registers]]
+address = 25
+type = "u16"
+name = "Ch3 DO pulse output count lo-word"
+
+[[registers]]
+address = 26
+type = "u16"
+name = "Ch4 DO pulse output count hi-word"
+
+[[registers]]
+address = 27
+type = "u16"
+name = "Ch4 DO pulse output count lo-word"
+
+[[registers]]
+address = 28
+type = "u16"
+name = "Ch5 DO pulse output count hi-word"
+
+[[registers]]
+address = 29
+type = "u16"
+name = "Ch5 DO pulse output count lo-word"
+
+[[registers]]
+address = 30
+type = "u16"
+name = "Ch6 DO pulse output count hi-word"
+
+[[registers]]
+address = 31
+type = "u16"
+name = "Ch6 DO pulse output count lo-word"
+
+[[registers]]
+address = 32
+type = "u16"
+name = "Ch7 DO pulse output count hi-word"
+
+[[registers]]
+address = 33
+type = "u16"
+name = "Ch7 DO pulse output count lo-word"
+
+[[registers]]
+address = 34
+type = "u16"
+name = "Ch0 DO pulse low signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 35
+type = "u16"
+name = "Ch1 DO pulse low signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 36
+type = "u16"
+name = "Ch2 DO pulse low signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 37
+type = "u16"
+name = "Ch3 DO pulse low signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 38
+type = "u16"
+name = "Ch4 DO pulse low signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 39
+type = "u16"
+name = "Ch5 DO pulse low signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 40
+type = "u16"
+name = "Ch6 DO pulse low signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 41
+type = "u16"
+name = "Ch7 DO pulse low signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 42
+type = "u16"
+name = "Ch0 DO pulse high signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 43
+type = "u16"
+name = "Ch1 DO pulse high signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 44
+type = "u16"
+name = "Ch2 DO pulse high signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 45
+type = "u16"
+name = "Ch3 DO pulse high signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 46
+type = "u16"
+name = "Ch4 DO pulse high signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 47
+type = "u16"
+name = "Ch5 DO pulse high signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 48
+type = "u16"
+name = "Ch6 DO pulse high signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 49
+type = "u16"
+name = "Ch7 DO pulse high signal width (1-0xFFFF × 1ms; EEprom)"
+
+[[registers]]
+address = 50
+type = "u16"
+name = "DO mode bitmask (bit N=ch N; 0=DO 1=Pulse; EEprom)"
+
+# ===== Rule Engine Rules 0-7 (FC03, EEprom) =====
+
+[[registers]]
+address = 51
+type = "u16"
+name = "Rule enable rules 0-7 bitmask (bit N=rule N)"
+
+[[registers]]
+address = 52
+type = "u16"
+name = "Select OR/AND logic rules 0-7 (nibble per rule: 0=OR 1=AND)"
+
+[[registers]]
+address = 53
+type = "u16"
+name = "IF condition DI channels rule 0 (ABCD nibbles = 4 DI ch selectors)"
+
+[[registers]]
+address = 54
+type = "u16"
+name = "IF condition DI channels rule 1"
+
+[[registers]]
+address = 55
+type = "u16"
+name = "IF condition DI channels rule 2"
+
+[[registers]]
+address = 56
+type = "u16"
+name = "IF condition DI channels rule 3"
+
+[[registers]]
+address = 57
+type = "u16"
+name = "IF condition DI channels rule 4"
+
+[[registers]]
+address = 58
+type = "u16"
+name = "IF condition DI channels rule 5"
+
+[[registers]]
+address = 59
+type = "u16"
+name = "IF condition DI channels rule 6"
+
+[[registers]]
+address = 60
+type = "u16"
+name = "IF condition DI channels rule 7"
+
+[[registers]]
+address = 61
+type = "u16"
+name = "IF condition operators rule 0 (nibble: 0=ON,1=OFF,2=Lo→Hi,3=Hi→Lo,4-8=ctr cmp)"
+
+[[registers]]
+address = 62
+type = "u16"
+name = "IF condition operators rule 1"
+
+[[registers]]
+address = 63
+type = "u16"
+name = "IF condition operators rule 2"
+
+[[registers]]
+address = 64
+type = "u16"
+name = "IF condition operators rule 3"
+
+[[registers]]
+address = 65
+type = "u16"
+name = "IF condition operators rule 4"
+
+[[registers]]
+address = 66
+type = "u16"
+name = "IF condition operators rule 5"
+
+[[registers]]
+address = 67
+type = "u16"
+name = "IF condition operators rule 6"
+
+[[registers]]
+address = 68
+type = "u16"
+name = "IF condition operators rule 7"
+
+[[registers]]
+address = 69
+type = "u16"
+name = "THEN DO channels rule 0 (ABCD nibbles = 4 DO ch selectors)"
+
+[[registers]]
+address = 70
+type = "u16"
+name = "THEN DO channels rule 1"
+
+[[registers]]
+address = 71
+type = "u16"
+name = "THEN DO channels rule 2"
+
+[[registers]]
+address = 72
+type = "u16"
+name = "THEN DO channels rule 3"
+
+[[registers]]
+address = 73
+type = "u16"
+name = "THEN DO channels rule 4"
+
+[[registers]]
+address = 74
+type = "u16"
+name = "THEN DO channels rule 5"
+
+[[registers]]
+address = 75
+type = "u16"
+name = "THEN DO channels rule 6"
+
+[[registers]]
+address = 76
+type = "u16"
+name = "THEN DO channels rule 7"
+
+[[registers]]
+address = 77
+type = "u16"
+name = "THEN action operators rule 0 (nibble: 0=ON,1=OFF,2=ctr reset,3=pulse start,4=pulse stop,5=SNMP)"
+
+[[registers]]
+address = 78
+type = "u16"
+name = "THEN action operators rule 1"
+
+[[registers]]
+address = 79
+type = "u16"
+name = "THEN action operators rule 2"
+
+[[registers]]
+address = 80
+type = "u16"
+name = "THEN action operators rule 3"
+
+[[registers]]
+address = 81
+type = "u16"
+name = "THEN action operators rule 4"
+
+[[registers]]
+address = 82
+type = "u16"
+name = "THEN action operators rule 5"
+
+[[registers]]
+address = 83
+type = "u16"
+name = "THEN action operators rule 6"
+
+[[registers]]
+address = 84
+type = "u16"
+name = "THEN action operators rule 7"
+
+[[registers]]
+address = 85
+type = "u16"
+name = "Condition enable rules 0-3 (nibble per rule: count of active conditions)"
+
+[[registers]]
+address = 86
+type = "u16"
+name = "Condition enable rules 4-7"
+
+[[registers]]
+address = 87
+type = "u16"
+name = "Reserved"
+
+[[registers]]
+address = 88
+type = "u16"
+name = "Reserved"
+
+# ===== Identity / Peer-to-Peer / SNMP (FC03) =====
+
+[[registers]]
+address = 89
+type = "u16"
+name = "Device type R (reads 0x6550)"
+
+[[registers]]
+address = 90
+type = "u16"
+name = "Peer-to-peer status R"
+
+[[registers]]
+address = 91
+type = "u16"
+name = "Output coil client/server status R"
+
+[[registers]]
+address = 92
+type = "u16"
+name = "Input coil client/server status R"
+
+[[registers]]
+address = 93
+type = "u16"
+name = "Peer-to-peer enable/disable"
+
+[[registers]]
+address = 94
+type = "u16"
+name = "P2P mirror direction (0=mirror to client 1=mirror from server)"
+
+[[registers]]
+address = 95
+type = "u16"
+name = "Action enable rules 0-3 (nibble per rule: count of active actions)"
+
+[[registers]]
+address = 96
+type = "u16"
+name = "Action enable rules 4-7"
+
+[[registers]]
+address = 97
+type = "u16"
+name = "SNMP trap number (0=disable 1-4=trap IP slot)"
+
+[[registers]]
+address = 98
+type = "u16"
+name = "SNMP trap IP1 lo-word (X.X.AA.BB)"
+
+[[registers]]
+address = 99
+type = "u16"
+name = "SNMP trap IP1 hi-word (AA.BB.X.X)"
+
+[[registers]]
+address = 100
+type = "u16"
+name = "SNMP trap IP2 lo-word"
+
+[[registers]]
+address = 101
+type = "u16"
+name = "SNMP trap IP2 hi-word"
+
+[[registers]]
+address = 102
+type = "u16"
+name = "SNMP trap IP3 lo-word"
+
+[[registers]]
+address = 103
+type = "u16"
+name = "SNMP trap IP3 hi-word"
+
+[[registers]]
+address = 104
+type = "u16"
+name = "SNMP trap IP4 lo-word"
+
+[[registers]]
+address = 105
+type = "u16"
+name = "SNMP trap IP4 hi-word"
+
+[[registers]]
+address = 106
+type = "u16"
+name = "SNMP trap repeat enable (write 0xFF00)"
+
+# ===== Rule DI Counter Reset & Compare Values Rules 0-7 (FC03) =====
+
+[[registers]]
+address = 107
+type = "u16"
+name = "DI counter reset trigger rule 0 (write 1=reset condition DI counter)"
+
+[[registers]]
+address = 108
+type = "u16"
+name = "DI counter reset trigger rule 1"
+
+[[registers]]
+address = 109
+type = "u16"
+name = "DI counter reset trigger rule 2"
+
+[[registers]]
+address = 110
+type = "u16"
+name = "DI counter reset trigger rule 3"
+
+[[registers]]
+address = 111
+type = "u16"
+name = "DI counter reset trigger rule 4"
+
+[[registers]]
+address = 112
+type = "u16"
+name = "DI counter reset trigger rule 5"
+
+[[registers]]
+address = 113
+type = "u16"
+name = "DI counter reset trigger rule 6"
+
+[[registers]]
+address = 114
+type = "u16"
+name = "DI counter reset trigger rule 7"
+
+[[registers]]
+address = 115
+type = "u16"
+name = "DI counter compare value rule 0 hi-word (u32)"
+
+[[registers]]
+address = 116
+type = "u16"
+name = "DI counter compare value rule 0 lo-word"
+
+[[registers]]
+address = 117
+type = "u16"
+name = "DI counter compare value rule 1 hi-word"
+
+[[registers]]
+address = 118
+type = "u16"
+name = "DI counter compare value rule 1 lo-word"
+
+[[registers]]
+address = 119
+type = "u16"
+name = "DI counter compare value rule 2 hi-word"
+
+[[registers]]
+address = 120
+type = "u16"
+name = "DI counter compare value rule 2 lo-word"
+
+[[registers]]
+address = 121
+type = "u16"
+name = "DI counter compare value rule 3 hi-word"
+
+[[registers]]
+address = 122
+type = "u16"
+name = "DI counter compare value rule 3 lo-word"
+
+[[registers]]
+address = 123
+type = "u16"
+name = "DI counter compare value rule 4 hi-word"
+
+[[registers]]
+address = 124
+type = "u16"
+name = "DI counter compare value rule 4 lo-word"
+
+[[registers]]
+address = 125
+type = "u16"
+name = "DI counter compare value rule 5 hi-word"
+
+[[registers]]
+address = 126
+type = "u16"
+name = "DI counter compare value rule 5 lo-word"
+
+[[registers]]
+address = 127
+type = "u16"
+name = "DI counter compare value rule 6 hi-word"
+
+[[registers]]
+address = 128
+type = "u16"
+name = "DI counter compare value rule 6 lo-word"
+
+[[registers]]
+address = 129
+type = "u16"
+name = "DI counter compare value rule 7 hi-word"
+
+[[registers]]
+address = 130
+type = "u16"
+name = "DI counter compare value rule 7 lo-word"
+
+# ===== Extended Rule Engine Rules 8-15 — Flash RAM (FC03, addr 500+) =====
+
+[[registers]]
+address = 500
+type = "u16"
+name = "Extended aux flag selector rules 0-3 (Flash RAM)"
+
+[[registers]]
+address = 501
+type = "u16"
+name = "Extended aux flag selector rules 4-7 (Flash RAM)"
+
+[[registers]]
+address = 502
+type = "u16"
+name = "Extended aux flag selector rules 8-11 (Flash RAM)"
+
+[[registers]]
+address = 503
+type = "u16"
+name = "Extended aux flag selector rules 12-15 (Flash RAM)"
+
+[[registers]]
+address = 504
+type = "u16"
+name = "Extended aux flag selector (Flash RAM)"
+
+[[registers]]
+address = 505
+type = "u16"
+name = "Extended aux flag selector (Flash RAM)"
+
+[[registers]]
+address = 506
+type = "u16"
+name = "Extended aux flag selector (Flash RAM)"
+
+[[registers]]
+address = 507
+type = "u16"
+name = "Extended aux flag selector (Flash RAM)"
+
+[[registers]]
+address = 508
+type = "u16"
+name = "PTP enable/disable condition flag"
+
+[[registers]]
+address = 509
+type = "u16"
+name = "PTP select condition channel group A (4 conditions packed)"
+
+[[registers]]
+address = 510
+type = "u16"
+name = "PTP select condition channel group B (4 conditions packed)"
+
+[[registers]]
+address = 511
+type = "u16"
+name = "PTP select action channel group A (4 actions packed)"
+
+[[registers]]
+address = 512
+type = "u16"
+name = "PTP select action channel group B (4 actions packed)"
+
+[[registers]]
+address = 513
+type = "u16"
+name = "Select DI channel or auxiliary flag"
+
+[[registers]]
+address = 514
+type = "u16"
+name = "Select DO channel or auxiliary flag"
+
+[[registers]]
+address = 515
+type = "u16"
+name = "P2P server[0] IP lo-word (Flash RAM)"
+
+[[registers]]
+address = 516
+type = "u16"
+name = "P2P server[0] IP hi-word"
+
+[[registers]]
+address = 517
+type = "u16"
+name = "P2P server[1] IP lo-word"
+
+[[registers]]
+address = 518
+type = "u16"
+name = "P2P server[1] IP hi-word"
+
+[[registers]]
+address = 519
+type = "u16"
+name = "P2P server[2] IP lo-word"
+
+[[registers]]
+address = 520
+type = "u16"
+name = "P2P server[2] IP hi-word"
+
+[[registers]]
+address = 521
+type = "u16"
+name = "P2P server[3] IP lo-word"
+
+[[registers]]
+address = 522
+type = "u16"
+name = "P2P server[3] IP hi-word"
+
+[[registers]]
+address = 523
+type = "u16"
+name = "P2P server[4] IP lo-word"
+
+[[registers]]
+address = 524
+type = "u16"
+name = "P2P server[4] IP hi-word"
+
+[[registers]]
+address = 525
+type = "u16"
+name = "P2P server[5] IP lo-word"
+
+[[registers]]
+address = 526
+type = "u16"
+name = "P2P server[5] IP hi-word"
+
+[[registers]]
+address = 527
+type = "u16"
+name = "P2P server[6] IP lo-word"
+
+[[registers]]
+address = 528
+type = "u16"
+name = "P2P server[6] IP hi-word"
+
+[[registers]]
+address = 529
+type = "u16"
+name = "P2P server[7] IP lo-word"
+
+[[registers]]
+address = 530
+type = "u16"
+name = "P2P server[7] IP hi-word"
+
+[[registers]]
+address = 531
+type = "u16"
+name = "P2P client[8] IP lo-word"
+
+[[registers]]
+address = 532
+type = "u16"
+name = "P2P client[8] IP hi-word"
+
+[[registers]]
+address = 533
+type = "u16"
+name = "Rule enable rules 0-7 (Flash RAM)"
+
+[[registers]]
+address = 534
+type = "u16"
+name = "Select OR/AND logic (Flash RAM)"
+
+[[registers]]
+address = 535
+type = "u16"
+name = "IF condition DI channels rule 8 (Flash RAM)"
+
+[[registers]]
+address = 536
+type = "u16"
+name = "IF condition DI channels rule 9"
+
+[[registers]]
+address = 537
+type = "u16"
+name = "IF condition DI channels rule 10"
+
+[[registers]]
+address = 538
+type = "u16"
+name = "IF condition DI channels rule 11"
+
+[[registers]]
+address = 539
+type = "u16"
+name = "IF condition DI channels rule 12"
+
+[[registers]]
+address = 540
+type = "u16"
+name = "IF condition DI channels rule 13"
+
+[[registers]]
+address = 541
+type = "u16"
+name = "IF condition DI channels rule 14"
+
+[[registers]]
+address = 542
+type = "u16"
+name = "IF condition DI channels rule 15"
+
+[[registers]]
+address = 543
+type = "u16"
+name = "IF condition operators rule 8"
+
+[[registers]]
+address = 544
+type = "u16"
+name = "IF condition operators rule 9"
+
+[[registers]]
+address = 545
+type = "u16"
+name = "IF condition operators rule 10"
+
+[[registers]]
+address = 546
+type = "u16"
+name = "IF condition operators rule 11"
+
+[[registers]]
+address = 547
+type = "u16"
+name = "IF condition operators rule 12"
+
+[[registers]]
+address = 548
+type = "u16"
+name = "IF condition operators rule 13"
+
+[[registers]]
+address = 549
+type = "u16"
+name = "IF condition operators rule 14"
+
+[[registers]]
+address = 550
+type = "u16"
+name = "IF condition operators rule 15"
+
+[[registers]]
+address = 551
+type = "u16"
+name = "THEN DO channels rule 8"
+
+[[registers]]
+address = 552
+type = "u16"
+name = "THEN DO channels rule 9"
+
+[[registers]]
+address = 553
+type = "u16"
+name = "THEN DO channels rule 10"
+
+[[registers]]
+address = 554
+type = "u16"
+name = "THEN DO channels rule 11"
+
+[[registers]]
+address = 555
+type = "u16"
+name = "THEN DO channels rule 12"
+
+[[registers]]
+address = 556
+type = "u16"
+name = "THEN DO channels rule 13"
+
+[[registers]]
+address = 557
+type = "u16"
+name = "THEN DO channels rule 14"
+
+[[registers]]
+address = 558
+type = "u16"
+name = "THEN DO channels rule 15"
+
+[[registers]]
+address = 559
+type = "u16"
+name = "THEN action operators rule 8"
+
+[[registers]]
+address = 560
+type = "u16"
+name = "THEN action operators rule 9"
+
+[[registers]]
+address = 561
+type = "u16"
+name = "THEN action operators rule 10"
+
+[[registers]]
+address = 562
+type = "u16"
+name = "THEN action operators rule 11"
+
+[[registers]]
+address = 563
+type = "u16"
+name = "THEN action operators rule 12"
+
+[[registers]]
+address = 564
+type = "u16"
+name = "THEN action operators rule 13"
+
+[[registers]]
+address = 565
+type = "u16"
+name = "THEN action operators rule 14"
+
+[[registers]]
+address = 566
+type = "u16"
+name = "THEN action operators rule 15"
+
+[[registers]]
+address = 567
+type = "u16"
+name = "Condition enable rules 8-11"
+
+[[registers]]
+address = 568
+type = "u16"
+name = "Condition enable rules 12-15"
+
+[[registers]]
+address = 569
+type = "u16"
+name = "Action enable rules 8-11"
+
+[[registers]]
+address = 570
+type = "u16"
+name = "Action enable rules 12-15"
+
+[[registers]]
+address = 571
+type = "u16"
+name = "DI counter reset trigger rule 8"
+
+[[registers]]
+address = 572
+type = "u16"
+name = "DI counter reset trigger rule 9"
+
+[[registers]]
+address = 573
+type = "u16"
+name = "DI counter reset trigger rule 10"
+
+[[registers]]
+address = 574
+type = "u16"
+name = "DI counter reset trigger rule 11"
+
+[[registers]]
+address = 575
+type = "u16"
+name = "DI counter reset trigger rule 12"
+
+[[registers]]
+address = 576
+type = "u16"
+name = "DI counter reset trigger rule 13"
+
+[[registers]]
+address = 577
+type = "u16"
+name = "DI counter reset trigger rule 14"
+
+[[registers]]
+address = 578
+type = "u16"
+name = "DI counter reset trigger rule 15"
+
+[[registers]]
+address = 579
+type = "u16"
+name = "DI counter compare value rule 8 hi-word (u32; Flash RAM)"
+
+[[registers]]
+address = 580
+type = "u16"
+name = "DI counter compare value rule 8 lo-word"
+
+[[registers]]
+address = 581
+type = "u16"
+name = "DI counter compare value rule 9 hi-word"
+
+[[registers]]
+address = 582
+type = "u16"
+name = "DI counter compare value rule 9 lo-word"
+
+[[registers]]
+address = 583
+type = "u16"
+name = "DI counter compare value rule 10 hi-word"
+
+[[registers]]
+address = 584
+type = "u16"
+name = "DI counter compare value rule 10 lo-word"
+
+[[registers]]
+address = 585
+type = "u16"
+name = "DI counter compare value rule 11 hi-word"
+
+[[registers]]
+address = 586
+type = "u16"
+name = "DI counter compare value rule 11 lo-word"
+
+[[registers]]
+address = 587
+type = "u16"
+name = "DI counter compare value rule 12 hi-word"
+
+[[registers]]
+address = 588
+type = "u16"
+name = "DI counter compare value rule 12 lo-word"
+
+[[registers]]
+address = 589
+type = "u16"
+name = "DI counter compare value rule 13 hi-word"
+
+[[registers]]
+address = 590
+type = "u16"
+name = "DI counter compare value rule 13 lo-word"
+
+[[registers]]
+address = 591
+type = "u16"
+name = "DI counter compare value rule 14 hi-word"
+
+[[registers]]
+address = 592
+type = "u16"
+name = "DI counter compare value rule 14 lo-word"
+
+[[registers]]
+address = 593
+type = "u16"
+name = "DI counter compare value rule 15 hi-word"
+
+[[registers]]
+address = 594
+type = "u16"
+name = "DI counter compare value rule 15 lo-word"
+
+# ===== Internal Flags / P2P Error Codes (FC03) =====
+
+[[registers]]
+address = 595
+type = "u16"
+name = "Internal flags R/W"
+
+[[registers]]
+address = 596
+type = "u16"
+name = "P2P error code for client R (0=OK,1=content not satisfiable,2=module not found,FFFF=not enabled)"
+
+[[registers]]
+address = 597
+type = "u16"
+name = "P2P error code server #1 R"
+
+[[registers]]
+address = 598
+type = "u16"
+name = "P2P error code server #2 R"
+
+[[registers]]
+address = 599
+type = "u16"
+name = "P2P error code server #3 R"
+
+[[registers]]
+address = 600
+type = "u16"
+name = "P2P error code server #4 R"
+
+[[registers]]
+address = 601
+type = "u16"
+name = "P2P error code server #5 R"
+
+[[registers]]
+address = 602
+type = "u16"
+name = "P2P error code server #6 R"
+
+[[registers]]
+address = 603
+type = "u16"
+name = "P2P error code server #7 R"
+
+[[registers]]
+address = 604
+type = "u16"
+name = "P2P error code server #8 R"

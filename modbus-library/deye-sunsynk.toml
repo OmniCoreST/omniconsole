@@ -1,0 +1,640 @@
+# Deye / Sunsynk String & Hybrid Solar Inverter (Modbus RTU RS-485)
+#
+# Source: deye-sunsynk-modbus-protocol.pdf
+# Models: Deye/Sunsynk string inverters (3-phase and split-phase hybrid variants)
+# Protocol: Modbus RTU, FC03 read, FC10 write
+# Baud: configurable (register 38 readable); default 9600 8N1
+# All addresses are decimal.
+# Types: u16 default; s16 where signed; u32/s32 for 32-bit (low word first).
+# Temperature registers use +1000 offset (e.g. 1150 = 115.0°C).
+# Power factor register 39 uses +1000 offset (1000=0, 1982=0.982, 18=−0.982).
+
+vendor = "Deye"
+model = "Sunsynk Inverter"
+description = "Deye/Sunsynk solar inverter, Modbus RTU RS-485. FC03 read, FC10 write. Identity/config at addr 0-57 (device type, S/N, rated power, grid limits, comms, PF/power regulation). Run state at 59. Day/total energy at 60-68. Grid voltages at 70-75; grid currents at 76-78; grid freq at 79. 3-phase output power at 80-89; temperatures at 90-95; PV history energy at 96-97. Fault/warning at 100-106. DC MPPT V/I at 109-116. Split-phase grid/inverter/load voltages at 150-158; currents at 160-165; powers at 167-178. Battery data at 182-191. PV input power at 186-189. Load/meter/grid energy at 198-210."
+
+# ----- Identity / intrinsic (FC03, R, u16) -----
+[[registers]]
+address = 0
+type = "u16"
+name = "Device type"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "Modbus address"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "Comm protocol version"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "Serial number bytes 1-2"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "Serial number bytes 3-4"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "Serial number bytes 5-6"
+
+[[registers]]
+address = 6
+type = "u16"
+name = "Serial number bytes 7-8"
+
+[[registers]]
+address = 7
+type = "u16"
+name = "Serial number bytes 9-10"
+
+[[registers]]
+address = 8
+type = "u16"
+name = "Rated power"
+
+[[registers]]
+address = 10
+type = "u16"
+name = "Delivery date year month"
+
+[[registers]]
+address = 11
+type = "u16"
+name = "Delivery date day hour"
+
+[[registers]]
+address = 12
+type = "u16"
+name = "Delivery date minute second"
+
+[[registers]]
+address = 13
+type = "u16"
+name = "Firmware version control board"
+
+[[registers]]
+address = 14
+type = "u16"
+name = "Firmware version comm board"
+
+[[registers]]
+address = 15
+type = "u16"
+name = "Safety type"
+
+[[registers]]
+address = 16
+type = "u32"
+name = "Rated power precise"
+
+[[registers]]
+address = 18
+type = "u16"
+name = "MPPT number and phases"
+
+# ----- Control / configuration (FC03/10, R/W) -----
+[[registers]]
+address = 20
+type = "u16"
+name = "Remote lock"
+
+[[registers]]
+address = 21
+type = "u16"
+name = "Self-check time"
+
+[[registers]]
+address = 22
+type = "u16"
+name = "System time year month"
+
+[[registers]]
+address = 23
+type = "u16"
+name = "System time day hour"
+
+[[registers]]
+address = 24
+type = "u16"
+name = "System time minute second"
+
+[[registers]]
+address = 25
+type = "u16"
+name = "Minimum insulation impedance"
+
+[[registers]]
+address = 26
+type = "u16"
+name = "DC voltage upper limit"
+
+[[registers]]
+address = 27
+type = "u16"
+name = "Grid voltage upper limit"
+
+[[registers]]
+address = 28
+type = "u16"
+name = "Grid voltage lower limit"
+
+[[registers]]
+address = 29
+type = "u16"
+name = "Grid frequency upper limit"
+
+[[registers]]
+address = 30
+type = "u16"
+name = "Grid frequency lower limit"
+
+[[registers]]
+address = 31
+type = "u16"
+name = "Grid current upper limit"
+
+[[registers]]
+address = 32
+type = "u16"
+name = "Starting voltage upper limit"
+
+[[registers]]
+address = 33
+type = "u16"
+name = "Starting voltage lower limit"
+
+[[registers]]
+address = 37
+type = "u16"
+name = "Communication address"
+
+[[registers]]
+address = 38
+type = "u16"
+name = "Communication baud rate"
+
+[[registers]]
+address = 39
+type = "u16"
+name = "Power factor regulation"
+
+[[registers]]
+address = 40
+type = "u16"
+name = "Active power regulation"
+
+[[registers]]
+address = 41
+type = "u16"
+name = "Reactive power regulation"
+
+[[registers]]
+address = 42
+type = "u16"
+name = "Apparent power regulation"
+
+[[registers]]
+address = 43
+type = "u16"
+name = "Switch on off enable"
+
+[[registers]]
+address = 44
+type = "u16"
+name = "Factory reset enable"
+
+[[registers]]
+address = 51
+type = "u16"
+name = "Grid standard"
+
+[[registers]]
+address = 57
+type = "u16"
+name = "PowerWH factor"
+
+# ----- Run state / day/total energy (FC03, R) -----
+[[registers]]
+address = 59
+type = "u16"
+name = "Run state"
+
+[[registers]]
+address = 60
+type = "s16"
+name = "Day active energy"
+
+[[registers]]
+address = 61
+type = "s16"
+name = "Day reactive energy"
+
+[[registers]]
+address = 62
+type = "u16"
+name = "Day grid work time"
+
+[[registers]]
+address = 63
+type = "s32"
+name = "Total active energy"
+
+[[registers]]
+address = 65
+type = "s32"
+name = "Total reactive energy"
+
+[[registers]]
+address = 67
+type = "u32"
+name = "Total work time"
+
+[[registers]]
+address = 69
+type = "u16"
+name = "Inverter efficiency"
+
+# ----- 3-phase grid voltages / currents / frequency (FC03, R) -----
+[[registers]]
+address = 70
+type = "u16"
+name = "Grid voltage AB"
+
+[[registers]]
+address = 71
+type = "u16"
+name = "Grid voltage BC"
+
+[[registers]]
+address = 72
+type = "u16"
+name = "Grid voltage AC"
+
+[[registers]]
+address = 73
+type = "u16"
+name = "Grid voltage A"
+
+[[registers]]
+address = 74
+type = "u16"
+name = "Grid voltage B"
+
+[[registers]]
+address = 75
+type = "u16"
+name = "Grid voltage C"
+
+[[registers]]
+address = 76
+type = "s16"
+name = "Grid current A"
+
+[[registers]]
+address = 77
+type = "s16"
+name = "Grid current B"
+
+[[registers]]
+address = 78
+type = "s16"
+name = "Grid current C"
+
+[[registers]]
+address = 79
+type = "u16"
+name = "Grid frequency"
+
+# ----- 3-phase output power (FC03, R) -----
+[[registers]]
+address = 80
+type = "s32"
+name = "Output active power"
+
+[[registers]]
+address = 82
+type = "s32"
+name = "Input active power"
+
+[[registers]]
+address = 84
+type = "u32"
+name = "Output apparent power"
+
+[[registers]]
+address = 86
+type = "s32"
+name = "Output active power detail"
+
+[[registers]]
+address = 88
+type = "s32"
+name = "Output reactive power"
+
+# ----- Temperatures (FC03, R, s16, 0.1°C) -----
+[[registers]]
+address = 90
+type = "s16"
+name = "DC radiator temperature"
+
+[[registers]]
+address = 91
+type = "s16"
+name = "IGBT temperature"
+
+[[registers]]
+address = 93
+type = "u16"
+name = "Power factor"
+
+[[registers]]
+address = 95
+type = "s16"
+name = "Environment temperature"
+
+# ----- PV history energy (FC03, R) -----
+[[registers]]
+address = 96
+type = "u32"
+name = "PV history energy"
+
+# ----- Fault and warning (FC03, R, u16) -----
+[[registers]]
+address = 100
+type = "u16"
+name = "Test flag bits"
+
+[[registers]]
+address = 101
+type = "u16"
+name = "Warning message word 1"
+
+[[registers]]
+address = 102
+type = "u16"
+name = "Warning message word 2"
+
+[[registers]]
+address = 103
+type = "u16"
+name = "Fault information word 1"
+
+[[registers]]
+address = 104
+type = "u16"
+name = "Fault information word 2"
+
+[[registers]]
+address = 105
+type = "u16"
+name = "Fault information word 3"
+
+[[registers]]
+address = 106
+type = "u16"
+name = "Fault information word 4"
+
+[[registers]]
+address = 107
+type = "u16"
+name = "Corrected AH"
+
+# ----- Day PV energy + DC MPPT inputs (FC03, R) -----
+[[registers]]
+address = 108
+type = "u16"
+name = "Day PV energy"
+
+[[registers]]
+address = 109
+type = "u16"
+name = "DC voltage 1"
+
+[[registers]]
+address = 110
+type = "s16"
+name = "DC current 1"
+
+[[registers]]
+address = 111
+type = "u16"
+name = "DC voltage 2"
+
+[[registers]]
+address = 112
+type = "s16"
+name = "DC current 2"
+
+[[registers]]
+address = 113
+type = "u16"
+name = "DC voltage 3"
+
+[[registers]]
+address = 114
+type = "s16"
+name = "DC current 3"
+
+[[registers]]
+address = 115
+type = "u16"
+name = "DC voltage 4"
+
+[[registers]]
+address = 116
+type = "s16"
+name = "DC current 4"
+
+# ----- Split-phase voltages (FC03, R, u16, 0.1V) -----
+[[registers]]
+address = 150
+type = "u16"
+name = "Grid side voltage L1-N"
+
+[[registers]]
+address = 151
+type = "u16"
+name = "Grid side voltage L2-N"
+
+[[registers]]
+address = 152
+type = "u16"
+name = "Grid side voltage L1-L2"
+
+[[registers]]
+address = 154
+type = "u16"
+name = "Inverter output voltage L1-N"
+
+[[registers]]
+address = 155
+type = "u16"
+name = "Inverter output voltage L2-N"
+
+[[registers]]
+address = 156
+type = "u16"
+name = "Inverter output voltage L1-L2"
+
+[[registers]]
+address = 157
+type = "u16"
+name = "Load voltage L1"
+
+[[registers]]
+address = 158
+type = "u16"
+name = "Load voltage L2"
+
+# ----- Split-phase currents (FC03, R, s16, 0.01A) -----
+[[registers]]
+address = 160
+type = "s16"
+name = "Grid side current L1"
+
+[[registers]]
+address = 161
+type = "s16"
+name = "Grid side current L2"
+
+[[registers]]
+address = 164
+type = "s16"
+name = "Inverter output current L1"
+
+[[registers]]
+address = 165
+type = "s16"
+name = "Inverter output current L2"
+
+# ----- Split-phase powers (FC03, R, s16, 1W) -----
+[[registers]]
+address = 167
+type = "s16"
+name = "Grid side L1 power"
+
+[[registers]]
+address = 168
+type = "s16"
+name = "Grid side L2 power"
+
+[[registers]]
+address = 169
+type = "s16"
+name = "Grid side total power"
+
+[[registers]]
+address = 175
+type = "s16"
+name = "Inverter output total power"
+
+[[registers]]
+address = 178
+type = "s16"
+name = "Load side total power"
+
+# ----- Battery (FC03, R) -----
+[[registers]]
+address = 182
+type = "s16"
+name = "Battery temperature"
+
+[[registers]]
+address = 183
+type = "u16"
+name = "Battery voltage"
+
+[[registers]]
+address = 184
+type = "u16"
+name = "Battery capacity"
+
+# ----- PV input power (FC03, R, u16, 1W) -----
+[[registers]]
+address = 186
+type = "u16"
+name = "PV1 input power"
+
+[[registers]]
+address = 187
+type = "u16"
+name = "PV2 input power"
+
+[[registers]]
+address = 188
+type = "u16"
+name = "PV3 input power"
+
+[[registers]]
+address = 189
+type = "u16"
+name = "PV4 input power"
+
+# ----- Battery power / frequency (FC03, R) -----
+[[registers]]
+address = 190
+type = "s16"
+name = "Battery output power"
+
+[[registers]]
+address = 191
+type = "s16"
+name = "Battery output current"
+
+[[registers]]
+address = 192
+type = "u16"
+name = "Load frequency"
+
+[[registers]]
+address = 193
+type = "u16"
+name = "Inverter output frequency"
+
+# ----- Input and load energy (FC03, R) -----
+[[registers]]
+address = 198
+type = "u32"
+name = "Input active power"
+
+[[registers]]
+address = 200
+type = "u16"
+name = "Day load energy"
+
+[[registers]]
+address = 201
+type = "u32"
+name = "History load energy"
+
+[[registers]]
+address = 203
+type = "s32"
+name = "Meter active power"
+
+[[registers]]
+address = 205
+type = "u16"
+name = "Day grid sell energy"
+
+[[registers]]
+address = 206
+type = "u32"
+name = "History grid sell energy"
+
+[[registers]]
+address = 208
+type = "u16"
+name = "Day grid buy energy"
+
+[[registers]]
+address = 209
+type = "u32"
+name = "History grid buy energy"

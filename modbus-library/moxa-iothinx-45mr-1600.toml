@@ -1,0 +1,113 @@
+# Moxa ioThinx 45MR-1600 — 16-channel DI (PNP sink)
+#
+# Source: ioThinx 4510 Series User's Manual V2.1, August 2019, Appendix A
+# Protocol: Modbus/TCP via ioThinx 4510 adapter, port 502
+#
+# IMPORTANT: Addresses below are MODULE-RELATIVE. Actual PDU address = slot_base + relative_address.
+# Slot base depends on which slot this module occupies in the ioThinx 4510 chassis.
+# Only ch0-3 support event counter mode; ch4-15 are standard DI only.
+#
+# FC01 (coil R/W): diCounterStatus ch0-3 (4 BOOL, 0=Pause 1=Run),
+#   diCounterOverflowFlagClear ch0-3 (4 BOOL, W=1 to clear)
+# FC02 (discrete input R): diStatus ch0-15 (16 BOOL, 0=OFF 1=ON),
+#   diMode ch0-15 (16 BOOL, 0=DI 1=Counter), diCounterOverflowFlag ch0-3 (4 BOOL, 0=Normal 1=Overflow)
+# FC03 (holding R/W): see [[registers]] below
+# FC04 (input R): diStatusAll (1 WORD bitmask ch0-15), diCounterOverflowFlagAll (1 WORD bitmask ch0-3),
+#   diModeAll (1 WORD bitmask ch0-15)
+
+vendor = "Moxa"
+model = "ioThinx 45MR-1600"
+description = "16-DI PNP sink input ioThinx 45MR slot module. Addresses are module-relative; actual PDU address = slot_base + relative_address (slot base assigned dynamically by ioThinx 4510 chassis). Only ch0-3 support event counter mode; ch4-15 are DI-only. FC01: diCounterStatus ch0-3 (0=Pause 1=Run), diCounterOverflowFlagClear ch0-3 (W=1 to clear). FC02: diStatus ch0-15, diMode ch0-15 (0=DI 1=Counter), diCounterOverflowFlag ch0-3. FC03: diCounterValue ch0-3 u64 4-words/ch (rel 0-15), diCounterStatusAll bitmask (rel 16), diCounterOverflowFlagClearAll (rel 17). FC04: diStatusAll (1 WORD), diCounterOverflowFlagAll (1 WORD), diModeAll (1 WORD)."
+
+# ===== FC03 Holding Registers (module-relative addresses) =====
+
+# DI counter value ch0-3 (u64 per channel, 4 x u16 words each, rel 0-15)
+[[registers]]
+address = 0
+type = "u16"
+name = "diCounterValue ch0 word[0] (u64 hi-DWORD hi-word; R)"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "diCounterValue ch0 word[1] (u64 hi-DWORD lo-word)"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "diCounterValue ch0 word[2] (u64 lo-DWORD hi-word)"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "diCounterValue ch0 word[3] (u64 lo-DWORD lo-word)"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "diCounterValue ch1 word[0] (u64 hi-DWORD hi-word)"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "diCounterValue ch1 word[1]"
+
+[[registers]]
+address = 6
+type = "u16"
+name = "diCounterValue ch1 word[2]"
+
+[[registers]]
+address = 7
+type = "u16"
+name = "diCounterValue ch1 word[3]"
+
+[[registers]]
+address = 8
+type = "u16"
+name = "diCounterValue ch2 word[0] (u64 hi-DWORD hi-word)"
+
+[[registers]]
+address = 9
+type = "u16"
+name = "diCounterValue ch2 word[1]"
+
+[[registers]]
+address = 10
+type = "u16"
+name = "diCounterValue ch2 word[2]"
+
+[[registers]]
+address = 11
+type = "u16"
+name = "diCounterValue ch2 word[3]"
+
+[[registers]]
+address = 12
+type = "u16"
+name = "diCounterValue ch3 word[0] (u64 hi-DWORD hi-word)"
+
+[[registers]]
+address = 13
+type = "u16"
+name = "diCounterValue ch3 word[1]"
+
+[[registers]]
+address = 14
+type = "u16"
+name = "diCounterValue ch3 word[2]"
+
+[[registers]]
+address = 15
+type = "u16"
+name = "diCounterValue ch3 word[3] (u64 lo-DWORD lo-word)"
+
+[[registers]]
+address = 16
+type = "u16"
+name = "diCounterStatusAll (bitmask bit0-3=ch0-3; 0=Pause 1=Run; R/W)"
+
+[[registers]]
+address = 17
+type = "u16"
+name = "diCounterOverflowFlagClearAll (W=1 to clear all overflow flags; R/W)"

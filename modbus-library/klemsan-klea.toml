@@ -1,0 +1,2823 @@
+# Klemsan KLEA Network Energy Analyzer (Modbus RTU RS-485)
+#
+# Source: klemsan-klea-network-energy-analyzer-manual-en.pdf
+# Protocol: Modbus RTU; FC03 read, FC06 write single, FC10 write multiple, FC14 read file record
+# All registers 32-bit (2 Modbus words each); addresses increment by +2 per 32-bit register,
+#   +4 per 64-bit register. Big-endian word order (high word at lower address).
+# Data types: f32 = IEEE 754 float; u32 = unsigned 32-bit int; s32 = signed 32-bit int.
+# 64-bit double registers split into two u32 entries: (high 32-bit) at base, (low 32-bit) at base+2.
+# Starting address for measured data: 0. Settings: 2000+. Clear: 1898+.
+# To save settings to non-volatile memory: write 0x0000 to register 1998, then 0x0001 to 1999
+#   within 60 seconds of last setting change.
+# Archive records via FC14 (Read File Record): hourly files 1-1920, daily 5001-5240, monthly 10001-10036.
+# Each archive block has 68 parameters (32-bit each): timestamp, then L1/L2/L3 avg/min/max V/I/P/Q/S/cosΦ/PF,
+#   line voltages V12/V23/V31 avg/min/max, frequency avg/min/max, T1 energy import/export active+reactive.
+
+vendor = "Klemsan"
+model = "KLEA"
+description = "3-phase energy analyzer, Modbus RTU RS-485. All 32-bit IEEE 754 float or 32-bit/64-bit int; each 32-bit value = 2 Modbus words (addr stride +2). FC03 read, FC06/FC10 write. Global at addr 0-26: V-avg, I-total, P/Q/S-total, cosΦ/PF-avg, VLL1/2/3/avg, IN, THDV/THDI-total. Per-phase at 28-150 (L1), 152-274 (L2), 276-398 (L3): V/I/P/Q/S/cosΦ/PF/F/THDV/THDI + voltage harmonics (1st-51st odd, 26 entries) + current harmonics (1st-51st odd, 26 entries). Alarm flags 400-402. Tariff meters T1/T1_1/T1_2/T1_3/T2 import/export active+reactive (32-bit float, kWh/kVArh) at 404-682. Demand peak (current month + 3 prior months) at 684-938. DI counters 940-958. Temp/battery/time 944-948. Alarm statuses (50 alarms) at 960-1358. Archive file numbers 1360-1364. Tariff indices (64-bit double) at 1366-1444. Phase energies (64-bit) at 1458-1694. Digital output logs 1698-1808. DI energy counters 1810-1836. Clear commands 1898-1916. Settings at 2000-2390: CTR/VTR, connection, demand period, energy tariff presets, digital outputs/inputs, baud rate, slave ID, alarm limits (V-LN/LL, I, P, Q, S, IN, PF, cosΦ, F, temp, V-THD, I-THD), device, optional DIO/AO."
+
+# ===== GLOBAL MEASUREMENTS (all f32, RO) =====
+
+[[registers]]
+address = 0
+type = "f32"
+name = "Average voltage (V)"
+
+[[registers]]
+address = 2
+type = "f32"
+name = "Total current (A)"
+
+[[registers]]
+address = 4
+type = "f32"
+name = "Total active power (W)"
+
+[[registers]]
+address = 6
+type = "f32"
+name = "Total reactive power (VAr)"
+
+[[registers]]
+address = 8
+type = "f32"
+name = "Total apparent power (VA)"
+
+[[registers]]
+address = 10
+type = "f32"
+name = "Average CosΦ"
+
+[[registers]]
+address = 12
+type = "f32"
+name = "Average power factor"
+
+[[registers]]
+address = 14
+type = "f32"
+name = "Voltage V1-2 (V)"
+
+[[registers]]
+address = 16
+type = "f32"
+name = "Voltage V2-3 (V)"
+
+[[registers]]
+address = 18
+type = "f32"
+name = "Voltage V3-1 (V)"
+
+[[registers]]
+address = 20
+type = "f32"
+name = "Average line-to-line voltage (V)"
+
+[[registers]]
+address = 22
+type = "f32"
+name = "Neutral current (A)"
+
+[[registers]]
+address = 24
+type = "f32"
+name = "Total THDV (%)"
+
+[[registers]]
+address = 26
+type = "f32"
+name = "Total THDI (%)"
+
+# ===== PHASE 1 (L1) =====
+
+[[registers]]
+address = 28
+type = "f32"
+name = "L1 voltage (V)"
+
+[[registers]]
+address = 30
+type = "f32"
+name = "L1 current (A)"
+
+[[registers]]
+address = 32
+type = "f32"
+name = "L1 active power (W)"
+
+[[registers]]
+address = 34
+type = "f32"
+name = "L1 reactive power (VAr)"
+
+[[registers]]
+address = 36
+type = "f32"
+name = "L1 apparent power (VA)"
+
+[[registers]]
+address = 38
+type = "f32"
+name = "L1 CosΦ"
+
+[[registers]]
+address = 40
+type = "f32"
+name = "L1 power factor"
+
+[[registers]]
+address = 42
+type = "f32"
+name = "L1 frequency (Hz)"
+
+[[registers]]
+address = 44
+type = "f32"
+name = "L1 THDV (%)"
+
+[[registers]]
+address = 46
+type = "f32"
+name = "L1 THDI (%)"
+
+[[registers]]
+address = 48
+type = "f32"
+name = "L1 voltage harmonic 1st (%)"
+
+[[registers]]
+address = 50
+type = "f32"
+name = "L1 voltage harmonic 3rd (%)"
+
+[[registers]]
+address = 52
+type = "f32"
+name = "L1 voltage harmonic 5th (%)"
+
+[[registers]]
+address = 54
+type = "f32"
+name = "L1 voltage harmonic 7th (%)"
+
+[[registers]]
+address = 56
+type = "f32"
+name = "L1 voltage harmonic 9th (%)"
+
+[[registers]]
+address = 58
+type = "f32"
+name = "L1 voltage harmonic 11th (%)"
+
+[[registers]]
+address = 60
+type = "f32"
+name = "L1 voltage harmonic 13th (%)"
+
+[[registers]]
+address = 62
+type = "f32"
+name = "L1 voltage harmonic 15th (%)"
+
+[[registers]]
+address = 64
+type = "f32"
+name = "L1 voltage harmonic 17th (%)"
+
+[[registers]]
+address = 66
+type = "f32"
+name = "L1 voltage harmonic 19th (%)"
+
+[[registers]]
+address = 68
+type = "f32"
+name = "L1 voltage harmonic 21st (%)"
+
+[[registers]]
+address = 70
+type = "f32"
+name = "L1 voltage harmonic 23rd (%)"
+
+[[registers]]
+address = 72
+type = "f32"
+name = "L1 voltage harmonic 25th (%)"
+
+[[registers]]
+address = 74
+type = "f32"
+name = "L1 voltage harmonic 27th (%)"
+
+[[registers]]
+address = 76
+type = "f32"
+name = "L1 voltage harmonic 29th (%)"
+
+[[registers]]
+address = 78
+type = "f32"
+name = "L1 voltage harmonic 31st (%)"
+
+[[registers]]
+address = 80
+type = "f32"
+name = "L1 voltage harmonic 33rd (%)"
+
+[[registers]]
+address = 82
+type = "f32"
+name = "L1 voltage harmonic 35th (%)"
+
+[[registers]]
+address = 84
+type = "f32"
+name = "L1 voltage harmonic 37th (%)"
+
+[[registers]]
+address = 86
+type = "f32"
+name = "L1 voltage harmonic 39th (%)"
+
+[[registers]]
+address = 88
+type = "f32"
+name = "L1 voltage harmonic 41st (%)"
+
+[[registers]]
+address = 90
+type = "f32"
+name = "L1 voltage harmonic 43rd (%)"
+
+[[registers]]
+address = 92
+type = "f32"
+name = "L1 voltage harmonic 45th (%)"
+
+[[registers]]
+address = 94
+type = "f32"
+name = "L1 voltage harmonic 47th (%)"
+
+[[registers]]
+address = 96
+type = "f32"
+name = "L1 voltage harmonic 49th (%)"
+
+[[registers]]
+address = 98
+type = "f32"
+name = "L1 voltage harmonic 51st (%)"
+
+[[registers]]
+address = 100
+type = "f32"
+name = "L1 current harmonic 1st (%)"
+
+[[registers]]
+address = 102
+type = "f32"
+name = "L1 current harmonic 3rd (%)"
+
+[[registers]]
+address = 104
+type = "f32"
+name = "L1 current harmonic 5th (%)"
+
+[[registers]]
+address = 106
+type = "f32"
+name = "L1 current harmonic 7th (%)"
+
+[[registers]]
+address = 108
+type = "f32"
+name = "L1 current harmonic 9th (%)"
+
+[[registers]]
+address = 110
+type = "f32"
+name = "L1 current harmonic 11th (%)"
+
+[[registers]]
+address = 112
+type = "f32"
+name = "L1 current harmonic 13th (%)"
+
+[[registers]]
+address = 114
+type = "f32"
+name = "L1 current harmonic 15th (%)"
+
+[[registers]]
+address = 116
+type = "f32"
+name = "L1 current harmonic 17th (%)"
+
+[[registers]]
+address = 118
+type = "f32"
+name = "L1 current harmonic 19th (%)"
+
+[[registers]]
+address = 120
+type = "f32"
+name = "L1 current harmonic 21st (%)"
+
+[[registers]]
+address = 122
+type = "f32"
+name = "L1 current harmonic 23rd (%)"
+
+[[registers]]
+address = 124
+type = "f32"
+name = "L1 current harmonic 25th (%)"
+
+[[registers]]
+address = 126
+type = "f32"
+name = "L1 current harmonic 27th (%)"
+
+[[registers]]
+address = 128
+type = "f32"
+name = "L1 current harmonic 29th (%)"
+
+[[registers]]
+address = 130
+type = "f32"
+name = "L1 current harmonic 31st (%)"
+
+[[registers]]
+address = 132
+type = "f32"
+name = "L1 current harmonic 33rd (%)"
+
+[[registers]]
+address = 134
+type = "f32"
+name = "L1 current harmonic 35th (%)"
+
+[[registers]]
+address = 136
+type = "f32"
+name = "L1 current harmonic 37th (%)"
+
+[[registers]]
+address = 138
+type = "f32"
+name = "L1 current harmonic 39th (%)"
+
+[[registers]]
+address = 140
+type = "f32"
+name = "L1 current harmonic 41st (%)"
+
+[[registers]]
+address = 142
+type = "f32"
+name = "L1 current harmonic 43rd (%)"
+
+[[registers]]
+address = 144
+type = "f32"
+name = "L1 current harmonic 45th (%)"
+
+[[registers]]
+address = 146
+type = "f32"
+name = "L1 current harmonic 47th (%)"
+
+[[registers]]
+address = 148
+type = "f32"
+name = "L1 current harmonic 49th (%)"
+
+[[registers]]
+address = 150
+type = "f32"
+name = "L1 current harmonic 51st (%)"
+
+# ===== PHASE 2 (L2) =====
+
+[[registers]]
+address = 152
+type = "f32"
+name = "L2 voltage (V)"
+
+[[registers]]
+address = 154
+type = "f32"
+name = "L2 current (A)"
+
+[[registers]]
+address = 156
+type = "f32"
+name = "L2 active power (W)"
+
+[[registers]]
+address = 158
+type = "f32"
+name = "L2 reactive power (VAr)"
+
+[[registers]]
+address = 160
+type = "f32"
+name = "L2 apparent power (VA)"
+
+[[registers]]
+address = 162
+type = "f32"
+name = "L2 CosΦ"
+
+[[registers]]
+address = 164
+type = "f32"
+name = "L2 power factor"
+
+[[registers]]
+address = 166
+type = "f32"
+name = "L2 frequency (Hz)"
+
+[[registers]]
+address = 168
+type = "f32"
+name = "L2 THDV (%)"
+
+[[registers]]
+address = 170
+type = "f32"
+name = "L2 THDI (%)"
+
+[[registers]]
+address = 172
+type = "f32"
+name = "L2 voltage harmonic 1st (%)"
+
+[[registers]]
+address = 174
+type = "f32"
+name = "L2 voltage harmonic 3rd (%)"
+
+[[registers]]
+address = 176
+type = "f32"
+name = "L2 voltage harmonic 5th (%)"
+
+[[registers]]
+address = 178
+type = "f32"
+name = "L2 voltage harmonic 7th (%)"
+
+[[registers]]
+address = 180
+type = "f32"
+name = "L2 voltage harmonic 9th (%)"
+
+[[registers]]
+address = 182
+type = "f32"
+name = "L2 voltage harmonic 11th (%)"
+
+[[registers]]
+address = 184
+type = "f32"
+name = "L2 voltage harmonic 13th (%)"
+
+[[registers]]
+address = 186
+type = "f32"
+name = "L2 voltage harmonic 15th (%)"
+
+[[registers]]
+address = 188
+type = "f32"
+name = "L2 voltage harmonic 17th (%)"
+
+[[registers]]
+address = 190
+type = "f32"
+name = "L2 voltage harmonic 19th (%)"
+
+[[registers]]
+address = 192
+type = "f32"
+name = "L2 voltage harmonic 21st (%)"
+
+[[registers]]
+address = 194
+type = "f32"
+name = "L2 voltage harmonic 23rd (%)"
+
+[[registers]]
+address = 196
+type = "f32"
+name = "L2 voltage harmonic 25th (%)"
+
+[[registers]]
+address = 198
+type = "f32"
+name = "L2 voltage harmonic 27th (%)"
+
+[[registers]]
+address = 200
+type = "f32"
+name = "L2 voltage harmonic 29th (%)"
+
+[[registers]]
+address = 202
+type = "f32"
+name = "L2 voltage harmonic 31st (%)"
+
+[[registers]]
+address = 204
+type = "f32"
+name = "L2 voltage harmonic 33rd (%)"
+
+[[registers]]
+address = 206
+type = "f32"
+name = "L2 voltage harmonic 35th (%)"
+
+[[registers]]
+address = 208
+type = "f32"
+name = "L2 voltage harmonic 37th (%)"
+
+[[registers]]
+address = 210
+type = "f32"
+name = "L2 voltage harmonic 39th (%)"
+
+[[registers]]
+address = 212
+type = "f32"
+name = "L2 voltage harmonic 41st (%)"
+
+[[registers]]
+address = 214
+type = "f32"
+name = "L2 voltage harmonic 43rd (%)"
+
+[[registers]]
+address = 216
+type = "f32"
+name = "L2 voltage harmonic 45th (%)"
+
+[[registers]]
+address = 218
+type = "f32"
+name = "L2 voltage harmonic 47th (%)"
+
+[[registers]]
+address = 220
+type = "f32"
+name = "L2 voltage harmonic 49th (%)"
+
+[[registers]]
+address = 222
+type = "f32"
+name = "L2 voltage harmonic 51st (%)"
+
+[[registers]]
+address = 224
+type = "f32"
+name = "L2 current harmonic 1st (%)"
+
+[[registers]]
+address = 226
+type = "f32"
+name = "L2 current harmonic 3rd (%)"
+
+[[registers]]
+address = 228
+type = "f32"
+name = "L2 current harmonic 5th (%)"
+
+[[registers]]
+address = 230
+type = "f32"
+name = "L2 current harmonic 7th (%)"
+
+[[registers]]
+address = 232
+type = "f32"
+name = "L2 current harmonic 9th (%)"
+
+[[registers]]
+address = 234
+type = "f32"
+name = "L2 current harmonic 11th (%)"
+
+[[registers]]
+address = 236
+type = "f32"
+name = "L2 current harmonic 13th (%)"
+
+[[registers]]
+address = 238
+type = "f32"
+name = "L2 current harmonic 15th (%)"
+
+[[registers]]
+address = 240
+type = "f32"
+name = "L2 current harmonic 17th (%)"
+
+[[registers]]
+address = 242
+type = "f32"
+name = "L2 current harmonic 19th (%)"
+
+[[registers]]
+address = 244
+type = "f32"
+name = "L2 current harmonic 21st (%)"
+
+[[registers]]
+address = 246
+type = "f32"
+name = "L2 current harmonic 23rd (%)"
+
+[[registers]]
+address = 248
+type = "f32"
+name = "L2 current harmonic 25th (%)"
+
+[[registers]]
+address = 250
+type = "f32"
+name = "L2 current harmonic 27th (%)"
+
+[[registers]]
+address = 252
+type = "f32"
+name = "L2 current harmonic 29th (%)"
+
+[[registers]]
+address = 254
+type = "f32"
+name = "L2 current harmonic 31st (%)"
+
+[[registers]]
+address = 256
+type = "f32"
+name = "L2 current harmonic 33rd (%)"
+
+[[registers]]
+address = 258
+type = "f32"
+name = "L2 current harmonic 35th (%)"
+
+[[registers]]
+address = 260
+type = "f32"
+name = "L2 current harmonic 37th (%)"
+
+[[registers]]
+address = 262
+type = "f32"
+name = "L2 current harmonic 39th (%)"
+
+[[registers]]
+address = 264
+type = "f32"
+name = "L2 current harmonic 41st (%)"
+
+[[registers]]
+address = 266
+type = "f32"
+name = "L2 current harmonic 43rd (%)"
+
+[[registers]]
+address = 268
+type = "f32"
+name = "L2 current harmonic 45th (%)"
+
+[[registers]]
+address = 270
+type = "f32"
+name = "L2 current harmonic 47th (%)"
+
+[[registers]]
+address = 272
+type = "f32"
+name = "L2 current harmonic 49th (%)"
+
+[[registers]]
+address = 274
+type = "f32"
+name = "L2 current harmonic 51st (%)"
+
+# ===== PHASE 3 (L3) =====
+
+[[registers]]
+address = 276
+type = "f32"
+name = "L3 voltage (V)"
+
+[[registers]]
+address = 278
+type = "f32"
+name = "L3 current (A)"
+
+[[registers]]
+address = 280
+type = "f32"
+name = "L3 active power (W)"
+
+[[registers]]
+address = 282
+type = "f32"
+name = "L3 reactive power (VAr)"
+
+[[registers]]
+address = 284
+type = "f32"
+name = "L3 apparent power (VA)"
+
+[[registers]]
+address = 286
+type = "f32"
+name = "L3 CosΦ"
+
+[[registers]]
+address = 288
+type = "f32"
+name = "L3 power factor"
+
+[[registers]]
+address = 290
+type = "f32"
+name = "L3 frequency (Hz)"
+
+[[registers]]
+address = 292
+type = "f32"
+name = "L3 THDV (%)"
+
+[[registers]]
+address = 294
+type = "f32"
+name = "L3 THDI (%)"
+
+[[registers]]
+address = 296
+type = "f32"
+name = "L3 voltage harmonic 1st (%)"
+
+[[registers]]
+address = 298
+type = "f32"
+name = "L3 voltage harmonic 3rd (%)"
+
+[[registers]]
+address = 300
+type = "f32"
+name = "L3 voltage harmonic 5th (%)"
+
+[[registers]]
+address = 302
+type = "f32"
+name = "L3 voltage harmonic 7th (%)"
+
+[[registers]]
+address = 304
+type = "f32"
+name = "L3 voltage harmonic 9th (%)"
+
+[[registers]]
+address = 306
+type = "f32"
+name = "L3 voltage harmonic 11th (%)"
+
+[[registers]]
+address = 308
+type = "f32"
+name = "L3 voltage harmonic 13th (%)"
+
+[[registers]]
+address = 310
+type = "f32"
+name = "L3 voltage harmonic 15th (%)"
+
+[[registers]]
+address = 312
+type = "f32"
+name = "L3 voltage harmonic 17th (%)"
+
+[[registers]]
+address = 314
+type = "f32"
+name = "L3 voltage harmonic 19th (%)"
+
+[[registers]]
+address = 316
+type = "f32"
+name = "L3 voltage harmonic 21st (%)"
+
+[[registers]]
+address = 318
+type = "f32"
+name = "L3 voltage harmonic 23rd (%)"
+
+[[registers]]
+address = 320
+type = "f32"
+name = "L3 voltage harmonic 25th (%)"
+
+[[registers]]
+address = 322
+type = "f32"
+name = "L3 voltage harmonic 27th (%)"
+
+[[registers]]
+address = 324
+type = "f32"
+name = "L3 voltage harmonic 29th (%)"
+
+[[registers]]
+address = 326
+type = "f32"
+name = "L3 voltage harmonic 31st (%)"
+
+[[registers]]
+address = 328
+type = "f32"
+name = "L3 voltage harmonic 33rd (%)"
+
+[[registers]]
+address = 330
+type = "f32"
+name = "L3 voltage harmonic 35th (%)"
+
+[[registers]]
+address = 332
+type = "f32"
+name = "L3 voltage harmonic 37th (%)"
+
+[[registers]]
+address = 334
+type = "f32"
+name = "L3 voltage harmonic 39th (%)"
+
+[[registers]]
+address = 336
+type = "f32"
+name = "L3 voltage harmonic 41st (%)"
+
+[[registers]]
+address = 338
+type = "f32"
+name = "L3 voltage harmonic 43rd (%)"
+
+[[registers]]
+address = 340
+type = "f32"
+name = "L3 voltage harmonic 45th (%)"
+
+[[registers]]
+address = 342
+type = "f32"
+name = "L3 voltage harmonic 47th (%)"
+
+[[registers]]
+address = 344
+type = "f32"
+name = "L3 voltage harmonic 49th (%)"
+
+[[registers]]
+address = 346
+type = "f32"
+name = "L3 voltage harmonic 51st (%)"
+
+[[registers]]
+address = 348
+type = "f32"
+name = "L3 current harmonic 1st (%)"
+
+[[registers]]
+address = 350
+type = "f32"
+name = "L3 current harmonic 3rd (%)"
+
+[[registers]]
+address = 352
+type = "f32"
+name = "L3 current harmonic 5th (%)"
+
+[[registers]]
+address = 354
+type = "f32"
+name = "L3 current harmonic 7th (%)"
+
+[[registers]]
+address = 356
+type = "f32"
+name = "L3 current harmonic 9th (%)"
+
+[[registers]]
+address = 358
+type = "f32"
+name = "L3 current harmonic 11th (%)"
+
+[[registers]]
+address = 360
+type = "f32"
+name = "L3 current harmonic 13th (%)"
+
+[[registers]]
+address = 362
+type = "f32"
+name = "L3 current harmonic 15th (%)"
+
+[[registers]]
+address = 364
+type = "f32"
+name = "L3 current harmonic 17th (%)"
+
+[[registers]]
+address = 366
+type = "f32"
+name = "L3 current harmonic 19th (%)"
+
+[[registers]]
+address = 368
+type = "f32"
+name = "L3 current harmonic 21st (%)"
+
+[[registers]]
+address = 370
+type = "f32"
+name = "L3 current harmonic 23rd (%)"
+
+[[registers]]
+address = 372
+type = "f32"
+name = "L3 current harmonic 25th (%)"
+
+[[registers]]
+address = 374
+type = "f32"
+name = "L3 current harmonic 27th (%)"
+
+[[registers]]
+address = 376
+type = "f32"
+name = "L3 current harmonic 29th (%)"
+
+[[registers]]
+address = 378
+type = "f32"
+name = "L3 current harmonic 31st (%)"
+
+[[registers]]
+address = 380
+type = "f32"
+name = "L3 current harmonic 33rd (%)"
+
+[[registers]]
+address = 382
+type = "f32"
+name = "L3 current harmonic 35th (%)"
+
+[[registers]]
+address = 384
+type = "f32"
+name = "L3 current harmonic 37th (%)"
+
+[[registers]]
+address = 386
+type = "f32"
+name = "L3 current harmonic 39th (%)"
+
+[[registers]]
+address = 388
+type = "f32"
+name = "L3 current harmonic 41st (%)"
+
+[[registers]]
+address = 390
+type = "f32"
+name = "L3 current harmonic 43rd (%)"
+
+[[registers]]
+address = 392
+type = "f32"
+name = "L3 current harmonic 45th (%)"
+
+[[registers]]
+address = 394
+type = "f32"
+name = "L3 current harmonic 47th (%)"
+
+[[registers]]
+address = 396
+type = "f32"
+name = "L3 current harmonic 49th (%)"
+
+[[registers]]
+address = 398
+type = "f32"
+name = "L3 current harmonic 51st (%)"
+
+# ===== ALARM FLAGS =====
+
+[[registers]]
+address = 400
+type = "u32"
+name = "Alarm flags word 1 (bits: V1/V2/V3/IN/THDV2/THDV3/I1/I2/I3/V1H/V2H/V3H/VLL1/VLL2/VLL3/P1/P2/P3/IN2/Q1/Q2/Q3/S1/S2/S3/CosΦ1/CosΦ2/CosΦ3/PF1/PF2)"
+
+[[registers]]
+address = 402
+type = "u32"
+name = "Alarm flags word 2 (bits: PF3/F1/F2/F3/THDI1/THDI2/THDI3/I1H/I2H/I3H/BattV)"
+
+# ===== TARIFF METERS 32-bit float (kWh / kVArh) =====
+
+[[registers]]
+address = 404
+type = "f32"
+name = "T1 import active index (kWh)"
+
+[[registers]]
+address = 406
+type = "f32"
+name = "T1 import active current hour (kWh)"
+
+[[registers]]
+address = 408
+type = "f32"
+name = "T1 import active previous hour (kWh)"
+
+[[registers]]
+address = 410
+type = "f32"
+name = "T1 import active current day (kWh)"
+
+[[registers]]
+address = 412
+type = "f32"
+name = "T1 import active previous day (kWh)"
+
+[[registers]]
+address = 414
+type = "f32"
+name = "T1 import active current month (kWh)"
+
+[[registers]]
+address = 416
+type = "f32"
+name = "T1 import active previous month (kWh)"
+
+[[registers]]
+address = 418
+type = "f32"
+name = "T1 export active index (kWh)"
+
+[[registers]]
+address = 420
+type = "f32"
+name = "T1 export active current hour (kWh)"
+
+[[registers]]
+address = 422
+type = "f32"
+name = "T1 export active previous hour (kWh)"
+
+[[registers]]
+address = 424
+type = "f32"
+name = "T1 export active current day (kWh)"
+
+[[registers]]
+address = 426
+type = "f32"
+name = "T1 export active previous day (kWh)"
+
+[[registers]]
+address = 428
+type = "f32"
+name = "T1 export active current month (kWh)"
+
+[[registers]]
+address = 430
+type = "f32"
+name = "T1 export active previous month (kWh)"
+
+[[registers]]
+address = 432
+type = "f32"
+name = "T1 import reactive index (kVArh)"
+
+[[registers]]
+address = 434
+type = "f32"
+name = "T1 import reactive current hour (kVArh)"
+
+[[registers]]
+address = 436
+type = "f32"
+name = "T1 import reactive previous hour (kVArh)"
+
+[[registers]]
+address = 438
+type = "f32"
+name = "T1 import reactive current day (kVArh)"
+
+[[registers]]
+address = 440
+type = "f32"
+name = "T1 import reactive previous day (kVArh)"
+
+[[registers]]
+address = 442
+type = "f32"
+name = "T1 import reactive current month (kVArh)"
+
+[[registers]]
+address = 444
+type = "f32"
+name = "T1 import reactive previous month (kVArh)"
+
+[[registers]]
+address = 446
+type = "f32"
+name = "T1 export reactive index (kVArh)"
+
+[[registers]]
+address = 448
+type = "f32"
+name = "T1 export reactive current hour (kVArh)"
+
+[[registers]]
+address = 450
+type = "f32"
+name = "T1 export reactive previous hour (kVArh)"
+
+[[registers]]
+address = 452
+type = "f32"
+name = "T1 export reactive current day (kVArh)"
+
+[[registers]]
+address = 454
+type = "f32"
+name = "T1 export reactive previous day (kVArh)"
+
+[[registers]]
+address = 456
+type = "f32"
+name = "T1 export reactive current month (kVArh)"
+
+[[registers]]
+address = 458
+type = "f32"
+name = "T1 export reactive previous month (kVArh)"
+
+[[registers]]
+address = 460
+type = "f32"
+name = "T1 rate1 import active index (kWh)"
+
+[[registers]]
+address = 462
+type = "f32"
+name = "T1 rate1 import active current hour (kWh)"
+
+[[registers]]
+address = 464
+type = "f32"
+name = "T1 rate1 import active previous hour (kWh)"
+
+[[registers]]
+address = 466
+type = "f32"
+name = "T1 rate1 import active current day (kWh)"
+
+[[registers]]
+address = 468
+type = "f32"
+name = "T1 rate1 import active previous day (kWh)"
+
+[[registers]]
+address = 470
+type = "f32"
+name = "T1 rate1 import active current month (kWh)"
+
+[[registers]]
+address = 472
+type = "f32"
+name = "T1 rate1 import active previous month (kWh)"
+
+[[registers]]
+address = 474
+type = "f32"
+name = "T1 rate1 export active index (kWh)"
+
+[[registers]]
+address = 476
+type = "f32"
+name = "T1 rate1 export active current hour (kWh)"
+
+[[registers]]
+address = 478
+type = "f32"
+name = "T1 rate1 export active previous hour (kWh)"
+
+[[registers]]
+address = 480
+type = "f32"
+name = "T1 rate1 export active current day (kWh)"
+
+[[registers]]
+address = 482
+type = "f32"
+name = "T1 rate1 export active previous day (kWh)"
+
+[[registers]]
+address = 484
+type = "f32"
+name = "T1 rate1 export active current month (kWh)"
+
+[[registers]]
+address = 486
+type = "f32"
+name = "T1 rate1 export active previous month (kWh)"
+
+[[registers]]
+address = 488
+type = "f32"
+name = "T1 rate1 import reactive index (kVArh)"
+
+[[registers]]
+address = 490
+type = "f32"
+name = "T1 rate1 import reactive current hour (kVArh)"
+
+[[registers]]
+address = 492
+type = "f32"
+name = "T1 rate1 import reactive previous hour (kVArh)"
+
+[[registers]]
+address = 494
+type = "f32"
+name = "T1 rate1 import reactive current day (kVArh)"
+
+[[registers]]
+address = 496
+type = "f32"
+name = "T1 rate1 import reactive previous day (kVArh)"
+
+[[registers]]
+address = 498
+type = "f32"
+name = "T1 rate1 import reactive current month (kVArh)"
+
+[[registers]]
+address = 500
+type = "f32"
+name = "T1 rate1 import reactive previous month (kVArh)"
+
+[[registers]]
+address = 502
+type = "f32"
+name = "T1 rate1 export reactive index (kVArh)"
+
+[[registers]]
+address = 504
+type = "f32"
+name = "T1 rate1 export reactive current hour (kVArh)"
+
+[[registers]]
+address = 506
+type = "f32"
+name = "T1 rate1 export reactive previous hour (kVArh)"
+
+[[registers]]
+address = 508
+type = "f32"
+name = "T1 rate1 export reactive current day (kVArh)"
+
+[[registers]]
+address = 510
+type = "f32"
+name = "T1 rate1 export reactive previous day (kVArh)"
+
+[[registers]]
+address = 512
+type = "f32"
+name = "T1 rate1 export reactive current month (kVArh)"
+
+[[registers]]
+address = 514
+type = "f32"
+name = "T1 rate1 export reactive previous month (kVArh)"
+
+[[registers]]
+address = 516
+type = "f32"
+name = "T1 rate2 import active index (kWh)"
+
+[[registers]]
+address = 544
+type = "f32"
+name = "T1 rate2 import reactive index (kVArh)"
+
+[[registers]]
+address = 558
+type = "f32"
+name = "T1 rate2 export reactive index (kVArh)"
+
+[[registers]]
+address = 572
+type = "f32"
+name = "T1 rate3 import active index (kWh)"
+
+[[registers]]
+address = 600
+type = "f32"
+name = "T1 rate3 import reactive index (kVArh)"
+
+[[registers]]
+address = 614
+type = "f32"
+name = "T1 rate3 export reactive index (kVArh)"
+
+[[registers]]
+address = 628
+type = "f32"
+name = "T2 import active index (kWh)"
+
+[[registers]]
+address = 630
+type = "f32"
+name = "T2 import active current hour (kWh)"
+
+[[registers]]
+address = 632
+type = "f32"
+name = "T2 import active previous hour (kWh)"
+
+[[registers]]
+address = 634
+type = "f32"
+name = "T2 import active current day (kWh)"
+
+[[registers]]
+address = 636
+type = "f32"
+name = "T2 import active previous day (kWh)"
+
+[[registers]]
+address = 638
+type = "f32"
+name = "T2 import active current month (kWh)"
+
+[[registers]]
+address = 640
+type = "f32"
+name = "T2 import active previous month (kWh)"
+
+[[registers]]
+address = 642
+type = "f32"
+name = "T2 export active index (kWh)"
+
+[[registers]]
+address = 656
+type = "f32"
+name = "T2 import reactive index (kVArh)"
+
+[[registers]]
+address = 670
+type = "f32"
+name = "T2 export reactive index (kVArh)"
+
+[[registers]]
+address = 682
+type = "f32"
+name = "T2 export reactive previous month (kVArh)"
+
+# ===== DEMAND — current month peak values =====
+
+[[registers]]
+address = 684
+type = "f32"
+name = "Demand current month total active power (W)"
+
+[[registers]]
+address = 686
+type = "u32"
+name = "Demand current month total active power timestamp"
+
+[[registers]]
+address = 688
+type = "f32"
+name = "Demand current month total current (A)"
+
+[[registers]]
+address = 690
+type = "u32"
+name = "Demand current month total current timestamp"
+
+[[registers]]
+address = 692
+type = "f32"
+name = "Demand current month total reactive power (VAr)"
+
+[[registers]]
+address = 694
+type = "u32"
+name = "Demand current month total reactive power timestamp"
+
+[[registers]]
+address = 696
+type = "f32"
+name = "Demand current month total apparent power (VA)"
+
+[[registers]]
+address = 698
+type = "u32"
+name = "Demand current month total apparent power timestamp"
+
+[[registers]]
+address = 700
+type = "f32"
+name = "Demand current month L1 active power (W)"
+
+[[registers]]
+address = 702
+type = "u32"
+name = "Demand current month L1 active power timestamp"
+
+[[registers]]
+address = 704
+type = "f32"
+name = "Demand current month L1 current (A)"
+
+[[registers]]
+address = 706
+type = "u32"
+name = "Demand current month L1 current timestamp"
+
+[[registers]]
+address = 708
+type = "f32"
+name = "Demand current month L1 reactive power (VAr)"
+
+[[registers]]
+address = 710
+type = "u32"
+name = "Demand current month L1 reactive power timestamp"
+
+[[registers]]
+address = 712
+type = "f32"
+name = "Demand current month L1 apparent power (VA)"
+
+[[registers]]
+address = 714
+type = "u32"
+name = "Demand current month L1 apparent power timestamp"
+
+[[registers]]
+address = 716
+type = "f32"
+name = "Demand current month L2 active power (W)"
+
+[[registers]]
+address = 718
+type = "u32"
+name = "Demand current month L2 active power timestamp"
+
+[[registers]]
+address = 720
+type = "f32"
+name = "Demand current month L2 current (A)"
+
+[[registers]]
+address = 722
+type = "u32"
+name = "Demand current month L2 current timestamp"
+
+[[registers]]
+address = 724
+type = "f32"
+name = "Demand current month L2 reactive power (VAr)"
+
+[[registers]]
+address = 726
+type = "u32"
+name = "Demand current month L2 reactive power timestamp"
+
+[[registers]]
+address = 728
+type = "f32"
+name = "Demand current month L2 apparent power (VA)"
+
+[[registers]]
+address = 730
+type = "u32"
+name = "Demand current month L2 apparent power timestamp"
+
+[[registers]]
+address = 732
+type = "f32"
+name = "Demand current month L3 active power (W)"
+
+[[registers]]
+address = 734
+type = "u32"
+name = "Demand current month L3 active power timestamp"
+
+[[registers]]
+address = 736
+type = "f32"
+name = "Demand current month L3 current (A)"
+
+[[registers]]
+address = 738
+type = "u32"
+name = "Demand current month L3 current timestamp"
+
+[[registers]]
+address = 740
+type = "f32"
+name = "Demand current month L3 reactive power (VAr)"
+
+[[registers]]
+address = 742
+type = "u32"
+name = "Demand current month L3 reactive power timestamp"
+
+[[registers]]
+address = 744
+type = "f32"
+name = "Demand current month L3 apparent power (VA)"
+
+[[registers]]
+address = 746
+type = "u32"
+name = "Demand current month L3 apparent power timestamp"
+
+[[registers]]
+address = 748
+type = "f32"
+name = "Demand 1 month ago total active power (W)"
+
+[[registers]]
+address = 750
+type = "u32"
+name = "Demand 1 month ago total active power timestamp"
+
+[[registers]]
+address = 752
+type = "f32"
+name = "Demand 1 month ago total current (A)"
+
+[[registers]]
+address = 760
+type = "f32"
+name = "Demand 1 month ago total apparent power (VA)"
+
+[[registers]]
+address = 812
+type = "f32"
+name = "Demand 2 months ago total active power (W)"
+
+[[registers]]
+address = 876
+type = "f32"
+name = "Demand 3 months ago total active power (W)"
+
+[[registers]]
+address = 938
+type = "u32"
+name = "Demand 3 months ago L3 apparent power timestamp"
+
+# ===== DI COUNTERS / SYSTEM =====
+
+[[registers]]
+address = 940
+type = "f32"
+name = "Digital input 1 counter"
+
+[[registers]]
+address = 942
+type = "f32"
+name = "Digital input 2 counter"
+
+[[registers]]
+address = 944
+type = "f32"
+name = "Temperature (°C)"
+
+[[registers]]
+address = 946
+type = "f32"
+name = "Battery voltage (V)"
+
+[[registers]]
+address = 948
+type = "u32"
+name = "System date and time (unix timestamp, R/W)"
+
+[[registers]]
+address = 950
+type = "f32"
+name = "Digital input 3 counter (optional DIO)"
+
+[[registers]]
+address = 952
+type = "f32"
+name = "Digital input 4 counter (optional DIO)"
+
+[[registers]]
+address = 954
+type = "f32"
+name = "Digital input 5 counter (optional DIO)"
+
+[[registers]]
+address = 956
+type = "f32"
+name = "Digital input 6 counter (optional DIO)"
+
+[[registers]]
+address = 958
+type = "f32"
+name = "Digital input 7 counter (optional DIO)"
+
+# ===== ALARM STATUSES (50 alarms; addr = 960 + (N-1)*8, 4 registers each) =====
+# Pattern per alarm N: +0 timestamp (u32), +2 alarm ID (u32), +4 status (u32), +6 value (f32)
+
+[[registers]]
+address = 960
+type = "u32"
+name = "Alarm 1 timestamp"
+
+[[registers]]
+address = 962
+type = "u32"
+name = "Alarm 1 ID"
+
+[[registers]]
+address = 964
+type = "u32"
+name = "Alarm 1 status (1=ON, 0=OFF)"
+
+[[registers]]
+address = 966
+type = "f32"
+name = "Alarm 1 value"
+
+[[registers]]
+address = 968
+type = "u32"
+name = "Alarm 2 timestamp"
+
+[[registers]]
+address = 970
+type = "u32"
+name = "Alarm 2 ID"
+
+[[registers]]
+address = 972
+type = "u32"
+name = "Alarm 2 status"
+
+[[registers]]
+address = 974
+type = "f32"
+name = "Alarm 2 value"
+
+[[registers]]
+address = 976
+type = "u32"
+name = "Alarm 3 timestamp"
+
+[[registers]]
+address = 978
+type = "u32"
+name = "Alarm 3 ID"
+
+[[registers]]
+address = 980
+type = "u32"
+name = "Alarm 3 status"
+
+[[registers]]
+address = 982
+type = "f32"
+name = "Alarm 3 value"
+
+[[registers]]
+address = 984
+type = "u32"
+name = "Alarm 4 timestamp"
+
+[[registers]]
+address = 986
+type = "u32"
+name = "Alarm 4 ID"
+
+[[registers]]
+address = 988
+type = "u32"
+name = "Alarm 4 status"
+
+[[registers]]
+address = 990
+type = "f32"
+name = "Alarm 4 value"
+
+[[registers]]
+address = 992
+type = "u32"
+name = "Alarm 5 timestamp"
+
+[[registers]]
+address = 994
+type = "u32"
+name = "Alarm 5 ID"
+
+[[registers]]
+address = 996
+type = "u32"
+name = "Alarm 5 status"
+
+[[registers]]
+address = 998
+type = "f32"
+name = "Alarm 5 value"
+
+[[registers]]
+address = 1000
+type = "u32"
+name = "Alarm 6 timestamp"
+
+[[registers]]
+address = 1002
+type = "u32"
+name = "Alarm 6 ID"
+
+[[registers]]
+address = 1004
+type = "u32"
+name = "Alarm 6 status"
+
+[[registers]]
+address = 1006
+type = "f32"
+name = "Alarm 6 value"
+
+[[registers]]
+address = 1008
+type = "u32"
+name = "Alarm 7 timestamp"
+
+[[registers]]
+address = 1010
+type = "u32"
+name = "Alarm 7 ID"
+
+[[registers]]
+address = 1012
+type = "u32"
+name = "Alarm 7 status"
+
+[[registers]]
+address = 1014
+type = "f32"
+name = "Alarm 7 value"
+
+[[registers]]
+address = 1016
+type = "u32"
+name = "Alarm 8 timestamp"
+
+[[registers]]
+address = 1018
+type = "u32"
+name = "Alarm 8 ID"
+
+[[registers]]
+address = 1020
+type = "u32"
+name = "Alarm 8 status"
+
+[[registers]]
+address = 1022
+type = "f32"
+name = "Alarm 8 value"
+
+[[registers]]
+address = 1024
+type = "u32"
+name = "Alarm 9 timestamp"
+
+[[registers]]
+address = 1026
+type = "u32"
+name = "Alarm 9 ID"
+
+[[registers]]
+address = 1028
+type = "u32"
+name = "Alarm 9 status"
+
+[[registers]]
+address = 1030
+type = "f32"
+name = "Alarm 9 value"
+
+[[registers]]
+address = 1032
+type = "u32"
+name = "Alarm 10 timestamp"
+
+[[registers]]
+address = 1034
+type = "u32"
+name = "Alarm 10 ID"
+
+[[registers]]
+address = 1036
+type = "u32"
+name = "Alarm 10 status"
+
+[[registers]]
+address = 1038
+type = "f32"
+name = "Alarm 10 value"
+
+[[registers]]
+address = 1352
+type = "u32"
+name = "Alarm 50 timestamp"
+
+[[registers]]
+address = 1354
+type = "u32"
+name = "Alarm 50 ID"
+
+[[registers]]
+address = 1356
+type = "u32"
+name = "Alarm 50 status"
+
+[[registers]]
+address = 1358
+type = "f32"
+name = "Alarm 50 value"
+
+# ===== ARCHIVE FILE NUMBERS =====
+
+[[registers]]
+address = 1360
+type = "u32"
+name = "Last saved hourly archive file number"
+
+[[registers]]
+address = 1362
+type = "u32"
+name = "Last saved daily archive file number"
+
+[[registers]]
+address = 1364
+type = "u32"
+name = "Last saved monthly archive file number"
+
+# ===== TARIFF METERS 64-bit double (addr stride +4; split as high/low u32) =====
+
+[[registers]]
+address = 1366
+type = "u32"
+name = "T1 import active index 64-bit (high 32-bit, kWh)"
+
+[[registers]]
+address = 1368
+type = "u32"
+name = "T1 import active index 64-bit (low 32-bit, kWh)"
+
+[[registers]]
+address = 1370
+type = "u32"
+name = "T1 rate1 import active index 64-bit (high, kWh)"
+
+[[registers]]
+address = 1372
+type = "u32"
+name = "T1 rate1 import active index 64-bit (low, kWh)"
+
+[[registers]]
+address = 1374
+type = "u32"
+name = "T1 rate2 import active index 64-bit (high, kWh)"
+
+[[registers]]
+address = 1376
+type = "u32"
+name = "T1 rate2 import active index 64-bit (low, kWh)"
+
+[[registers]]
+address = 1378
+type = "u32"
+name = "T1 rate3 import active index 64-bit (high, kWh)"
+
+[[registers]]
+address = 1380
+type = "u32"
+name = "T1 rate3 import active index 64-bit (low, kWh)"
+
+[[registers]]
+address = 1382
+type = "u32"
+name = "T2 import active index 64-bit (high, kWh)"
+
+[[registers]]
+address = 1384
+type = "u32"
+name = "T2 import active index 64-bit (low, kWh)"
+
+[[registers]]
+address = 1386
+type = "u32"
+name = "T1 export active index 64-bit (high, kWh)"
+
+[[registers]]
+address = 1388
+type = "u32"
+name = "T1 export active index 64-bit (low, kWh)"
+
+[[registers]]
+address = 1390
+type = "u32"
+name = "T1 rate1 export active index 64-bit (high, kWh)"
+
+[[registers]]
+address = 1392
+type = "u32"
+name = "T1 rate1 export active index 64-bit (low, kWh)"
+
+[[registers]]
+address = 1394
+type = "u32"
+name = "T1 rate2 export active index 64-bit (high, kWh)"
+
+[[registers]]
+address = 1396
+type = "u32"
+name = "T1 rate2 export active index 64-bit (low, kWh)"
+
+[[registers]]
+address = 1398
+type = "u32"
+name = "T1 rate3 export active index 64-bit (high, kWh)"
+
+[[registers]]
+address = 1400
+type = "u32"
+name = "T1 rate3 export active index 64-bit (low, kWh)"
+
+[[registers]]
+address = 1402
+type = "u32"
+name = "T2 export active index 64-bit (high, kWh)"
+
+[[registers]]
+address = 1404
+type = "u32"
+name = "T2 export active index 64-bit (low, kWh)"
+
+[[registers]]
+address = 1406
+type = "u32"
+name = "T1 import reactive index 64-bit (high, kWh)"
+
+[[registers]]
+address = 1408
+type = "u32"
+name = "T1 import reactive index 64-bit (low, kWh)"
+
+[[registers]]
+address = 1422
+type = "u32"
+name = "T2 import reactive index 64-bit (high, kWh)"
+
+[[registers]]
+address = 1424
+type = "u32"
+name = "T2 import reactive index 64-bit (low, kWh)"
+
+[[registers]]
+address = 1426
+type = "u32"
+name = "T1 export reactive index 64-bit (high, kWh)"
+
+[[registers]]
+address = 1428
+type = "u32"
+name = "T1 export reactive index 64-bit (low, kWh)"
+
+[[registers]]
+address = 1442
+type = "u32"
+name = "T2 export reactive index 64-bit (high, kWh)"
+
+[[registers]]
+address = 1444
+type = "u32"
+name = "T2 export reactive index 64-bit (low, kWh)"
+
+# ===== DI FLAGS / OTHER COUNTERS =====
+
+[[registers]]
+address = 1446
+type = "u32"
+name = "Digital input active/passive flags"
+
+[[registers]]
+address = 1448
+type = "u32"
+name = "Run hour counter (h)"
+
+[[registers]]
+address = 1450
+type = "u32"
+name = "On hour counter (h)"
+
+[[registers]]
+address = 1452
+type = "u32"
+name = "Power interruption counter"
+
+[[registers]]
+address = 1454
+type = "u32"
+name = "Total run minute counter (min)"
+
+[[registers]]
+address = 1456
+type = "u32"
+name = "Total on minute counter (min)"
+
+# ===== PHASE ENERGIES 64-bit double (stride +4; split high/low) =====
+
+[[registers]]
+address = 1458
+type = "u32"
+name = "L1 import active energy T1 (high, kWh)"
+
+[[registers]]
+address = 1460
+type = "u32"
+name = "L1 import active energy T1 (low, kWh)"
+
+[[registers]]
+address = 1478
+type = "u32"
+name = "L2 import active energy T1 (high, kWh)"
+
+[[registers]]
+address = 1480
+type = "u32"
+name = "L2 import active energy T1 (low, kWh)"
+
+[[registers]]
+address = 1498
+type = "u32"
+name = "L3 import active energy T1 (high, kWh)"
+
+[[registers]]
+address = 1500
+type = "u32"
+name = "L3 import active energy T1 (low, kWh)"
+
+[[registers]]
+address = 1518
+type = "u32"
+name = "L1 export active energy T1 (high, kWh)"
+
+[[registers]]
+address = 1520
+type = "u32"
+name = "L1 export active energy T1 (low, kWh)"
+
+[[registers]]
+address = 1578
+type = "u32"
+name = "L1 import reactive energy T1 (high, kVArh)"
+
+[[registers]]
+address = 1580
+type = "u32"
+name = "L1 import reactive energy T1 (low, kVArh)"
+
+[[registers]]
+address = 1638
+type = "u32"
+name = "L1 export reactive energy T1 (high, kVArh)"
+
+[[registers]]
+address = 1640
+type = "u32"
+name = "L1 export reactive energy T1 (low, kVArh)"
+
+[[registers]]
+address = 1694
+type = "u32"
+name = "L3 export reactive energy T2 (high, kVArh)"
+
+# ===== DIGITAL OUTPUT LOGS (28 logs; each = timestamp u32 + data u32) =====
+
+[[registers]]
+address = 1698
+type = "u32"
+name = "Digital output log 1 timestamp"
+
+[[registers]]
+address = 1700
+type = "u32"
+name = "Digital output log 1 data"
+
+[[registers]]
+address = 1808
+type = "u32"
+name = "Digital output log 28 data"
+
+# ===== DI ENERGY COUNTERS 64-bit (stride +4) =====
+
+[[registers]]
+address = 1810
+type = "u32"
+name = "DI energy counter 1 (high, kWh)"
+
+[[registers]]
+address = 1812
+type = "u32"
+name = "DI energy counter 1 (low, kWh)"
+
+[[registers]]
+address = 1814
+type = "u32"
+name = "DI energy counter 2 (high, kWh)"
+
+[[registers]]
+address = 1816
+type = "u32"
+name = "DI energy counter 2 (low, kWh)"
+
+[[registers]]
+address = 1834
+type = "u32"
+name = "DI energy counter 7 (high, kWh)"
+
+[[registers]]
+address = 1836
+type = "u32"
+name = "DI energy counter 7 (low, kWh)"
+
+# ===== CLEAR COMMANDS (W only; write 1 to clear, then confirm at 1898) =====
+
+[[registers]]
+address = 1898
+type = "u32"
+name = "Complete erase confirm (write 1 after setting 1900-1916, W)"
+
+[[registers]]
+address = 1900
+type = "u32"
+name = "Clear energy meters (W)"
+
+[[registers]]
+address = 1902
+type = "u32"
+name = "Clear demand values (W)"
+
+[[registers]]
+address = 1904
+type = "u32"
+name = "Clear digital input counters (W)"
+
+[[registers]]
+address = 1906
+type = "u32"
+name = "Clear all above (W)"
+
+[[registers]]
+address = 1908
+type = "u32"
+name = "Clear run hour counter (W)"
+
+[[registers]]
+address = 1910
+type = "u32"
+name = "Clear hourly archive records (W)"
+
+[[registers]]
+address = 1912
+type = "u32"
+name = "Clear daily archive records (W)"
+
+[[registers]]
+address = 1914
+type = "u32"
+name = "Clear monthly archive records (W)"
+
+[[registers]]
+address = 1916
+type = "u32"
+name = "Clear alarm records (W)"
+
+[[registers]]
+address = 1998
+type = "u32"
+name = "Save settings to non-volatile memory (write 0 then write 1 to 1999 within 60s, W)"
+
+# ===== SETTINGS (R/W unless noted RO) =====
+
+[[registers]]
+address = 2000
+type = "f32"
+name = "Current transformer ratio (CTR)"
+
+[[registers]]
+address = 2002
+type = "f32"
+name = "Voltage transformer ratio (VTR)"
+
+[[registers]]
+address = 2004
+type = "u32"
+name = "Connection type (0=3ph-4wire, 1=3ph-3wire, 2=Aron)"
+
+[[registers]]
+address = 2006
+type = "u32"
+name = "Demand period (min)"
+
+[[registers]]
+address = 2008
+type = "u32"
+name = "Power unit (0=Mega, 1=Kilo)"
+
+[[registers]]
+address = 2010
+type = "u32"
+name = "T1 rate1 start time (hour)"
+
+[[registers]]
+address = 2012
+type = "u32"
+name = "T1 rate2 start time (hour)"
+
+[[registers]]
+address = 2014
+type = "u32"
+name = "T1 rate3 start time (hour)"
+
+[[registers]]
+address = 2016
+type = "u32"
+name = "Start of day (hour)"
+
+[[registers]]
+address = 2018
+type = "u32"
+name = "Start of month (day)"
+
+[[registers]]
+address = 2020
+type = "f32"
+name = "T1 import active energy preset (kWh)"
+
+[[registers]]
+address = 2022
+type = "f32"
+name = "T1 export active energy preset (kWh)"
+
+[[registers]]
+address = 2024
+type = "f32"
+name = "T1 import reactive energy preset (kVArh)"
+
+[[registers]]
+address = 2026
+type = "f32"
+name = "T1 export reactive energy preset (kVArh)"
+
+[[registers]]
+address = 2052
+type = "f32"
+name = "T2 import active energy preset (kWh)"
+
+[[registers]]
+address = 2054
+type = "f32"
+name = "T2 export active energy preset (kWh)"
+
+[[registers]]
+address = 2056
+type = "f32"
+name = "T2 import reactive energy preset (kVArh)"
+
+[[registers]]
+address = 2058
+type = "f32"
+name = "T2 export reactive energy preset (kVArh)"
+
+[[registers]]
+address = 2060
+type = "u32"
+name = "Output 1 mode (0=Off, 1-20=tariff energy pulse, 21=DI)"
+
+[[registers]]
+address = 2062
+type = "f32"
+name = "Output 1 energy per pulse"
+
+[[registers]]
+address = 2064
+type = "u32"
+name = "Output 1 pulse width (msec)"
+
+[[registers]]
+address = 2066
+type = "u32"
+name = "Output 1 multiplier"
+
+[[registers]]
+address = 2068
+type = "u32"
+name = "Output 2 mode"
+
+[[registers]]
+address = 2070
+type = "f32"
+name = "Output 2 energy per pulse"
+
+[[registers]]
+address = 2072
+type = "u32"
+name = "Output 2 pulse width (msec)"
+
+[[registers]]
+address = 2074
+type = "u32"
+name = "Output 2 multiplier"
+
+[[registers]]
+address = 2076
+type = "u32"
+name = "Input 1 mode (1=Off, 2=2nd-tariff, 3=Accumulator, 4=Run-hour, 5=DI-Meter)"
+
+[[registers]]
+address = 2078
+type = "u32"
+name = "Input 1 delay (msec)"
+
+[[registers]]
+address = 2080
+type = "u32"
+name = "Input 2 mode"
+
+[[registers]]
+address = 2082
+type = "u32"
+name = "Input 2 delay (msec)"
+
+[[registers]]
+address = 2084
+type = "u32"
+name = "Baud rate (0=2400, 1=4800, 2=9600, 3=19200, 4=38400, 5=57600, 6=115200)"
+
+[[registers]]
+address = 2086
+type = "u32"
+name = "Slave ID (1-247)"
+
+[[registers]]
+address = 2088
+type = "u32"
+name = "Voltage (L-N) alarm relay (0=Off, 1=Relay1, 2=Relay2)"
+
+[[registers]]
+address = 2090
+type = "f32"
+name = "Voltage (L-N) alarm low limit (V)"
+
+[[registers]]
+address = 2092
+type = "f32"
+name = "Voltage (L-N) alarm high limit (V)"
+
+[[registers]]
+address = 2094
+type = "u32"
+name = "Voltage (L-N) alarm delay (sec)"
+
+[[registers]]
+address = 2096
+type = "f32"
+name = "Voltage (L-N) alarm hysteresis (%)"
+
+[[registers]]
+address = 2098
+type = "u32"
+name = "Voltage (L-L) alarm relay"
+
+[[registers]]
+address = 2100
+type = "f32"
+name = "Voltage (L-L) alarm low limit (V)"
+
+[[registers]]
+address = 2102
+type = "f32"
+name = "Voltage (L-L) alarm high limit (V)"
+
+[[registers]]
+address = 2104
+type = "u32"
+name = "Voltage (L-L) alarm delay (sec)"
+
+[[registers]]
+address = 2106
+type = "f32"
+name = "Voltage (L-L) alarm hysteresis (%)"
+
+[[registers]]
+address = 2108
+type = "u32"
+name = "Current alarm relay"
+
+[[registers]]
+address = 2110
+type = "f32"
+name = "Current alarm low limit (A)"
+
+[[registers]]
+address = 2112
+type = "f32"
+name = "Current alarm high limit (A)"
+
+[[registers]]
+address = 2114
+type = "u32"
+name = "Current alarm delay (sec)"
+
+[[registers]]
+address = 2116
+type = "f32"
+name = "Current alarm hysteresis (%)"
+
+[[registers]]
+address = 2118
+type = "u32"
+name = "Active power alarm relay"
+
+[[registers]]
+address = 2120
+type = "f32"
+name = "Active power alarm low limit (W)"
+
+[[registers]]
+address = 2122
+type = "f32"
+name = "Active power alarm high limit (W)"
+
+[[registers]]
+address = 2124
+type = "u32"
+name = "Active power alarm delay (sec)"
+
+[[registers]]
+address = 2126
+type = "f32"
+name = "Active power alarm hysteresis (%)"
+
+[[registers]]
+address = 2128
+type = "u32"
+name = "Reactive power alarm relay"
+
+[[registers]]
+address = 2130
+type = "f32"
+name = "Reactive power alarm low limit (VAr)"
+
+[[registers]]
+address = 2132
+type = "f32"
+name = "Reactive power alarm high limit (VAr)"
+
+[[registers]]
+address = 2134
+type = "u32"
+name = "Reactive power alarm delay (sec)"
+
+[[registers]]
+address = 2136
+type = "f32"
+name = "Reactive power alarm hysteresis (%)"
+
+[[registers]]
+address = 2138
+type = "u32"
+name = "Apparent power alarm relay"
+
+[[registers]]
+address = 2140
+type = "f32"
+name = "Apparent power alarm low limit (VA)"
+
+[[registers]]
+address = 2142
+type = "f32"
+name = "Apparent power alarm high limit (VA)"
+
+[[registers]]
+address = 2144
+type = "u32"
+name = "Apparent power alarm delay (sec)"
+
+[[registers]]
+address = 2146
+type = "f32"
+name = "Apparent power alarm hysteresis (%)"
+
+[[registers]]
+address = 2148
+type = "u32"
+name = "Neutral current alarm relay"
+
+[[registers]]
+address = 2150
+type = "f32"
+name = "Neutral current alarm low limit (A)"
+
+[[registers]]
+address = 2152
+type = "f32"
+name = "Neutral current alarm high limit (A)"
+
+[[registers]]
+address = 2154
+type = "u32"
+name = "Neutral current alarm delay (sec)"
+
+[[registers]]
+address = 2156
+type = "f32"
+name = "Neutral current alarm hysteresis (%)"
+
+[[registers]]
+address = 2158
+type = "u32"
+name = "Power factor alarm relay"
+
+[[registers]]
+address = 2160
+type = "f32"
+name = "Power factor alarm low limit"
+
+[[registers]]
+address = 2162
+type = "f32"
+name = "Power factor alarm high limit"
+
+[[registers]]
+address = 2164
+type = "u32"
+name = "Power factor alarm delay (sec)"
+
+[[registers]]
+address = 2166
+type = "f32"
+name = "Power factor alarm hysteresis (%)"
+
+[[registers]]
+address = 2168
+type = "u32"
+name = "CosΦ alarm relay"
+
+[[registers]]
+address = 2170
+type = "f32"
+name = "CosΦ alarm low limit"
+
+[[registers]]
+address = 2172
+type = "f32"
+name = "CosΦ alarm high limit"
+
+[[registers]]
+address = 2174
+type = "u32"
+name = "CosΦ alarm delay (sec)"
+
+[[registers]]
+address = 2176
+type = "f32"
+name = "CosΦ alarm hysteresis (%)"
+
+[[registers]]
+address = 2178
+type = "u32"
+name = "Frequency alarm relay"
+
+[[registers]]
+address = 2180
+type = "f32"
+name = "Frequency alarm low limit (Hz)"
+
+[[registers]]
+address = 2182
+type = "f32"
+name = "Frequency alarm high limit (Hz)"
+
+[[registers]]
+address = 2184
+type = "u32"
+name = "Frequency alarm delay (sec)"
+
+[[registers]]
+address = 2186
+type = "f32"
+name = "Frequency alarm hysteresis (%)"
+
+[[registers]]
+address = 2188
+type = "u32"
+name = "Temperature alarm relay"
+
+[[registers]]
+address = 2190
+type = "f32"
+name = "Temperature alarm low limit (°C)"
+
+[[registers]]
+address = 2192
+type = "f32"
+name = "Temperature alarm high limit (°C)"
+
+[[registers]]
+address = 2194
+type = "u32"
+name = "Temperature alarm delay (sec)"
+
+[[registers]]
+address = 2196
+type = "f32"
+name = "Temperature alarm hysteresis (%)"
+
+[[registers]]
+address = 2198
+type = "u32"
+name = "Voltage harmonics alarm relay"
+
+[[registers]]
+address = 2200
+type = "f32"
+name = "Voltage harmonics alarm THDV high limit (%)"
+
+[[registers]]
+address = 2202
+type = "f32"
+name = "Voltage harmonics alarm V3 high limit (%)"
+
+[[registers]]
+address = 2204
+type = "f32"
+name = "Voltage harmonics alarm V5 high limit (%)"
+
+[[registers]]
+address = 2222
+type = "u32"
+name = "Voltage harmonics alarm delay (sec)"
+
+[[registers]]
+address = 2224
+type = "u32"
+name = "Current harmonics alarm relay"
+
+[[registers]]
+address = 2226
+type = "f32"
+name = "Current harmonics alarm THDI high limit (%)"
+
+[[registers]]
+address = 2228
+type = "f32"
+name = "Current harmonics alarm I3 high limit (%)"
+
+[[registers]]
+address = 2248
+type = "u32"
+name = "Current harmonics alarm delay (sec)"
+
+[[registers]]
+address = 2250
+type = "u32"
+name = "Language (0=Turkish, 1=English, 2=Russian)"
+
+[[registers]]
+address = 2252
+type = "u32"
+name = "Display contrast"
+
+[[registers]]
+address = 2254
+type = "u32"
+name = "Password"
+
+[[registers]]
+address = 2256
+type = "u32"
+name = "Display on mode (0=Continuous, 1=Time-Dependent)"
+
+[[registers]]
+address = 2258
+type = "u32"
+name = "Display on time (sec)"
+
+[[registers]]
+address = 2260
+type = "u32"
+name = "Serial number (RO)"
+
+[[registers]]
+address = 2262
+type = "f32"
+name = "Firmware version (RO)"
+
+[[registers]]
+address = 2264
+type = "u32"
+name = "Order number (RO)"
+
+[[registers]]
+address = 2290
+type = "u32"
+name = "Output 3 mode (optional DIO)"
+
+[[registers]]
+address = 2292
+type = "f32"
+name = "Output 3 energy per pulse (optional DIO)"
+
+[[registers]]
+address = 2294
+type = "u32"
+name = "Output 3 pulse width msec (optional DIO)"
+
+[[registers]]
+address = 2296
+type = "u32"
+name = "Output 3 multiplier (optional DIO)"
+
+[[registers]]
+address = 2330
+type = "u32"
+name = "Input 3 mode (optional DIO)"
+
+[[registers]]
+address = 2332
+type = "u32"
+name = "Input 3 delay msec (optional DIO)"
+
+[[registers]]
+address = 2350
+type = "u32"
+name = "Analog output 1 input mode (optional AO)"
+
+[[registers]]
+address = 2352
+type = "u32"
+name = "Analog output 1 output connection (optional AO)"
+
+[[registers]]
+address = 2354
+type = "f32"
+name = "Analog output 1 max value (optional AO)"
+
+[[registers]]
+address = 2356
+type = "f32"
+name = "Analog output 1 min value (optional AO)"
+
+[[registers]]
+address = 2358
+type = "u32"
+name = "Analog output 1 multiplier (0=×1, 1=Kilo, 2=Mega) (optional AO)"
+
+[[registers]]
+address = 2390
+type = "f32"
+name = "Password activation"

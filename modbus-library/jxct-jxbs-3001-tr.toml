@@ -1,0 +1,29 @@
+# JXCT JXBS-3001-TR Soil Temperature & Humidity Sensor — Modbus register map for Omni Console
+#
+# Source: jxct-soil-temp-humidity-rs485-modbus.pdf
+# - Capacitive soil temperature and humidity sensor, RS485 Modbus RTU.
+# - Holding registers (FC03).
+# - Protocol address = PLC address − 40001 (standard Modicon convention).
+# - Temperature is signed (negative soil temperatures supported).
+# - Factory defaults: slave=1, baud=9600, 8N1.
+
+vendor = "JXCT"
+model = "JXBS-3001-TR"
+description = "Capacitive soil temperature and humidity sensor — soil moisture (u16 ×0.1%RH), soil temperature (s16 ×0.1°C), holding registers."
+
+# ----- Measurements (FC03 holding registers) -----
+# PLC address 40003 → protocol address 2
+[[registers]]
+address = 2
+type = "u16"
+name = "Soil humidity"
+unit = "%RH"
+scale = 0.1
+
+# PLC address 40004 → protocol address 3
+[[registers]]
+address = 3
+type = "s16"
+name = "Soil temperature"
+unit = "°C"
+scale = 0.1

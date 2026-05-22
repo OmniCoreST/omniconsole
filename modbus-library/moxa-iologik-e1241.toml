@@ -1,0 +1,77 @@
+# Moxa ioLogik E1241 Remote Ethernet I/O — 4-channel AO
+#
+# Source: ioLogik E1200 Series User Manual V16.2, August 2025 (Appendix A)
+# Protocol: Modbus/TCP (port 502); Modbus/TCP ID default = 1
+#
+# AO channels (ch0-3):
+#   FC01 addr 4128-4131: AO_p2pSafeModeFlagClear ch0-3 (1=clear safe mode flag; R/W)
+#   FC02 addr 4096-4099: AO_p2pStatus ch0-3 (R)
+#   FC02 addr 4112-4115: AO_p2pSafeModeFlag ch0-3 (R)
+# FC01 addr 4144: watchdogAlarmFlag (R/W)
+# System FC04: same as other E1200 models
+
+vendor = "Moxa"
+model = "ioLogik E1241"
+description = "4-AO remote Ethernet I/O, Modbus/TCP. FC03: AO_scaledValue u32 hi/lo ch0-3 (addr 0-7 R/W), AO_rawValue ch0-3 (addr 1024-1027 R/W). FC02: AO_p2pStatus (4096-4099), AO_p2pSafeModeFlag (4112-4115). FC01: AO_p2pSafeModeFlagClear (4128-4131), watchdogAlarmFlag (4144)."
+
+# ===== FC03 Holding Registers =====
+
+[[registers]]
+address = 0
+type = "u16"
+name = "AO_scaledValue ch0 hi-word (u32; R/W)"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "AO_scaledValue ch0 lo-word"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "AO_scaledValue ch1 hi-word"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "AO_scaledValue ch1 lo-word"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "AO_scaledValue ch2 hi-word"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "AO_scaledValue ch2 lo-word"
+
+[[registers]]
+address = 6
+type = "u16"
+name = "AO_scaledValue ch3 hi-word"
+
+[[registers]]
+address = 7
+type = "u16"
+name = "AO_scaledValue ch3 lo-word"
+
+[[registers]]
+address = 1024
+type = "u16"
+name = "AO_rawValue ch0 (R/W)"
+
+[[registers]]
+address = 1025
+type = "u16"
+name = "AO_rawValue ch1"
+
+[[registers]]
+address = 1026
+type = "u16"
+name = "AO_rawValue ch2"
+
+[[registers]]
+address = 1027
+type = "u16"
+name = "AO_rawValue ch3"

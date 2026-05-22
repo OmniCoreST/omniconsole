@@ -1,0 +1,469 @@
+# ABB M2M/DMTME — Modbus register map for Omni Console
+#
+# Source: abb-m2m-dmtme-modbus.pdf (Technical specification V2.0, 2CSG445011D0201)
+# - Covers: M2M MODBUS, M2M ALARM, M2M I/O, DMTME-I-485.
+# - 3-phase energy and power quality meter, RS485 Modbus RTU.
+# - Holding registers FC03 only.
+# - All values are 2-word (Unsigned Long = u32 / Signed Long = s32); Big-Endian.
+# - Addresses are raw protocol hex addresses (0x1000 = 4096 decimal).
+# - (s) registers: Signed in M2M, Unsigned in DMTME — mapped as s32 for M2M compatibility.
+# - Superscript II = M2M instruments only; III = M2M I/O model only; IV = THD registers.
+# - Factory defaults: slave=1, baud=4800–19200 (M2M) / 2400–19200 (DMTME), 8N1/E1/O1.
+
+vendor = "ABB"
+model = "M2M/DMTME"
+description = "3-phase energy and power quality meter — phase/line V/I, P/Q/S/PF, CosPhi, frequency, energy (Wh/VArh*100), THD, max values, 15-min averages (FC03, Big-Endian, 0x1000 int32 bank)."
+
+# ----- Phase-to-neutral and phase-to-phase voltages -----
+# 0x1000 = 4096
+[[registers]]
+address = 4096
+type = "u32"
+name = "System voltage"
+unit = "V"
+
+[[registers]]
+address = 4098
+type = "u32"
+name = "Voltage L1-N"
+unit = "V"
+
+[[registers]]
+address = 4100
+type = "u32"
+name = "Voltage L2-N"
+unit = "V"
+
+[[registers]]
+address = 4102
+type = "u32"
+name = "Voltage L3-N"
+unit = "V"
+
+[[registers]]
+address = 4104
+type = "u32"
+name = "Voltage L1-L2"
+unit = "V"
+
+[[registers]]
+address = 4106
+type = "u32"
+name = "Voltage L2-L3"
+unit = "V"
+
+[[registers]]
+address = 4108
+type = "u32"
+name = "Voltage L3-L1"
+unit = "V"
+
+# ----- Currents (mA) -----
+# 0x100E = 4110
+[[registers]]
+address = 4110
+type = "u32"
+name = "System current"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4112
+type = "u32"
+name = "Current L1"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4114
+type = "u32"
+name = "Current L2"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4116
+type = "u32"
+name = "Current L3"
+unit = "A"
+scale = 0.001
+
+# ----- Power factor (×1000) -----
+# 0x1016 = 4118
+[[registers]]
+address = 4118
+type = "s32"
+name = "Total power factor"
+scale = 0.001
+
+[[registers]]
+address = 4120
+type = "s32"
+name = "Power factor L1"
+scale = 0.001
+
+[[registers]]
+address = 4122
+type = "s32"
+name = "Power factor L2"
+scale = 0.001
+
+[[registers]]
+address = 4124
+type = "s32"
+name = "Power factor L3"
+scale = 0.001
+
+# ----- CosPhi (×1000) -----
+# 0x101E = 4126
+[[registers]]
+address = 4126
+type = "s32"
+name = "CosPhi total"
+scale = 0.001
+
+[[registers]]
+address = 4128
+type = "s32"
+name = "CosPhi L1"
+scale = 0.001
+
+[[registers]]
+address = 4130
+type = "s32"
+name = "CosPhi L2"
+scale = 0.001
+
+[[registers]]
+address = 4132
+type = "s32"
+name = "CosPhi L3"
+scale = 0.001
+
+# ----- Apparent power (VA) -----
+# 0x1026 = 4134
+[[registers]]
+address = 4134
+type = "u32"
+name = "Total apparent power"
+unit = "VA"
+
+[[registers]]
+address = 4136
+type = "u32"
+name = "Apparent power L1"
+unit = "VA"
+
+[[registers]]
+address = 4138
+type = "u32"
+name = "Apparent power L2"
+unit = "VA"
+
+[[registers]]
+address = 4140
+type = "u32"
+name = "Apparent power L3"
+unit = "VA"
+
+# ----- Active power (W) — signed in M2M, unsigned in DMTME -----
+# 0x102E = 4142
+[[registers]]
+address = 4142
+type = "s32"
+name = "Total active power"
+unit = "W"
+
+[[registers]]
+address = 4144
+type = "s32"
+name = "Active power L1"
+unit = "W"
+
+[[registers]]
+address = 4146
+type = "s32"
+name = "Active power L2"
+unit = "W"
+
+[[registers]]
+address = 4148
+type = "s32"
+name = "Active power L3"
+unit = "W"
+
+# ----- Reactive power (VAr) — signed in M2M, unsigned in DMTME -----
+# 0x1036 = 4150
+[[registers]]
+address = 4150
+type = "s32"
+name = "Total reactive power"
+unit = "var"
+
+[[registers]]
+address = 4152
+type = "s32"
+name = "Reactive power L1"
+unit = "var"
+
+[[registers]]
+address = 4154
+type = "s32"
+name = "Reactive power L2"
+unit = "var"
+
+[[registers]]
+address = 4156
+type = "s32"
+name = "Reactive power L3"
+unit = "var"
+
+# ----- Energy accumulators (Wh×100 / VArh×100) -----
+# 0x103E = 4158
+[[registers]]
+address = 4158
+type = "u32"
+name = "Active energy import"
+unit = "Wh"
+scale = 0.01
+
+[[registers]]
+address = 4160
+type = "u32"
+name = "Reactive energy import"
+unit = "varh"
+scale = 0.01
+
+# ----- Frequency (mHz) -----
+# 0x1046 = 4166
+[[registers]]
+address = 4166
+type = "u32"
+name = "Frequency"
+unit = "Hz"
+scale = 0.001
+
+# ----- Max current and power (M2M II) -----
+# 0x1060 = 4192
+[[registers]]
+address = 4192
+type = "u32"
+name = "Max current L1"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4194
+type = "u32"
+name = "Max current L2"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4196
+type = "u32"
+name = "Max current L3"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 4198
+type = "s32"
+name = "Max active power"
+unit = "W"
+
+[[registers]]
+address = 4200
+type = "u32"
+name = "Max apparent power"
+unit = "VA"
+
+# ----- 15-minute averages -----
+# 0x1070 = 4208
+[[registers]]
+address = 4208
+type = "s32"
+name = "Active power 15-min average"
+unit = "W"
+
+# ----- M2M-only registers (II) -----
+# 0x1072 = 4210
+[[registers]]
+address = 4210
+type = "u32"
+name = "Apparent power 15-min average"
+unit = "VA"
+
+[[registers]]
+address = 4212
+type = "u32"
+name = "Active energy L1"
+unit = "Wh"
+scale = 0.01
+
+[[registers]]
+address = 4214
+type = "u32"
+name = "Active energy L2"
+unit = "Wh"
+scale = 0.01
+
+[[registers]]
+address = 4216
+type = "u32"
+name = "Active energy L3"
+unit = "Wh"
+scale = 0.01
+
+[[registers]]
+address = 4218
+type = "u32"
+name = "Reactive energy L1"
+unit = "varh"
+scale = 0.01
+
+[[registers]]
+address = 4220
+type = "u32"
+name = "Reactive energy L2"
+unit = "varh"
+scale = 0.01
+
+[[registers]]
+address = 4222
+type = "u32"
+name = "Reactive energy L3"
+unit = "varh"
+scale = 0.01
+
+# ----- THD (×100, M2M only) -----
+# 0x1082 = 4226
+[[registers]]
+address = 4226
+type = "u32"
+name = "Voltage THD L1"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4228
+type = "u32"
+name = "Voltage THD L2"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4230
+type = "u32"
+name = "Voltage THD L3"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4232
+type = "u32"
+name = "Current THD L1"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4234
+type = "u32"
+name = "Current THD L2"
+unit = "%"
+scale = 0.01
+
+[[registers]]
+address = 4236
+type = "u32"
+name = "Current THD L3"
+unit = "%"
+scale = 0.01
+
+# ----- Apparent energy (VAh×100, M2M only) -----
+# 0x10A6 = 4262
+[[registers]]
+address = 4262
+type = "u32"
+name = "Total apparent energy"
+unit = "VAh"
+scale = 0.01
+
+[[registers]]
+address = 4264
+type = "u32"
+name = "Apparent energy L1"
+unit = "VAh"
+scale = 0.01
+
+[[registers]]
+address = 4266
+type = "u32"
+name = "Apparent energy L2"
+unit = "VAh"
+scale = 0.01
+
+[[registers]]
+address = 4268
+type = "u32"
+name = "Apparent energy L3"
+unit = "VAh"
+scale = 0.01
+
+# ----- Generated (export) energy (M2M only) -----
+# 0x10AE = 4270
+[[registers]]
+address = 4270
+type = "u32"
+name = "Active energy export total"
+unit = "Wh"
+scale = 0.01
+
+[[registers]]
+address = 4272
+type = "u32"
+name = "Active energy export L1"
+unit = "Wh"
+scale = 0.01
+
+[[registers]]
+address = 4274
+type = "u32"
+name = "Active energy export L2"
+unit = "Wh"
+scale = 0.01
+
+[[registers]]
+address = 4276
+type = "u32"
+name = "Active energy export L3"
+unit = "Wh"
+scale = 0.01
+
+[[registers]]
+address = 4278
+type = "u32"
+name = "Reactive energy export total"
+unit = "varh"
+scale = 0.01
+
+[[registers]]
+address = 4280
+type = "u32"
+name = "Reactive energy export L1"
+unit = "varh"
+scale = 0.01
+
+[[registers]]
+address = 4282
+type = "u32"
+name = "Reactive energy export L2"
+unit = "varh"
+scale = 0.01
+
+[[registers]]
+address = 4284
+type = "u32"
+name = "Reactive energy export L3"
+unit = "varh"
+scale = 0.01

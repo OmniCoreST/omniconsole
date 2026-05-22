@@ -1,0 +1,65 @@
+# Chint DDSU666 — Modbus register map for Omni Console
+#
+# Source: chint-ddsu666-user-manual.pdf
+# - Single-phase DIN-rail energy meter.
+# - Holding registers, FC03. Big-endian word order (MSW first).
+# - f32 values are direct engineering values (V, A, kW, kvar, Hz, kWh — no scale multipliers).
+# - Factory defaults: slave=1, baud=9600, 8E1.
+
+vendor = "Chint"
+model = "DDSU666"
+description = "Single-phase DIN-rail energy meter — voltage, current, active/reactive power, PF, frequency, import/export energy (IEEE-754 float, holding registers)."
+
+# ----- Voltage -----
+[[registers]]
+address = 8192
+type = "f32"
+name = "Voltage"
+unit = "V"
+
+# ----- Current -----
+[[registers]]
+address = 8194
+type = "f32"
+name = "Current"
+unit = "A"
+
+# ----- Active power -----
+[[registers]]
+address = 8196
+type = "f32"
+name = "Active power"
+unit = "kW"
+
+# ----- Reactive power -----
+[[registers]]
+address = 8198
+type = "f32"
+name = "Reactive power"
+unit = "kvar"
+
+# ----- Power factor -----
+[[registers]]
+address = 8202
+type = "f32"
+name = "Power factor"
+
+# ----- Frequency -----
+[[registers]]
+address = 8206
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# ----- Energy -----
+[[registers]]
+address = 16384
+type = "f32"
+name = "Import active energy"
+unit = "kWh"
+
+[[registers]]
+address = 16394
+type = "f32"
+name = "Export active energy"
+unit = "kWh"

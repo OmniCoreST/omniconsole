@@ -1,0 +1,480 @@
+# Circutor CEM-C31 — 3-Phase Multifunctional Energy Meter (Modbus RTU RS-485)
+#
+# Source: circutor-cem-c20-c30-instruction-manual.pdf (section 7.2, pp. 42-48)
+# Models with RS-485: CEM-C31-485-T1, CEM-C31-485-T1-MID, CEM-C31-485-DS, CEM-C31-485-DS-MID
+# Protocol: Modbus RTU, FC03/04 read, FC10 write, 8N1 default
+# Baud: 9600/19200/38400 bps (configurable at 0x03E9)
+# All MODBUS addresses are hexadecimal in the source; converted to decimal here.
+# All 32-bit values occupy 2 consecutive registers (big-endian word order).
+# Scaling: voltage ×10 (1 decimal), current ×100 (2 decimals), cos φ ×100 (2 decimals).
+# Tariff registers (0x0100-0x013A) available on CEM-C31-485-DS model only.
+# Digital input registers (0x0020, 0x0180, 0x0182) available on DS model only.
+
+vendor = "Circutor"
+model = "CEM-C31"
+description = "3-phase energy meter, Modbus RTU RS-485 (CEM-C31-485 variants). FC03/04 read, FC10 write. Energy u32 Wh/varh at addr 0-10; instantaneous s32 at 1842-1884 (V×10, A×100, cos φ×100, W/var/VA). Config at 1000-1108. Tariff/DS-only regs at 256+ and 32/384."
+
+# ----- Total energy (FC03/04, R, u32, Wh or varh) -----
+[[registers]]
+address = 0
+type = "u32"
+name = "Imported active energy"
+
+[[registers]]
+address = 2
+type = "u32"
+name = "Exported active energy"
+
+[[registers]]
+address = 4
+type = "u32"
+name = "Q1 reactive energy"
+
+[[registers]]
+address = 6
+type = "u32"
+name = "Q2 reactive energy"
+
+[[registers]]
+address = 8
+type = "u32"
+name = "Q3 reactive energy"
+
+[[registers]]
+address = 10
+type = "u32"
+name = "Q4 reactive energy"
+
+# ----- Digital input (FC03/04, R) — DS model only -----
+[[registers]]
+address = 32
+type = "u16"
+name = "Digital input status"
+
+# ----- Partial energy (FC03/04, R, u32, Wh or varh) -----
+[[registers]]
+address = 48
+type = "u32"
+name = "Partial imported active energy"
+
+[[registers]]
+address = 50
+type = "u32"
+name = "Partial exported active energy"
+
+[[registers]]
+address = 52
+type = "u32"
+name = "Q1 partial reactive energy"
+
+[[registers]]
+address = 54
+type = "u32"
+name = "Q2 partial reactive energy"
+
+[[registers]]
+address = 56
+type = "u32"
+name = "Q3 partial reactive energy"
+
+[[registers]]
+address = 58
+type = "u32"
+name = "Q4 partial reactive energy"
+
+# ----- Firmware version (FC03/04, R, u16) -----
+[[registers]]
+address = 80
+type = "u16"
+name = "Higher firmware version"
+
+[[registers]]
+address = 81
+type = "u16"
+name = "Lower firmware version"
+
+[[registers]]
+address = 82
+type = "u16"
+name = "Revised firmware version"
+
+# ----- Identifier (FC03/04, R, u32) -----
+[[registers]]
+address = 96
+type = "u32"
+name = "Identifier ID no."
+
+# ----- Impulse output config (FC03/04, R/W, u16) -----
+[[registers]]
+address = 128
+type = "u16"
+name = "Impulse output type"
+
+[[registers]]
+address = 129
+type = "u16"
+name = "Impulse output weight"
+
+# ----- Cost / KgCO2 config (FC03/04, R/W, u32) -----
+[[registers]]
+address = 176
+type = "u32"
+name = "Cost per kWh"
+
+[[registers]]
+address = 178
+type = "u32"
+name = "KgCO2 per kWh"
+
+# ----- Display config (FC03/04, R/W, u16) -----
+[[registers]]
+address = 180
+type = "u16"
+name = "Display visualisation"
+
+[[registers]]
+address = 181
+type = "u16"
+name = "Backlight timeout"
+
+# ----- Operating time / cost (FC03/04, R, u32) -----
+[[registers]]
+address = 192
+type = "u32"
+name = "Cost of partial consumption"
+
+[[registers]]
+address = 194
+type = "u32"
+name = "KgCO2 atmospheric emissions of partial consumption"
+
+[[registers]]
+address = 196
+type = "u32"
+name = "Partial operating time in seconds"
+
+[[registers]]
+address = 198
+type = "u32"
+name = "Total operating time in seconds"
+
+# ----- Tariff 1 total energy (FC03/04, R, u32) — DS model only -----
+[[registers]]
+address = 256
+type = "u32"
+name = "T1 imported active energy"
+
+[[registers]]
+address = 258
+type = "u32"
+name = "T1 exported active energy"
+
+[[registers]]
+address = 260
+type = "u32"
+name = "T1 Q1 reactive energy"
+
+[[registers]]
+address = 262
+type = "u32"
+name = "T1 Q2 reactive energy"
+
+[[registers]]
+address = 264
+type = "u32"
+name = "T1 Q3 reactive energy"
+
+[[registers]]
+address = 266
+type = "u32"
+name = "T1 Q4 reactive energy"
+
+# ----- Tariff 2 total energy (FC03/04, R, u32) — DS model only -----
+[[registers]]
+address = 268
+type = "u32"
+name = "T2 imported active energy"
+
+[[registers]]
+address = 270
+type = "u32"
+name = "T2 exported active energy"
+
+[[registers]]
+address = 272
+type = "u32"
+name = "T2 Q1 reactive energy"
+
+[[registers]]
+address = 274
+type = "u32"
+name = "T2 Q2 reactive energy"
+
+[[registers]]
+address = 276
+type = "u32"
+name = "T2 Q3 reactive energy"
+
+[[registers]]
+address = 278
+type = "u32"
+name = "T2 Q4 reactive energy"
+
+# ----- Tariff 1 partial energy (FC03/04, R, u32) — DS model only -----
+[[registers]]
+address = 288
+type = "u32"
+name = "T1 partial imported active energy"
+
+[[registers]]
+address = 290
+type = "u32"
+name = "T1 partial exported active energy"
+
+[[registers]]
+address = 292
+type = "u32"
+name = "T1 Q1 partial reactive energy"
+
+[[registers]]
+address = 294
+type = "u32"
+name = "T1 Q2 partial reactive energy"
+
+[[registers]]
+address = 296
+type = "u32"
+name = "T1 Q3 partial reactive energy"
+
+[[registers]]
+address = 298
+type = "u32"
+name = "T1 Q4 partial reactive energy"
+
+# ----- Tariff 2 partial energy (FC03/04, R, u32) — DS model only -----
+[[registers]]
+address = 300
+type = "u32"
+name = "T2 partial imported active energy"
+
+[[registers]]
+address = 302
+type = "u32"
+name = "T2 partial exported active energy"
+
+[[registers]]
+address = 304
+type = "u32"
+name = "T2 Q1 partial reactive energy"
+
+[[registers]]
+address = 306
+type = "u32"
+name = "T2 Q2 partial reactive energy"
+
+[[registers]]
+address = 308
+type = "u32"
+name = "T2 Q3 partial reactive energy"
+
+[[registers]]
+address = 310
+type = "u32"
+name = "T2 Q4 partial reactive energy"
+
+# ----- Impulse / digital input counts (FC03/04, R) — DS model only -----
+[[registers]]
+address = 384
+type = "u32"
+name = "Total impulse count"
+
+[[registers]]
+address = 386
+type = "u32"
+name = "Partial impulse count"
+
+# ----- Modbus configuration (FC03/04, R/W) -----
+[[registers]]
+address = 1000
+type = "u16"
+name = "Modbus address"
+
+[[registers]]
+address = 1001
+type = "u16"
+name = "Baud rate"
+
+[[registers]]
+address = 1002
+type = "u16"
+name = "Communications configuration"
+
+# ----- Transformation ratios (FC03/04, R/W, u32) -----
+[[registers]]
+address = 1100
+type = "u32"
+name = "Voltage primary ratio"
+
+[[registers]]
+address = 1102
+type = "u32"
+name = "Voltage secondary ratio"
+
+[[registers]]
+address = 1104
+type = "u32"
+name = "Current primary ratio"
+
+[[registers]]
+address = 1106
+type = "u32"
+name = "Current secondary ratio"
+
+# ----- Digital input type (FC03/04, R/W, u16) — DS model only -----
+[[registers]]
+address = 1108
+type = "u16"
+name = "Digital input type"
+
+# ----- Instantaneous values (FC03/04, R, s32) -----
+[[registers]]
+address = 1842
+type = "s32"
+name = "Phase 1 voltage"
+
+[[registers]]
+address = 1844
+type = "s32"
+name = "Phase 2 voltage"
+
+[[registers]]
+address = 1846
+type = "s32"
+name = "Phase 3 voltage"
+
+[[registers]]
+address = 1848
+type = "s32"
+name = "Phase 1 current"
+
+[[registers]]
+address = 1850
+type = "s32"
+name = "Phase 2 current"
+
+[[registers]]
+address = 1852
+type = "s32"
+name = "Phase 3 current"
+
+[[registers]]
+address = 1854
+type = "s32"
+name = "Phase 1 power factor"
+
+[[registers]]
+address = 1856
+type = "s32"
+name = "Phase 2 power factor"
+
+[[registers]]
+address = 1858
+type = "s32"
+name = "Phase 3 power factor"
+
+[[registers]]
+address = 1862
+type = "s32"
+name = "Phase 1 active power"
+
+[[registers]]
+address = 1864
+type = "s32"
+name = "Phase 2 active power"
+
+[[registers]]
+address = 1866
+type = "s32"
+name = "Phase 3 active power"
+
+[[registers]]
+address = 1868
+type = "s32"
+name = "Total active power"
+
+[[registers]]
+address = 1870
+type = "s32"
+name = "Phase 1 reactive power"
+
+[[registers]]
+address = 1872
+type = "s32"
+name = "Phase 2 reactive power"
+
+[[registers]]
+address = 1874
+type = "s32"
+name = "Phase 3 reactive power"
+
+[[registers]]
+address = 1876
+type = "s32"
+name = "Total reactive power"
+
+[[registers]]
+address = 1878
+type = "s32"
+name = "Phase 1 apparent power"
+
+[[registers]]
+address = 1880
+type = "s32"
+name = "Phase 2 apparent power"
+
+[[registers]]
+address = 1882
+type = "s32"
+name = "Phase 3 apparent power"
+
+[[registers]]
+address = 1884
+type = "s32"
+name = "Total apparent power"
+
+# ----- Serial number (FC03/04, R, u32) -----
+[[registers]]
+address = 10000
+type = "u32"
+name = "Serial number"
+
+# ----- Energy meter model (FC03/04, R, 6×u16 = 12 bytes ASCII) -----
+[[registers]]
+address = 61456
+type = "u16"
+name = "Energy meter model byte 1-2"
+
+[[registers]]
+address = 61457
+type = "u16"
+name = "Energy meter model byte 3-4"
+
+[[registers]]
+address = 61458
+type = "u16"
+name = "Energy meter model byte 5-6"
+
+[[registers]]
+address = 61459
+type = "u16"
+name = "Energy meter model byte 7-8"
+
+[[registers]]
+address = 61460
+type = "u16"
+name = "Energy meter model byte 9-10"
+
+[[registers]]
+address = 61461
+type = "u16"
+name = "Energy meter model byte 11-12"

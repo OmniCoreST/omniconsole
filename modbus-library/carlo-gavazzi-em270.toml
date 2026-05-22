@@ -1,0 +1,155 @@
+# Carlo Gavazzi EM270 — Modbus register map for Omni Console
+#
+# Source: carlo-gavazzi-em270-modbus.pdf
+# - 3-phase 4-wire CT-connected energy meter, DIN-rail, RS485.
+# - Holding registers (FC03); FC03 and FC04 are interchangeable on this device.
+# - INT32 little-endian (LSW first), word_order = "le".
+# - Physical address = Modicom address − 300001.
+# - No per-phase power registers (CT model — only totals and V/I per phase).
+# - Factory defaults: slave=1, baud=9600, 8N1.
+
+vendor = "Carlo Gavazzi"
+model = "EM270"
+description = "3-phase 4-wire CT energy meter — per-phase V L-N and L-L, per-phase currents, total active/apparent power, demand, energy (INT32 LSW-first, holding registers)."
+
+# ----- Phase-to-neutral voltages -----
+[[registers]]
+address = 0
+type = "s32"
+word_order = "le"
+name = "Voltage L1-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 2
+type = "s32"
+word_order = "le"
+name = "Voltage L2-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 4
+type = "s32"
+word_order = "le"
+name = "Voltage L3-N"
+unit = "V"
+scale = 0.1
+
+# ----- Line-to-line voltages -----
+[[registers]]
+address = 6
+type = "s32"
+word_order = "le"
+name = "Voltage L1-L2"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 8
+type = "s32"
+word_order = "le"
+name = "Voltage L2-L3"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 10
+type = "s32"
+word_order = "le"
+name = "Voltage L3-L1"
+unit = "V"
+scale = 0.1
+
+# ----- Currents -----
+[[registers]]
+address = 12
+type = "s32"
+word_order = "le"
+name = "Current L1"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 14
+type = "s32"
+word_order = "le"
+name = "Current L2"
+unit = "A"
+scale = 0.001
+
+[[registers]]
+address = 16
+type = "s32"
+word_order = "le"
+name = "Current L3"
+unit = "A"
+scale = 0.001
+
+# ----- Total power -----
+[[registers]]
+address = 18
+type = "s32"
+word_order = "le"
+name = "Total active power"
+unit = "W"
+scale = 0.1
+
+[[registers]]
+address = 20
+type = "s32"
+word_order = "le"
+name = "Total apparent power"
+unit = "VA"
+scale = 0.1
+
+# ----- Energy (import) -----
+[[registers]]
+address = 24
+type = "s32"
+word_order = "le"
+name = "Total import kWh"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 26
+type = "s32"
+word_order = "le"
+name = "Total import kvarh"
+unit = "kvarh"
+scale = 0.1
+
+# ----- Demand -----
+[[registers]]
+address = 28
+type = "s32"
+word_order = "le"
+name = "Active power demand"
+unit = "W"
+scale = 0.1
+
+[[registers]]
+address = 30
+type = "s32"
+word_order = "le"
+name = "Apparent power demand"
+unit = "VA"
+scale = 0.1
+
+[[registers]]
+address = 32
+type = "s32"
+word_order = "le"
+name = "Maximum active power demand"
+unit = "W"
+scale = 0.1
+
+[[registers]]
+address = 34
+type = "s32"
+word_order = "le"
+name = "Maximum apparent power demand"
+unit = "VA"
+scale = 0.1

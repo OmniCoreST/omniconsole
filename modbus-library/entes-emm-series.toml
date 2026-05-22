@@ -1,0 +1,580 @@
+# ENTES EMM-04S / EMM-04CS 3-Phase Power Analyzer (Modbus RTU RS-485)
+#
+# Source: entes-emm-series-modbus-register-map-en.pdf
+# Models: EMM-04S (basic), EMM-04CS (with I/O module: digital I/O, relays, pulse inputs)
+# Protocol: Modbus RTU, FC03 read holding registers; FC06/16 write
+# Baud: configurable (reg 17358); default 9600 8N1
+# Float measurements: f32 (2 consecutive registers, IEEE 754)
+# Integer config/counters: u32 (2 words) unless noted as s16 (1 word)
+# Pulse counters, relay coil controls, and alarm dynamic registers: see datasheet
+
+vendor = "ENTES"
+model = "EMM-04S/EMM-04CS"
+description = "3-phase power analyzer, Modbus RTU. FC03 read. Float (f32) measurements at addr 0-146: phase/line voltages, currents, frequency, active/reactive/apparent power (per-phase + totals + quadrants), power factor, cos-phi, voltage/current angles, internal temp. Counters: hour meter (128), working hours (130), pulse 1-8 (132-146). Min/Max/Demand at 800-1335 (516 regs, see datasheet). Alarm status u32 at 20000/20002 (EMM-04CS). Network settings R at 16384; setup R/W at 17000 (CT/VT ratios, network type, demand time, alarm thresholds, pulse I/O); Modbus comms at 17354. Device ID at 60416."
+
+# ----- Phase and line voltages (FC03, R, f32, V) -----
+[[registers]]
+address = 0
+type = "f32"
+name = "Voltage L1-N"
+
+[[registers]]
+address = 2
+type = "f32"
+name = "Voltage L2-N"
+
+[[registers]]
+address = 4
+type = "f32"
+name = "Voltage L3-N"
+
+[[registers]]
+address = 8
+type = "f32"
+name = "Voltage L1-L2"
+
+[[registers]]
+address = 10
+type = "f32"
+name = "Voltage L2-L3"
+
+[[registers]]
+address = 12
+type = "f32"
+name = "Voltage L3-L1"
+
+# ----- Currents (FC03, R, f32, A) -----
+[[registers]]
+address = 14
+type = "f32"
+name = "Current L1"
+
+[[registers]]
+address = 16
+type = "f32"
+name = "Current L2"
+
+[[registers]]
+address = 18
+type = "f32"
+name = "Current L3"
+
+[[registers]]
+address = 22
+type = "f32"
+name = "Neutral current"
+
+# ----- Frequency (FC03, R, f32, Hz) -----
+[[registers]]
+address = 26
+type = "f32"
+name = "Frequency"
+
+# ----- Active power (FC03, R, f32, W) -----
+[[registers]]
+address = 28
+type = "f32"
+name = "Active power L1"
+
+[[registers]]
+address = 30
+type = "f32"
+name = "Active power L2"
+
+[[registers]]
+address = 32
+type = "f32"
+name = "Active power L3"
+
+[[registers]]
+address = 36
+type = "f32"
+name = "Total import active power"
+
+[[registers]]
+address = 38
+type = "f32"
+name = "Total export active power"
+
+[[registers]]
+address = 40
+type = "f32"
+name = "Total active power"
+
+# ----- Reactive power (FC03, R, f32, VAr) -----
+[[registers]]
+address = 42
+type = "f32"
+name = "Reactive power L1"
+
+[[registers]]
+address = 44
+type = "f32"
+name = "Reactive power L2"
+
+[[registers]]
+address = 46
+type = "f32"
+name = "Reactive power L3"
+
+[[registers]]
+address = 48
+type = "f32"
+name = "Quadrant 1 total reactive power"
+
+[[registers]]
+address = 50
+type = "f32"
+name = "Quadrant 2 total reactive power"
+
+[[registers]]
+address = 52
+type = "f32"
+name = "Quadrant 3 total reactive power"
+
+[[registers]]
+address = 54
+type = "f32"
+name = "Quadrant 4 total reactive power"
+
+# ----- Apparent power (FC03, R, f32, VA) -----
+[[registers]]
+address = 56
+type = "f32"
+name = "Apparent power L1"
+
+[[registers]]
+address = 58
+type = "f32"
+name = "Apparent power L2"
+
+[[registers]]
+address = 60
+type = "f32"
+name = "Apparent power L3"
+
+[[registers]]
+address = 64
+type = "f32"
+name = "Total import apparent power"
+
+[[registers]]
+address = 66
+type = "f32"
+name = "Total export apparent power"
+
+[[registers]]
+address = 68
+type = "f32"
+name = "Total apparent power"
+
+# ----- Power factor (FC03, R, f32) -----
+[[registers]]
+address = 70
+type = "f32"
+name = "Power factor L1"
+
+[[registers]]
+address = 72
+type = "f32"
+name = "Power factor L2"
+
+[[registers]]
+address = 74
+type = "f32"
+name = "Power factor L3"
+
+[[registers]]
+address = 78
+type = "f32"
+name = "Power factor total import"
+
+[[registers]]
+address = 80
+type = "f32"
+name = "Power factor total export"
+
+[[registers]]
+address = 82
+type = "f32"
+name = "Power factor total"
+
+# ----- Cos phi (FC03, R, f32) -----
+[[registers]]
+address = 84
+type = "f32"
+name = "Cos phi L1"
+
+[[registers]]
+address = 86
+type = "f32"
+name = "Cos phi L2"
+
+[[registers]]
+address = 88
+type = "f32"
+name = "Cos phi L3"
+
+[[registers]]
+address = 92
+type = "f32"
+name = "Cos phi total"
+
+[[registers]]
+address = 96
+type = "f32"
+name = "Cos phi average"
+
+# ----- Other measurements (FC03, R, f32) -----
+[[registers]]
+address = 100
+type = "f32"
+name = "Rotation field"
+
+[[registers]]
+address = 104
+type = "f32"
+name = "Phase 1 voltage angle"
+
+[[registers]]
+address = 106
+type = "f32"
+name = "Phase 2 voltage angle"
+
+[[registers]]
+address = 108
+type = "f32"
+name = "Phase 3 voltage angle"
+
+[[registers]]
+address = 112
+type = "f32"
+name = "Phase 1 current angle"
+
+[[registers]]
+address = 114
+type = "f32"
+name = "Phase 2 current angle"
+
+[[registers]]
+address = 116
+type = "f32"
+name = "Phase 3 current angle"
+
+[[registers]]
+address = 126
+type = "f32"
+name = "Internal temperature"
+
+# ----- Counters (FC03, R, u32) -----
+[[registers]]
+address = 128
+type = "u32"
+name = "Hour meter non-resettable"
+
+[[registers]]
+address = 130
+type = "u32"
+name = "Working hour counter"
+
+[[registers]]
+address = 132
+type = "u32"
+name = "Pulse counter 1"
+
+[[registers]]
+address = 134
+type = "u32"
+name = "Pulse counter 2"
+
+[[registers]]
+address = 136
+type = "u32"
+name = "Pulse counter 3"
+
+[[registers]]
+address = 138
+type = "u32"
+name = "Pulse counter 4"
+
+[[registers]]
+address = 140
+type = "u32"
+name = "Pulse counter 5"
+
+[[registers]]
+address = 142
+type = "u32"
+name = "Pulse counter 6"
+
+[[registers]]
+address = 144
+type = "u32"
+name = "Pulse counter 7"
+
+[[registers]]
+address = 146
+type = "u32"
+name = "Pulse counter 8"
+
+# ----- Alarm status (FC03, R, u32, EMM-04CS only) -----
+# Bit 0=L1 phase loss, Bit 1=L2 phase loss, Bit 2=L3 phase loss, Bit 6=inverse phase sequence
+[[registers]]
+address = 20000
+type = "u32"
+name = "Alarm status phase loss and sequence"
+
+# Bits 24-25=Custom alarm 1-2; user-configured alarm bits
+[[registers]]
+address = 20002
+type = "u32"
+name = "Alarm status user alarms"
+
+# ----- Network settings (FC03, R) -----
+# 0=1P4W, 1=3P4W, 2=1P3W, 3=3P4W balanced, 4=3P3W balanced, 5=ARON
+[[registers]]
+address = 16384
+type = "u32"
+name = "Network type"
+
+# 0=5A, 1=1A
+[[registers]]
+address = 16386
+type = "u32"
+name = "CT secondary"
+
+[[registers]]
+address = 16388
+type = "f32"
+name = "CT primary"
+
+# 0=None, 1=Present
+[[registers]]
+address = 16390
+type = "u32"
+name = "VT present"
+
+[[registers]]
+address = 16392
+type = "f32"
+name = "VT secondary"
+
+[[registers]]
+address = 16394
+type = "f32"
+name = "VT primary"
+
+# 0=60s, 1=120s, 2=300s, 3=600s, 4=1200s, 5=1800s, 6=3600s
+[[registers]]
+address = 16396
+type = "u32"
+name = "Demand time"
+
+# 0=50Hz, 1=60Hz
+[[registers]]
+address = 16402
+type = "u32"
+name = "System frequency"
+
+# ----- Setup (FC03/16, R/W) -----
+[[registers]]
+address = 17000
+type = "u32"
+name = "Setup network type"
+
+[[registers]]
+address = 17002
+type = "u32"
+name = "Setup CT secondary"
+
+[[registers]]
+address = 17004
+type = "f32"
+name = "Setup CT primary"
+
+[[registers]]
+address = 17006
+type = "u32"
+name = "Setup CT present"
+
+[[registers]]
+address = 17008
+type = "f32"
+name = "Setup VT secondary"
+
+[[registers]]
+address = 17010
+type = "f32"
+name = "Setup VT primary"
+
+[[registers]]
+address = 17012
+type = "u32"
+name = "Setup demand time"
+
+[[registers]]
+address = 17018
+type = "u32"
+name = "Setup system nominal frequency"
+
+# ----- Digital I/O and relay setup (FC03/16, R/W, EMM-04CS only) -----
+# 0=Relay, 1=Pulse, 2=RS-485
+[[registers]]
+address = 17032
+type = "u32"
+name = "Digital output 1 type"
+
+[[registers]]
+address = 17034
+type = "u32"
+name = "Digital output 2 type"
+
+[[registers]]
+address = 17048
+type = "u32"
+name = "Relay 1 type"
+
+[[registers]]
+address = 17050
+type = "u32"
+name = "Relay 2 type"
+
+# 0=Digital input, 1=Pulse, 2=Generator
+[[registers]]
+address = 17064
+type = "u32"
+name = "Digital input 1 type"
+
+[[registers]]
+address = 17066
+type = "u32"
+name = "Digital input 2 type"
+
+# ----- Pulse input setup (FC03/16, R/W, EMM-04CS only) -----
+[[registers]]
+address = 17090
+type = "u32"
+name = "Pulse input 1 ratio"
+
+[[registers]]
+address = 17092
+type = "u32"
+name = "Pulse input 1 parameter unit"
+
+[[registers]]
+address = 17094
+type = "u32"
+name = "Pulse input 1 width"
+
+[[registers]]
+address = 17096
+type = "f32"
+name = "Pulse input 2 ratio"
+
+[[registers]]
+address = 17098
+type = "u32"
+name = "Pulse input 2 parameter unit"
+
+[[registers]]
+address = 17100
+type = "u32"
+name = "Pulse input 2 width"
+
+# ----- Modbus communications (FC03/16, R/W) -----
+# 0=Modbus, 1=ENTBUS
+[[registers]]
+address = 17354
+type = "u32"
+name = "Modbus protocol"
+
+# 0-247
+[[registers]]
+address = 17356
+type = "u32"
+name = "Modbus slave address"
+
+# 0=2400, 1=4800, 2=9600, 3=19200, 4=38400, 5=57600, 6=115200
+[[registers]]
+address = 17358
+type = "u32"
+name = "Modbus baud rate"
+
+# 0=None, 1=Odd, 2=Even
+[[registers]]
+address = 17360
+type = "u32"
+name = "Modbus parity"
+
+# 0=Passive, 1=Active
+[[registers]]
+address = 17362
+type = "u32"
+name = "Password active"
+
+[[registers]]
+address = 17364
+type = "u32"
+name = "Password"
+
+# 0=Turkish, 1=English, 2=German, 3=French
+[[registers]]
+address = 17370
+type = "u32"
+name = "Language"
+
+# 0=1h, 1=8h, 2=24h, 3=72h, 4=7day, 5=30day
+[[registers]]
+address = 17372
+type = "u32"
+name = "Notification session time"
+
+# ----- Reset register (FC06, W) -----
+# Write 0x0001=Voltage log, 0x0002=Current log, 0x0003=Power log, 0x0007=Active energy,
+# 0x0009=Apparent energy, 0x000B=Max values, 0x000C=Min values, 0x000D=Demand,
+# 0x000F=Max demand, 0x0010=Working hour, 0x0013=Alarm and event log, 0x0016=Pulse counter 1
+[[registers]]
+address = 19968
+type = "u16"
+name = "Reset command"
+
+# ----- Device identification (FC03, R) -----
+[[registers]]
+address = 60416
+type = "s16"
+name = "Device ID"
+
+[[registers]]
+address = 60417
+type = "s16"
+name = "Device ID and version"
+
+[[registers]]
+address = 60420
+type = "u32"
+name = "Software version"
+
+[[registers]]
+address = 60422
+type = "u32"
+name = "Modbus table version"
+
+[[registers]]
+address = 60424
+type = "u32"
+name = "Modbus version"
+
+[[registers]]
+address = 60428
+type = "u32"
+name = "Fabrication date"
+
+[[registers]]
+address = 60430
+type = "u32"
+name = "Calibration date"
+
+[[registers]]
+address = 60432
+type = "s16"
+name = "Register test status"

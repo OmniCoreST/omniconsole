@@ -1,0 +1,152 @@
+# Advantech ADAM-6015 — 7-Channel RTD Input Module (Ethernet/Modbus TCP)
+#
+# Source: advantech-adam-6000-modbus.pdf (Appendix B.2)
+# - 7-channel RTD input; PT100/PT1000/Ni604/Balco500 types selectable per channel.
+# - Modbus TCP (Ethernet), unit identifier = 1.
+# - FC03 addr 0-6: AI raw value ch 0-6 (u16, 0-65535 = full scale) (R).
+# - FC03 addr 8: AI average value ch 0-6 (u16) (R).
+# - FC03 addr 30-31..43-44: AI float value ch 0-6 (f32 IEEE754, 2 regs each) (R).
+# - FC03 addr 47-48: AI float average (f32) (R).
+# - FC03 addr 100-101..113-114: AI status ch 0-6 (f32 pair: bit0=normal, bit3=burnout) (R).
+# - FC03 addr 200-206: Type code ch 0-6 (R/W; see type code table).
+# - FC03 addr 208: Type code average (R/W).
+# - FC03 addr 210-211: Module Name 1-2 (R).
+# - FC03 addr 304: GCL internal flag value (R/W).
+# - Type codes: 0x03A4=PT100(385) -50~150°C; 0x03A5=PT100 0~100°C; 0x03A6=PT100 0~200°C;
+#   0x03A7=PT100 0~400°C; 0x03A2=PT100 -200~200°C; 0x03E2=PT1000 -40~160°C;
+#   0x0300=Balco500 -30~120°C; 0x0320=NI604 -80~100°C; 0x0321=NI604 0~100°C.
+# - FC02 addr 120-126: Burnout flag ch 0-6 (R).
+# - FC02 addr 130-136, 138: High alarm flag ch 0-6, avg (R).
+# - FC02 addr 140-146, 148: Low alarm flag ch 0-6, avg (R).
+
+vendor = "Advantech"
+model = "ADAM-6015"
+description = "7-channel RTD input over Modbus TCP. FC03 addr 0-6: u16 raw (0-65535=full scale); addr 30,32,...42 pairs: f32 IEEE754 direct temperature. Type selectable per channel (PT100/PT1000/NI604/Balco500). Burnout/alarm flags via FC02 coils."
+
+# ----- AI raw values (FC03, R) -----
+[[registers]]
+address = 0
+type = "u16"
+name = "RTD channel 0 raw"
+
+[[registers]]
+address = 1
+type = "u16"
+name = "RTD channel 1 raw"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "RTD channel 2 raw"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "RTD channel 3 raw"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "RTD channel 4 raw"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "RTD channel 5 raw"
+
+[[registers]]
+address = 6
+type = "u16"
+name = "RTD channel 6 raw"
+
+[[registers]]
+address = 8
+type = "u16"
+name = "RTD average raw"
+
+# ----- AI float values (FC03, f32 IEEE754, R) -----
+[[registers]]
+address = 30
+type = "f32"
+name = "RTD channel 0"
+
+[[registers]]
+address = 32
+type = "f32"
+name = "RTD channel 1"
+
+[[registers]]
+address = 34
+type = "f32"
+name = "RTD channel 2"
+
+[[registers]]
+address = 36
+type = "f32"
+name = "RTD channel 3"
+
+[[registers]]
+address = 38
+type = "f32"
+name = "RTD channel 4"
+
+[[registers]]
+address = 40
+type = "f32"
+name = "RTD channel 5"
+
+[[registers]]
+address = 42
+type = "f32"
+name = "RTD channel 6"
+
+[[registers]]
+address = 46
+type = "f32"
+name = "RTD average"
+
+# ----- Configuration (FC03, R/W) -----
+[[registers]]
+address = 200
+type = "u16"
+name = "Type code channel 0"
+
+[[registers]]
+address = 201
+type = "u16"
+name = "Type code channel 1"
+
+[[registers]]
+address = 202
+type = "u16"
+name = "Type code channel 2"
+
+[[registers]]
+address = 203
+type = "u16"
+name = "Type code channel 3"
+
+[[registers]]
+address = 204
+type = "u16"
+name = "Type code channel 4"
+
+[[registers]]
+address = 205
+type = "u16"
+name = "Type code channel 5"
+
+[[registers]]
+address = 206
+type = "u16"
+name = "Type code channel 6"
+
+[[registers]]
+address = 210
+type = "u16"
+name = "Module name 1"
+
+[[registers]]
+address = 211
+type = "u16"
+name = "Module name 2"

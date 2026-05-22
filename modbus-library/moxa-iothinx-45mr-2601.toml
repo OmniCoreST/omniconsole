@@ -1,0 +1,153 @@
+# Moxa ioThinx 45MR-2601 — 16-channel DO (source/PNP)
+#
+# Source: ioThinx 4510 Series User's Manual V2.1, August 2019, Appendix A
+# Protocol: Modbus/TCP via ioThinx 4510 adapter, port 502
+#
+# Identical register map to 45MR-2600; differs only in output polarity (PNP source vs NPN sink).
+# IMPORTANT: Addresses are MODULE-RELATIVE. Actual PDU address = slot_base + relative_address.
+# Only ch0-3 support pulse output mode; ch4-15 are standard DO only.
+#
+# FC01 (coil R/W): doStatus ch0-15 (16 BOOL, 0=OFF 1=ON),
+#   doPulseStatus ch0-3 (4 BOOL, 0=Stop 1=Start)
+# FC02 (discrete input R): doMode ch0-15 (16 BOOL, 0=DO 1=Pulse)
+# FC03 (holding R/W): see [[registers]] below
+# FC04 (input R): doModeAll (1 WORD bitmask ch0-15)
+
+vendor = "Moxa"
+model = "ioThinx 45MR-2601"
+description = "16-DO source (PNP) output ioThinx 45MR slot module. Register map identical to 45MR-2600; differs only in output polarity. Addresses are module-relative; actual PDU address = slot_base + relative_address. Only ch0-3 support pulse output mode. FC01: doStatus ch0-15, doPulseStatus ch0-3. FC02: doMode ch0-15. FC03: doStatusAll bitmask (rel 0), doPulseCount ch0-3 u64 (rel 1-16), doPulseOnWidth ch0-3 (rel 17-20, unit 500us), doPulseOffWidth ch0-3 (rel 21-24, unit 500us), doPulseStatusAll bitmask (rel 25). FC04: doModeAll."
+
+# ===== FC03 Holding Registers (module-relative addresses) =====
+
+[[registers]]
+address = 0
+type = "u16"
+name = "doStatusAll (bitmask bit0-15=ch0-15; 0=OFF 1=ON; R/W)"
+
+# DO pulse count ch0-3 (u64 per channel, 4 x u16 words each, rel 1-16)
+[[registers]]
+address = 1
+type = "u16"
+name = "doPulseCount ch0 word[0] (u64 hi-DWORD hi-word; R)"
+
+[[registers]]
+address = 2
+type = "u16"
+name = "doPulseCount ch0 word[1] (u64 hi-DWORD lo-word)"
+
+[[registers]]
+address = 3
+type = "u16"
+name = "doPulseCount ch0 word[2] (u64 lo-DWORD hi-word)"
+
+[[registers]]
+address = 4
+type = "u16"
+name = "doPulseCount ch0 word[3] (u64 lo-DWORD lo-word)"
+
+[[registers]]
+address = 5
+type = "u16"
+name = "doPulseCount ch1 word[0] (u64 hi-DWORD hi-word)"
+
+[[registers]]
+address = 6
+type = "u16"
+name = "doPulseCount ch1 word[1]"
+
+[[registers]]
+address = 7
+type = "u16"
+name = "doPulseCount ch1 word[2]"
+
+[[registers]]
+address = 8
+type = "u16"
+name = "doPulseCount ch1 word[3]"
+
+[[registers]]
+address = 9
+type = "u16"
+name = "doPulseCount ch2 word[0] (u64 hi-DWORD hi-word)"
+
+[[registers]]
+address = 10
+type = "u16"
+name = "doPulseCount ch2 word[1]"
+
+[[registers]]
+address = 11
+type = "u16"
+name = "doPulseCount ch2 word[2]"
+
+[[registers]]
+address = 12
+type = "u16"
+name = "doPulseCount ch2 word[3]"
+
+[[registers]]
+address = 13
+type = "u16"
+name = "doPulseCount ch3 word[0] (u64 hi-DWORD hi-word)"
+
+[[registers]]
+address = 14
+type = "u16"
+name = "doPulseCount ch3 word[1]"
+
+[[registers]]
+address = 15
+type = "u16"
+name = "doPulseCount ch3 word[2]"
+
+[[registers]]
+address = 16
+type = "u16"
+name = "doPulseCount ch3 word[3] (u64 lo-DWORD lo-word)"
+
+# DO pulse on-width ch0-3 (unit 500 µs per count, rel 17-20)
+[[registers]]
+address = 17
+type = "u16"
+name = "doPulseOnWidth ch0 (unit 500us; R/W)"
+
+[[registers]]
+address = 18
+type = "u16"
+name = "doPulseOnWidth ch1"
+
+[[registers]]
+address = 19
+type = "u16"
+name = "doPulseOnWidth ch2"
+
+[[registers]]
+address = 20
+type = "u16"
+name = "doPulseOnWidth ch3"
+
+# DO pulse off-width ch0-3 (unit 500 µs per count, rel 21-24)
+[[registers]]
+address = 21
+type = "u16"
+name = "doPulseOffWidth ch0 (unit 500us; R/W)"
+
+[[registers]]
+address = 22
+type = "u16"
+name = "doPulseOffWidth ch1"
+
+[[registers]]
+address = 23
+type = "u16"
+name = "doPulseOffWidth ch2"
+
+[[registers]]
+address = 24
+type = "u16"
+name = "doPulseOffWidth ch3"
+
+[[registers]]
+address = 25
+type = "u16"
+name = "doPulseStatusAll (bitmask bit0-3=ch0-3; 0=Stop 1=Start; R/W)"

@@ -1,0 +1,20 @@
+# Moxa ioLogik E1260 Remote Ethernet I/O — 6-channel RTD
+#
+# Source: ioLogik E1200 Series User Manual V16.2, August 2025 (Appendix A)
+# Protocol: Modbus/TCP (port 502); Modbus/TCP ID default = 1
+#
+# ALL RTD data is in FC04 input registers and FC01 coils; NO FC03 holding registers.
+# RTD channels (ch0-5):
+#   FC04 addr 1536-1541 (len 6): RTD_multipliedEngineeringValue (unit 0.1, word, R)
+#   FC04 addr 1548-1559 (2 words/ch, len 12): RTD_scaledValue hi/lo (u32, R)
+#   FC04 addr 1560-1565 (2 words/ch, len 6): RTD_multipliedEngineeringValueMin hi/lo (R)
+#   FC04 addr 1572-1577 (2 words/ch, len 6): RTD_multipliedEngineeringValueMax hi/lo (R)
+#   FC04 addr 1584-1595 (2 words/ch, len 12): RTD_scaledValueMin hi/lo (u32, R)
+#   FC04 addr 1596-1607 (2 words/ch, len 12): RTD_scaledValueMax hi/lo (u32, R)
+#   FC01 addr 4161-4166 (len 6): RTD_resetMinValue ch0-5 (1=reset min; R/W)
+#   FC01 addr 4169-4174 (len 6): RTD_resetMaxValue ch0-5 (1=reset max; R/W)
+# System FC04: same as other E1200 models (no watchdogAlarmFlag for E1260)
+
+vendor = "Moxa"
+model = "ioLogik E1260"
+description = "6-RTD remote Ethernet I/O, Modbus/TCP. NO FC03 holding registers. FC04: RTD_multipliedEngineeringValue unit 0.1 (addr 1536-1541), RTD_scaledValue u32 hi/lo (1548-1559), RTD_multipliedEngineeringValueMin hi/lo (1560-1565), RTD_multipliedEngineeringValueMax hi/lo (1572-1577), RTD_scaledValueMin u32 hi/lo (1584-1595), RTD_scaledValueMax u32 hi/lo (1596-1607). FC01: RTD_resetMinValue ch0-5 (4161-4166), RTD_resetMaxValue ch0-5 (4169-4174). FC04 system: modelName (5000), deviceUpTime (5020)."

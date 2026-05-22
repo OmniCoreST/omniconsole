@@ -1,0 +1,311 @@
+# Accuenergy AcuRev 1300 — Modbus register map for Omni Console
+#
+# Source: accuenergy-acurev-1300-modbus-manual.pdf (SunSpec-compatible interface)
+# - 3-phase power meter with SunSpec AC Measurements block.
+# - FC03 (Read Holding Registers) for all registers listed here.
+# - All addresses are raw protocol addresses (0x1047 = 4167 decimal).
+# - Real-time: int16 (s16, 1 register) SunSpec format; each group has a sunssf
+#   scale-factor register (also s16) whose value is a power-of-10 exponent;
+#   true value = register × 10^sunssf.  Scale=1 here — apply sunssf at runtime.
+# - Energy accumulators (acc32, u32, 2 registers) — no sunssf, direct Wh / varh.
+# - TOU energy bank at 0x0900H (2304 decimal): Dword u32, real = Rx/100 → scale=0.01 kWh.
+# - Factory defaults: slave=1, baud=9600, 8N1.
+
+vendor = "Accuenergy"
+model = "AcuRev 1300"
+description = "3-phase SunSpec power meter — V/I/P/Q/S/PF (s16 with sunssf scale factors at FC03 0x1047 block), energy acc32, TOU energy Dword Rx/100 kWh at 0x0900 (Big-Endian)."
+
+# ----- SunSpec AC Measurements block -----
+# 0x1047 = 4167
+# NOTE: each group has a companion sunssf register; scale=1 here, multiply by 10^sunssf at runtime.
+
+# Currents (s16, A raw)
+[[registers]]
+address = 4167
+type = "s16"
+name = "Total current"
+unit = "A"
+
+[[registers]]
+address = 4168
+type = "s16"
+name = "Current L1"
+unit = "A"
+
+[[registers]]
+address = 4169
+type = "s16"
+name = "Current L2"
+unit = "A"
+
+[[registers]]
+address = 4170
+type = "s16"
+name = "Current L3"
+unit = "A"
+
+[[registers]]
+address = 4171
+type = "s16"
+name = "Current scale factor (sunssf)"
+
+# Phase-to-neutral voltages (s16, V raw)
+[[registers]]
+address = 4172
+type = "s16"
+name = "Average phase voltage"
+unit = "V"
+
+[[registers]]
+address = 4173
+type = "s16"
+name = "Voltage L1-N"
+unit = "V"
+
+[[registers]]
+address = 4174
+type = "s16"
+name = "Voltage L2-N"
+unit = "V"
+
+[[registers]]
+address = 4175
+type = "s16"
+name = "Voltage L3-N"
+unit = "V"
+
+# Line voltages (s16, V raw)
+[[registers]]
+address = 4176
+type = "s16"
+name = "Average line voltage"
+unit = "V"
+
+[[registers]]
+address = 4177
+type = "s16"
+name = "Voltage L1-L2"
+unit = "V"
+
+[[registers]]
+address = 4178
+type = "s16"
+name = "Voltage L2-L3"
+unit = "V"
+
+[[registers]]
+address = 4179
+type = "s16"
+name = "Voltage L3-L1"
+unit = "V"
+
+[[registers]]
+address = 4180
+type = "s16"
+name = "Voltage scale factor (sunssf)"
+
+# Frequency (s16, Hz raw)
+[[registers]]
+address = 4181
+type = "s16"
+name = "Frequency"
+unit = "Hz"
+
+[[registers]]
+address = 4182
+type = "s16"
+name = "Frequency scale factor (sunssf)"
+
+# Active power (s16, W raw)
+[[registers]]
+address = 4183
+type = "s16"
+name = "Total active power"
+unit = "W"
+
+[[registers]]
+address = 4184
+type = "s16"
+name = "Active power L1"
+unit = "W"
+
+[[registers]]
+address = 4185
+type = "s16"
+name = "Active power L2"
+unit = "W"
+
+[[registers]]
+address = 4186
+type = "s16"
+name = "Active power L3"
+unit = "W"
+
+[[registers]]
+address = 4187
+type = "s16"
+name = "Active power scale factor (sunssf)"
+
+# Apparent power (s16, VA raw)
+[[registers]]
+address = 4188
+type = "s16"
+name = "Total apparent power"
+unit = "VA"
+
+[[registers]]
+address = 4189
+type = "s16"
+name = "Apparent power L1"
+unit = "VA"
+
+[[registers]]
+address = 4190
+type = "s16"
+name = "Apparent power L2"
+unit = "VA"
+
+[[registers]]
+address = 4191
+type = "s16"
+name = "Apparent power L3"
+unit = "VA"
+
+[[registers]]
+address = 4192
+type = "s16"
+name = "Apparent power scale factor (sunssf)"
+
+# Reactive power (s16, var raw)
+[[registers]]
+address = 4193
+type = "s16"
+name = "Total reactive power"
+unit = "var"
+
+[[registers]]
+address = 4194
+type = "s16"
+name = "Reactive power L1"
+unit = "var"
+
+[[registers]]
+address = 4195
+type = "s16"
+name = "Reactive power L2"
+unit = "var"
+
+[[registers]]
+address = 4196
+type = "s16"
+name = "Reactive power L3"
+unit = "var"
+
+[[registers]]
+address = 4197
+type = "s16"
+name = "Reactive power scale factor (sunssf)"
+
+# Power factor (s16, -1000~1000 raw)
+[[registers]]
+address = 4198
+type = "s16"
+name = "Total power factor"
+
+[[registers]]
+address = 4199
+type = "s16"
+name = "Power factor L1"
+
+[[registers]]
+address = 4200
+type = "s16"
+name = "Power factor L2"
+
+[[registers]]
+address = 4201
+type = "s16"
+name = "Power factor L3"
+
+[[registers]]
+address = 4202
+type = "s16"
+name = "Power factor scale factor (sunssf)"
+
+# Active energy exported (acc32, u32, 2 registers, Wh)
+[[registers]]
+address = 4203
+type = "u32"
+name = "Active energy export"
+unit = "Wh"
+
+[[registers]]
+address = 4205
+type = "u32"
+name = "Active energy export L1"
+unit = "Wh"
+
+# ----- Energy — TOU bank (Dword, real = Rx/100) -----
+# 0x0900 = 2304
+[[registers]]
+address = 2304
+type = "u32"
+name = "Total active energy"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 2314
+type = "u32"
+name = "Net active energy"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 2324
+type = "u32"
+name = "Import active energy"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 2334
+type = "u32"
+name = "Export active energy"
+unit = "kWh"
+scale = 0.01
+
+[[registers]]
+address = 2344
+type = "u32"
+name = "Total reactive energy"
+unit = "kvarh"
+scale = 0.01
+
+[[registers]]
+address = 2354
+type = "u32"
+name = "Net reactive energy"
+unit = "kvarh"
+scale = 0.01
+
+[[registers]]
+address = 2364
+type = "u32"
+name = "Import reactive energy"
+unit = "kvarh"
+scale = 0.01
+
+[[registers]]
+address = 2374
+type = "u32"
+name = "Export reactive energy"
+unit = "kvarh"
+scale = 0.01
+
+[[registers]]
+address = 2384
+type = "u32"
+name = "Apparent energy"
+unit = "kVAh"
+scale = 0.01

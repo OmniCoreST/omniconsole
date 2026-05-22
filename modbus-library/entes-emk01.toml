@@ -1,0 +1,381 @@
+# Entes EMK-01 — Modbus register map for Omni Console
+#
+# Source: Entes EMK-01 Register Table (embedded documentation, FC03 section)
+# - 4-phase (3-phase + N) power quality analyser, RS485 Modbus RTU.
+# - Holding registers (FC03/read, FC16/write).
+# - IEEE-754 float (32-bit, 2 registers) and long64 (64-bit, 4 registers), Big-Endian (MSW first).
+# - Protocol address = table address − 40001 (standard Modicon 4xxxx convention).
+# - Measurement block: table 40001–40425+ (protocol 0–424+).
+# - Energy block: float at table 55024–55034 (protocol 15023–15033).
+# - Factory defaults: slave=1, baud configurable (check unit).
+
+vendor = "Entes"
+model = "EMK-01"
+description = "4-phase power quality analyser — per-phase V/I/P/Q/S/CosPhi/PF, voltage & current THD, 3-/4-phase totals, frequency, temperature, energy (IEEE-754 float, Big-Endian)."
+
+# ----- Phase-to-neutral voltages -----
+# Table 40001 → protocol 0
+[[registers]]
+address = 0
+type = "f32"
+name = "Voltage L1"
+unit = "V"
+
+[[registers]]
+address = 2
+type = "f32"
+name = "Voltage L2"
+unit = "V"
+
+[[registers]]
+address = 4
+type = "f32"
+name = "Voltage L3"
+unit = "V"
+
+[[registers]]
+address = 6
+type = "f32"
+name = "Voltage L4"
+unit = "V"
+
+# ----- Line-to-line voltages -----
+# Table 40009 → protocol 8
+[[registers]]
+address = 8
+type = "f32"
+name = "Voltage L1-L2"
+unit = "V"
+
+[[registers]]
+address = 10
+type = "f32"
+name = "Voltage L2-L3"
+unit = "V"
+
+[[registers]]
+address = 12
+type = "f32"
+name = "Voltage L3-L1"
+unit = "V"
+
+# ----- Voltage THD -----
+# Table 40017 → protocol 16
+[[registers]]
+address = 16
+type = "f32"
+name = "Voltage THD L1"
+unit = "%"
+
+[[registers]]
+address = 18
+type = "f32"
+name = "Voltage THD L2"
+unit = "%"
+
+[[registers]]
+address = 20
+type = "f32"
+name = "Voltage THD L3"
+unit = "%"
+
+# ----- Currents -----
+# Table 40033 → protocol 32
+[[registers]]
+address = 32
+type = "f32"
+name = "Current L1"
+unit = "A"
+
+[[registers]]
+address = 34
+type = "f32"
+name = "Current L2"
+unit = "A"
+
+[[registers]]
+address = 36
+type = "f32"
+name = "Current L3"
+unit = "A"
+
+[[registers]]
+address = 38
+type = "f32"
+name = "Current L4"
+unit = "A"
+
+# ----- Current THD -----
+# Table 40041 → protocol 40
+[[registers]]
+address = 40
+type = "f32"
+name = "Current THD L1"
+unit = "%"
+
+[[registers]]
+address = 42
+type = "f32"
+name = "Current THD L2"
+unit = "%"
+
+[[registers]]
+address = 44
+type = "f32"
+name = "Current THD L3"
+unit = "%"
+
+# ----- CosPhi per phase -----
+# Table 40049 → protocol 48
+[[registers]]
+address = 48
+type = "f32"
+name = "CosPhi L1"
+
+[[registers]]
+address = 50
+type = "f32"
+name = "CosPhi L2"
+
+[[registers]]
+address = 52
+type = "f32"
+name = "CosPhi L3"
+
+[[registers]]
+address = 54
+type = "f32"
+name = "CosPhi L4"
+
+# ----- Power factor per phase -----
+# Table 40057 → protocol 56
+[[registers]]
+address = 56
+type = "f32"
+name = "Power factor L1"
+
+[[registers]]
+address = 58
+type = "f32"
+name = "Power factor L2"
+
+[[registers]]
+address = 60
+type = "f32"
+name = "Power factor L3"
+
+[[registers]]
+address = 62
+type = "f32"
+name = "Power factor L4"
+
+# ----- Total 3-phase power factor -----
+# Table 40065 → protocol 64
+[[registers]]
+address = 64
+type = "f32"
+name = "Total power factor (L1..L3)"
+
+# ----- Frequency -----
+# Table 40081 → protocol 80
+[[registers]]
+address = 80
+type = "f32"
+name = "Frequency"
+unit = "Hz"
+
+# ----- Apparent power per phase -----
+# Table 40089 → protocol 88
+[[registers]]
+address = 88
+type = "f32"
+name = "Apparent power L1"
+unit = "VA"
+
+[[registers]]
+address = 90
+type = "f32"
+name = "Apparent power L2"
+unit = "VA"
+
+[[registers]]
+address = 92
+type = "f32"
+name = "Apparent power L3"
+unit = "VA"
+
+[[registers]]
+address = 94
+type = "f32"
+name = "Apparent power L4"
+unit = "VA"
+
+# ----- Active power per phase -----
+# Table 40097 → protocol 96
+[[registers]]
+address = 96
+type = "f32"
+name = "Active power L1"
+unit = "W"
+
+[[registers]]
+address = 98
+type = "f32"
+name = "Active power L2"
+unit = "W"
+
+[[registers]]
+address = 100
+type = "f32"
+name = "Active power L3"
+unit = "W"
+
+[[registers]]
+address = 102
+type = "f32"
+name = "Active power L4"
+unit = "W"
+
+# ----- Reactive power per phase (consumption / inductive) -----
+# Table 40105 → protocol 104
+[[registers]]
+address = 104
+type = "f32"
+name = "Reactive power L1 (consumption)"
+unit = "var"
+
+[[registers]]
+address = 106
+type = "f32"
+name = "Reactive power L2 (consumption)"
+unit = "var"
+
+[[registers]]
+address = 108
+type = "f32"
+name = "Reactive power L3 (consumption)"
+unit = "var"
+
+[[registers]]
+address = 110
+type = "f32"
+name = "Reactive power L4 (consumption)"
+unit = "var"
+
+# ----- Reactive power per phase (supply / capacitive) -----
+# Table 40113 → protocol 112
+[[registers]]
+address = 112
+type = "f32"
+name = "Reactive power L1 (supply)"
+unit = "var"
+
+[[registers]]
+address = 114
+type = "f32"
+name = "Reactive power L2 (supply)"
+unit = "var"
+
+[[registers]]
+address = 116
+type = "f32"
+name = "Reactive power L3 (supply)"
+unit = "var"
+
+[[registers]]
+address = 118
+type = "f32"
+name = "Reactive power L4 (supply)"
+unit = "var"
+
+# ----- 3-phase totals -----
+# Table 40121 → protocol 120
+[[registers]]
+address = 120
+type = "f32"
+name = "Total active power (L1..L3)"
+unit = "W"
+
+[[registers]]
+address = 128
+type = "f32"
+name = "Total apparent power (L1..L3)"
+unit = "VA"
+
+[[registers]]
+address = 136
+type = "f32"
+name = "Total reactive power consumption (L1..L3)"
+unit = "var"
+
+[[registers]]
+address = 144
+type = "f32"
+name = "Total reactive power supply (L1..L3)"
+unit = "var"
+
+# ----- 4-phase totals -----
+# Table 40153 → protocol 152
+[[registers]]
+address = 152
+type = "f32"
+name = "Total active power (L1..L4)"
+unit = "W"
+
+[[registers]]
+address = 160
+type = "f32"
+name = "Total apparent power (L1..L4)"
+unit = "VA"
+
+[[registers]]
+address = 168
+type = "f32"
+name = "Total reactive power consumption (L1..L4)"
+unit = "var"
+
+# ----- Temperature -----
+# Table 40297 → protocol 296
+[[registers]]
+address = 296
+type = "f32"
+name = "Temperature"
+unit = "°C"
+
+# ----- Energy (float, kWh) -----
+# Table 55024 → protocol 15023
+[[registers]]
+address = 15023
+type = "f32"
+name = "Consumed active energy"
+unit = "kWh"
+
+[[registers]]
+address = 15025
+type = "f32"
+name = "Consumed inductive reactive energy"
+unit = "kvarh"
+
+[[registers]]
+address = 15027
+type = "f32"
+name = "Consumed capacitive reactive energy"
+unit = "kvarh"
+
+[[registers]]
+address = 15029
+type = "f32"
+name = "Supplied active energy"
+unit = "kWh"
+
+[[registers]]
+address = 15031
+type = "f32"
+name = "Supplied inductive reactive energy"
+unit = "kvarh"
+
+[[registers]]
+address = 15033
+type = "f32"
+name = "Supplied capacitive reactive energy"
+unit = "kvarh"

@@ -1,0 +1,226 @@
+# ABB B24 — Modbus register map for Omni Console
+#
+# Source: abb-b23-b24-manual.pdf (2CMC485003M0201 Rev. A)
+# - 3-phase 4-wire energy meter, MID certified (EN 62053-21 class 2), RS485.
+# - Identical register map to B23; B24 adds MID certification and relay output.
+# - Holding registers (FC03); addresses are direct 0-based protocol addresses
+#   (do NOT subtract 40000 or decrement by 1).
+# - Measurements: mixed u32/s32 (2 registers) and u16/s16 (1 register).
+# - Energy registers at 0x5000+ are 64-bit (4 registers) — not included here.
+#   DMTME-compatible 32-bit energy totals at 0x103E/0x1040 are used instead.
+# - Scales: V×0.1, A×0.01, W/VAr/VA×0.01, PF×0.001, Hz×0.01, energy×0.1 kWh.
+# - Factory defaults: slave=1, baud=9600, 8N1.
+
+vendor = "ABB"
+model = "B24"
+description = "3-phase 4-wire MID-certified energy meter (EN 62053-21 class 2) — per-phase V/I/P/Q/S, PF, Hz, 32-bit energy totals — identical register map to B23."
+
+# ----- Phase-to-neutral voltages (0x5B00+, u32, ×0.1 V) -----
+[[registers]]
+address = 23296
+type = "u32"
+name = "Voltage L1-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 23298
+type = "u32"
+name = "Voltage L2-N"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 23300
+type = "u32"
+name = "Voltage L3-N"
+unit = "V"
+scale = 0.1
+
+# ----- Line-to-line voltages -----
+[[registers]]
+address = 23302
+type = "u32"
+name = "Voltage L1-L2"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 23304
+type = "u32"
+name = "Voltage L3-L2"
+unit = "V"
+scale = 0.1
+
+[[registers]]
+address = 23306
+type = "u32"
+name = "Voltage L1-L3"
+unit = "V"
+scale = 0.1
+
+# ----- Currents (u32, ×0.01 A) -----
+[[registers]]
+address = 23308
+type = "u32"
+name = "Current L1"
+unit = "A"
+scale = 0.01
+
+[[registers]]
+address = 23310
+type = "u32"
+name = "Current L2"
+unit = "A"
+scale = 0.01
+
+[[registers]]
+address = 23312
+type = "u32"
+name = "Current L3"
+unit = "A"
+scale = 0.01
+
+[[registers]]
+address = 23314
+type = "u32"
+name = "Current N"
+unit = "A"
+scale = 0.01
+
+# ----- Active power (s32, ×0.01 W) -----
+[[registers]]
+address = 23316
+type = "s32"
+name = "Total active power"
+unit = "W"
+scale = 0.01
+
+[[registers]]
+address = 23318
+type = "s32"
+name = "Active power L1"
+unit = "W"
+scale = 0.01
+
+[[registers]]
+address = 23320
+type = "s32"
+name = "Active power L2"
+unit = "W"
+scale = 0.01
+
+[[registers]]
+address = 23322
+type = "s32"
+name = "Active power L3"
+unit = "W"
+scale = 0.01
+
+# ----- Reactive power (s32, ×0.01 var) -----
+[[registers]]
+address = 23324
+type = "s32"
+name = "Total reactive power"
+unit = "var"
+scale = 0.01
+
+[[registers]]
+address = 23326
+type = "s32"
+name = "Reactive power L1"
+unit = "var"
+scale = 0.01
+
+[[registers]]
+address = 23328
+type = "s32"
+name = "Reactive power L2"
+unit = "var"
+scale = 0.01
+
+[[registers]]
+address = 23330
+type = "s32"
+name = "Reactive power L3"
+unit = "var"
+scale = 0.01
+
+# ----- Apparent power (s32, ×0.01 VA) -----
+[[registers]]
+address = 23332
+type = "s32"
+name = "Total apparent power"
+unit = "VA"
+scale = 0.01
+
+[[registers]]
+address = 23334
+type = "s32"
+name = "Apparent power L1"
+unit = "VA"
+scale = 0.01
+
+[[registers]]
+address = 23336
+type = "s32"
+name = "Apparent power L2"
+unit = "VA"
+scale = 0.01
+
+[[registers]]
+address = 23338
+type = "s32"
+name = "Apparent power L3"
+unit = "VA"
+scale = 0.01
+
+# ----- Frequency (u16, ×0.01 Hz) -----
+[[registers]]
+address = 23340
+type = "u16"
+name = "Frequency"
+unit = "Hz"
+scale = 0.01
+
+# ----- Power factor (s16, ×0.001) -----
+[[registers]]
+address = 23354
+type = "s16"
+name = "Total power factor"
+scale = 0.001
+
+[[registers]]
+address = 23355
+type = "s16"
+name = "Power factor L1"
+scale = 0.001
+
+[[registers]]
+address = 23356
+type = "s16"
+name = "Power factor L2"
+scale = 0.001
+
+[[registers]]
+address = 23357
+type = "s16"
+name = "Power factor L3"
+scale = 0.001
+
+# ----- Energy — DMTME-compatible 32-bit totals (u32, ×0.1 kWh/kVArh) -----
+# Note: primary 64-bit accumulators at 0x5000+ require 4-register reads not
+# supported by this format. These DMTME registers provide 32-bit equivalents.
+[[registers]]
+address = 4158
+type = "u32"
+name = "Total active energy import"
+unit = "kWh"
+scale = 0.1
+
+[[registers]]
+address = 4160
+type = "u32"
+name = "Total reactive energy import"
+unit = "kVArh"
+scale = 0.1

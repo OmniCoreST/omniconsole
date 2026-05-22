@@ -1,0 +1,142 @@
+# Moxa ioLogik E1240 Remote Ethernet I/O — 8-channel AI
+#
+# Source: ioLogik E1200 Series User Manual V16.2, August 2025 (Appendix A)
+# Protocol: Modbus/TCP (port 502); Modbus/TCP ID default = 1
+#
+# AI channels (ch0-7), measured values in FC04 input registers:
+#   FC04 addr 0-7: AI_rawValue (word, R)
+#   FC04 addr 8-23 (2 words/ch): AI_scaledValue hi/lo (u32, R)
+#   FC04 addr 24-31: AI_rawValueMin (word, R)
+#   FC04 addr 32-39: AI_rawValueMax (word, R)
+#   FC04 addr 60-67: AI_status (word, R; 0=normal,1=burnout,2=over range,3=under range)
+#   FC04 addr 109-124 (2 words/ch): AI_scaledValueMin hi/lo (u32, R)
+#   FC04 addr 125-140 (2 words/ch): AI_scaledValueMax hi/lo (u32, R)
+# FC01 addr 4145-4152: AI_resetMinValue ch0-7 (1=reset min; R/W)
+# FC01 addr 4153-4160: AI_resetMaxValue ch0-7 (1=reset max; R/W)
+# System FC04: same as other E1200 models (modelName@5000, deviceUpTime@5020, etc.)
+
+vendor = "Moxa"
+model = "ioLogik E1240"
+description = "8-AI remote Ethernet I/O, Modbus/TCP. FC04: AI_rawValue ch0-7 (addr 0-7), AI_scaledValue u32 hi/lo (8-23), AI_rawValueMin (24-31), AI_rawValueMax (32-39), AI_status (60-67; 0=normal,1=burnout,2=over range,3=under range), AI_scaledValueMin (109-124), AI_scaledValueMax (125-140). FC01: AI_resetMinValue (4145-4152), AI_resetMaxValue (4153-4160). FC03: AI_mode ch0-7 (addr 24-31; 0=0-10V,1=4-20mA,2=0-20mA,4=4-20mA burnout), AI_burnoutValue u32 hi/lo ch0-7 (addr 40-55)."
+
+# ===== FC03 Holding Registers =====
+
+[[registers]]
+address = 24
+type = "u16"
+name = "AI_mode ch0 (0=0-10V 1=4-20mA 2=0-20mA 4=4-20mA burnout)"
+
+[[registers]]
+address = 25
+type = "u16"
+name = "AI_mode ch1"
+
+[[registers]]
+address = 26
+type = "u16"
+name = "AI_mode ch2"
+
+[[registers]]
+address = 27
+type = "u16"
+name = "AI_mode ch3"
+
+[[registers]]
+address = 28
+type = "u16"
+name = "AI_mode ch4"
+
+[[registers]]
+address = 29
+type = "u16"
+name = "AI_mode ch5"
+
+[[registers]]
+address = 30
+type = "u16"
+name = "AI_mode ch6"
+
+[[registers]]
+address = 31
+type = "u16"
+name = "AI_mode ch7"
+
+[[registers]]
+address = 40
+type = "u16"
+name = "AI_burnoutValue ch0 hi-word (u32)"
+
+[[registers]]
+address = 41
+type = "u16"
+name = "AI_burnoutValue ch0 lo-word"
+
+[[registers]]
+address = 42
+type = "u16"
+name = "AI_burnoutValue ch1 hi-word"
+
+[[registers]]
+address = 43
+type = "u16"
+name = "AI_burnoutValue ch1 lo-word"
+
+[[registers]]
+address = 44
+type = "u16"
+name = "AI_burnoutValue ch2 hi-word"
+
+[[registers]]
+address = 45
+type = "u16"
+name = "AI_burnoutValue ch2 lo-word"
+
+[[registers]]
+address = 46
+type = "u16"
+name = "AI_burnoutValue ch3 hi-word"
+
+[[registers]]
+address = 47
+type = "u16"
+name = "AI_burnoutValue ch3 lo-word"
+
+[[registers]]
+address = 48
+type = "u16"
+name = "AI_burnoutValue ch4 hi-word"
+
+[[registers]]
+address = 49
+type = "u16"
+name = "AI_burnoutValue ch4 lo-word"
+
+[[registers]]
+address = 50
+type = "u16"
+name = "AI_burnoutValue ch5 hi-word"
+
+[[registers]]
+address = 51
+type = "u16"
+name = "AI_burnoutValue ch5 lo-word"
+
+[[registers]]
+address = 52
+type = "u16"
+name = "AI_burnoutValue ch6 hi-word"
+
+[[registers]]
+address = 53
+type = "u16"
+name = "AI_burnoutValue ch6 lo-word"
+
+[[registers]]
+address = 54
+type = "u16"
+name = "AI_burnoutValue ch7 hi-word"
+
+[[registers]]
+address = 55
+type = "u16"
+name = "AI_burnoutValue ch7 lo-word"

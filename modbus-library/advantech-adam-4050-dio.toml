@@ -1,0 +1,14 @@
+# Advantech ADAM-4050 — 15/16-Channel Isolated Digital I/O Module
+#
+# Source: advantech-adam-4000-modbus.pdf (Appendix G, Module 7)
+# - 8 DI channels + 7 DO channels (ADAM-4050) or 8 DO (ADAM-4050-F).
+# - Modbus RTU, FC01/FC02 for I/O state (coil registers — NOT FC03).
+# - FC01/FC02 00001-00008 (coil addr 0-7): DI Input Signal ch0-7 (R).
+# - FC01/FC02 00017-00023 (coil addr 16-22): DO Output Value ch0-6 (R/W).
+# - FC01/FC02 00024 (coil addr 23): DO ch7 — ADAM-4050-F only.
+# - Factory defaults: slave=1, 9600 baud, 8N1.
+# - NOTE: All I/O uses coil function codes (FC01 read, FC05/FC15 write), not FC03.
+
+vendor = "Advantech"
+model = "ADAM-4050"
+description = "8 DI + 7/8 DO isolated digital I/O module. I/O state via FC01/FC02 coils: DI at coil addr 0-7, DO at coil addr 16-22 (ch7/addr 23 = ADAM-4050-F only). No FC03 measurement registers."

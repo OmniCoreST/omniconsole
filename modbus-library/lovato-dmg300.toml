@@ -1,0 +1,280 @@
+# Lovato DMG300 — Modbus register map for Omni Console
+#
+# Source: lovato-dmg-modbus-i317.pdf (Doc. I317IGB02_22, 07/02/2022)
+# - 3-phase 4-wire power analyzer with datalogger, RS485 Modbus RTU.
+# - Holding registers (FC03); FC04 also accepted.
+# - UINT32/INT32 little-endian (LSW first), word_order = "le".
+# - Protocol address = table hex address − 1 (document states this explicitly).
+# - Adds equivalent (total) measures, voltage/current asymmetry, neutral current,
+#   and 0.001 Hz frequency resolution vs. the DMG110/210.
+# - Energy at high address 0x1A20 (protocol 6687).
+# - Factory defaults: slave=1, configurable baud, 8N1.
+
+vendor = "Lovato"
+model = "DMG300"
+description = "3-phase 4-wire power analyzer — per-phase V/I/P/Q/S/PF, totals, neutral current, asymmetry, energy, holding registers (UINT32/INT32 LSW-first)."
+
+# ----- Phase-to-neutral voltages -----
+[[registers]]
+address = 1
+type = "u32"
+word_order = "le"
+name = "Voltage L1-N"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 3
+type = "u32"
+word_order = "le"
+name = "Voltage L2-N"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 5
+type = "u32"
+word_order = "le"
+name = "Voltage L3-N"
+unit = "V"
+scale = 0.01
+
+# ----- Currents -----
+[[registers]]
+address = 7
+type = "u32"
+word_order = "le"
+name = "Current L1"
+unit = "A"
+scale = 0.0001
+
+[[registers]]
+address = 9
+type = "u32"
+word_order = "le"
+name = "Current L2"
+unit = "A"
+scale = 0.0001
+
+[[registers]]
+address = 11
+type = "u32"
+word_order = "le"
+name = "Current L3"
+unit = "A"
+scale = 0.0001
+
+# ----- Line-to-line voltages -----
+[[registers]]
+address = 13
+type = "u32"
+word_order = "le"
+name = "Voltage L1-L2"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 15
+type = "u32"
+word_order = "le"
+name = "Voltage L2-L3"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 17
+type = "u32"
+word_order = "le"
+name = "Voltage L3-L1"
+unit = "V"
+scale = 0.01
+
+# ----- Active power per phase -----
+[[registers]]
+address = 19
+type = "s32"
+word_order = "le"
+name = "Active power L1"
+unit = "W"
+scale = 0.01
+
+[[registers]]
+address = 21
+type = "s32"
+word_order = "le"
+name = "Active power L2"
+unit = "W"
+scale = 0.01
+
+[[registers]]
+address = 23
+type = "s32"
+word_order = "le"
+name = "Active power L3"
+unit = "W"
+scale = 0.01
+
+# ----- Reactive power per phase -----
+[[registers]]
+address = 25
+type = "s32"
+word_order = "le"
+name = "Reactive power L1"
+unit = "var"
+scale = 0.01
+
+[[registers]]
+address = 27
+type = "s32"
+word_order = "le"
+name = "Reactive power L2"
+unit = "var"
+scale = 0.01
+
+[[registers]]
+address = 29
+type = "s32"
+word_order = "le"
+name = "Reactive power L3"
+unit = "var"
+scale = 0.01
+
+# ----- Apparent power per phase -----
+[[registers]]
+address = 31
+type = "u32"
+word_order = "le"
+name = "Apparent power L1"
+unit = "VA"
+scale = 0.01
+
+[[registers]]
+address = 33
+type = "u32"
+word_order = "le"
+name = "Apparent power L2"
+unit = "VA"
+scale = 0.01
+
+[[registers]]
+address = 35
+type = "u32"
+word_order = "le"
+name = "Apparent power L3"
+unit = "VA"
+scale = 0.01
+
+# ----- Power factor per phase -----
+[[registers]]
+address = 37
+type = "s32"
+word_order = "le"
+name = "Power factor L1"
+scale = 0.0001
+
+[[registers]]
+address = 39
+type = "s32"
+word_order = "le"
+name = "Power factor L2"
+scale = 0.0001
+
+[[registers]]
+address = 41
+type = "s32"
+word_order = "le"
+name = "Power factor L3"
+scale = 0.0001
+
+# ----- Frequency (0.001 Hz resolution for DMG300+) -----
+[[registers]]
+address = 49
+type = "u32"
+word_order = "le"
+name = "Frequency"
+unit = "Hz"
+scale = 0.001
+
+# ----- Equivalent (total system) values -----
+[[registers]]
+address = 51
+type = "u32"
+word_order = "le"
+name = "Equivalent phase voltage"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 53
+type = "u32"
+word_order = "le"
+name = "Equivalent line voltage"
+unit = "V"
+scale = 0.01
+
+[[registers]]
+address = 55
+type = "u32"
+word_order = "le"
+name = "Equivalent current"
+unit = "A"
+scale = 0.0001
+
+[[registers]]
+address = 57
+type = "s32"
+word_order = "le"
+name = "Total active power"
+unit = "W"
+scale = 0.01
+
+[[registers]]
+address = 59
+type = "s32"
+word_order = "le"
+name = "Total reactive power"
+unit = "var"
+scale = 0.01
+
+[[registers]]
+address = 61
+type = "u32"
+word_order = "le"
+name = "Total apparent power"
+unit = "VA"
+scale = 0.01
+
+[[registers]]
+address = 63
+type = "s32"
+word_order = "le"
+name = "Total power factor"
+scale = 0.0001
+
+# ----- Current asymmetry -----
+[[registers]]
+address = 69
+type = "u32"
+word_order = "le"
+name = "Current asymmetry"
+unit = "%"
+scale = 0.01
+
+# ----- Neutral current -----
+[[registers]]
+address = 71
+type = "u32"
+word_order = "le"
+name = "Neutral current"
+unit = "A"
+scale = 0.0001
+
+# ----- Energy (import) -----
+# Table 0x1A20 → protocol 6687
+[[registers]]
+address = 6687
+type = "u32"
+word_order = "le"
+name = "Total imported active energy"
+unit = "kWh"
+scale = 0.01
