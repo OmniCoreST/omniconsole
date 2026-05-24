@@ -170,7 +170,7 @@ scale   = 0.01
 
 Omni Console embeds a **local [Model Context Protocol](https://modelcontextprotocol.io) server**, so an AI agent can operate the instrument *alongside you* — opening ports, sending frames, reading & decoding the trace, and building sequences, flows and device maps. The agent and the GUI share **one port and one trace**, so you both see every byte live.
 
-Point any MCP client (e.g. Claude) at the local endpoint:
+Point any MCP client at the local endpoint:
 
 ```json
 {
