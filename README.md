@@ -1,7 +1,7 @@
 <div align="center">
 
 <a href="https://omniconsole.dev">
-  <img src="https://omniconsole.dev/assets/og/default.png" alt="Omni Console — the serial monitor that decodes industrial protocols" width="760">
+  <img src=".github/logo.png" alt="Omni Console" width="132">
 </a>
 
 # Omni Console
